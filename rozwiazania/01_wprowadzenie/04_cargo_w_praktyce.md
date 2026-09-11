@@ -8,9 +8,11 @@ To jest kompletny manifest analizowany w ćwiczeniu: ma jawny target biblioteczn
 
 ~~~text
 [package]
-name = "raport-cli"
+name = "narzedzie-cli"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
+resolver = "3"
 
 [dependencies]
 serde = "1"
@@ -19,14 +21,14 @@ serde = "1"
 pretty_assertions = "1"
 
 [[bin]]
-name = "raport"
-path = "src/main.rs"
+name = "admin"
+path = "src/bin/admin.rs"
 
 [lib]
 path = "src/lib.rs"
 ~~~
 
-W package'u może istnieć także `src/lib.rs`; wtedy `raport` i testy wywołują publiczne API biblioteki. `serde` jest **third-party** i normalny build musi rozwiązać oraz skompilować tę zależność niezależnie od uruchomienia testów.
+`src/lib.rs` tworzy crate `narzedzie_cli`, więc bin `admin` i testy wywołują jego publiczne API. `serde` jest **third-party** i normalny build musi rozwiązać oraz skompilować tę zależność niezależnie od uruchomienia testów.
 
 ## W04-2
 

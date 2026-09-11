@@ -28,10 +28,12 @@ rust-version = "1.85"
 resolver = "3"
 
 [dependencies]
+serde = "1"
 
 [build-dependencies]
 
 [dev-dependencies]
+pretty_assertions = "1"
 
 [[bin]]
 name = "admin"
@@ -121,7 +123,7 @@ Oficjalne szczegóły: [targety Cargo](https://doc.rust-lang.org/cargo/reference
 
 ## Ćwiczenia
 
-- `W04-1` — podstawowe: przeanalizuj manifest z sekcji „Model” (`narzedzie-cli`, jawne `lib` i `bin`, `serde` oraz `pretty_assertions` w rozwiązaniu); wskaż, która zależność trafia do normalnego builda. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-1).
+- `W04-1` — podstawowe: przeanalizuj manifest `narzedzie-cli` z sekcji „Model” (jawne `lib` i bin `admin`, `serde`, `pretty_assertions`); wskaż, która zależność trafia do normalnego builda. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-1).
 - `W04-2` — praktyczne: dobierz polecenie do szybkiej kontroli biblioteki, uruchomienia binarium `admin` i pełnej kontroli targetów w CI. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-2).
 - `W04-3` — pogłębione: ustal politykę `Cargo.lock` dla workspace'a z CLI i publikowanej biblioteki oraz uzasadnij użycie `--locked`. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-3).
 
