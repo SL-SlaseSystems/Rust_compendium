@@ -55,7 +55,7 @@ def _outside_fences(lines: list[str]) -> tuple[list[str], bool, bool]:
                 fence_character = ""
                 fence_length = 0
             continue
-        if not fence_character:
+        if not fence_character and not line.startswith(("    ", "\t")):
             outside.append(line)
 
     return outside, bool(fence_character), has_rust_fence
@@ -71,10 +71,7 @@ def _has_solution_anchor(path: Path, exercise_id: str, fragment: str) -> bool:
     if fragment != exercise_id.lower():
         return False
     lines = path.read_text(encoding="utf-8").splitlines()
-    outside_fences, _, _ = _outside_fences(lines)
-    prose_lines = [
-        line for line in outside_fences if not line.startswith(("    ", "\t"))
-    ]
+    prose_lines, _, _ = _outside_fences(lines)
     heading = re.compile(rf"^ {{0,3}}#{{1,6}}[ \t]+{re.escape(exercise_id)}[ \t]*$")
     explicit_anchor = re.compile(
         rf"<(?:a|span)\s+[^>]*(?:id|name)=[\"']{re.escape(fragment)}[\"'][^>]*>",

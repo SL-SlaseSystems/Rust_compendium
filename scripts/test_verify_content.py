@@ -245,6 +245,22 @@ class ValidateMarkdownTests(MarkdownFixture):
 
         self.assertEqual(problems, [])
 
+    def test_ignores_markdown_links_inside_indented_code_blocks(self) -> None:
+        self.write(
+            "chapter/indented-code-link.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Przykład tekstu
+
+                [To nie jest odsyłacz](missing.md)
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertEqual(problems, [])
+
     def test_ignores_expanded_marker_inside_code_fences(self) -> None:
         self.write(
             "chapter/documented-marker.md",
