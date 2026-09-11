@@ -21,7 +21,7 @@ Crate root jest plikiem, od którego kompilator buduje pojedynczy crate. W pakie
 
 ## Reguły: wyrażenia, makra i formatowanie
 
-Instrukcja wykonuje działanie, a wyrażenie oblicza wartość. Blok zwraca wartość ostatniego wyrażenia bez średnika; średnik zmienia je w instrukcję o typie `()`. `println!` jest makrem, nie funkcją: `!` uruchamia rozwinięcie makra. Literał formatu jest sprawdzany podczas kompilacji; `{nazwa}` przechwytuje nazwę z zakresu, `{}` używa `Display`, a `{:?}` — `Debug`.
+Instrukcja wykonuje działanie, a wyrażenie oblicza wartość. Średnik tworzy instrukcję wyrażeniową i odrzuca wartość wyrażenia; blok bez końcowego wyrażenia ma wartość `()`. `println!` jest makrem, nie funkcją: `!` uruchamia rozwinięcie makra. Literał formatu jest sprawdzany podczas kompilacji; `{nazwa}` przechwytuje nazwę z zakresu, `{}` używa `Display`, a `{:?}` — `Debug`.
 
 ~~~rust
 fn podatek(cena: i32) -> i32 {
@@ -54,11 +54,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 ## Uproszczony model kompilacji
 
-To model mentalny aktualnej implementacji, nie stabilny interfejs `rustc`: parsowanie buduje `AST`; rozwijanie makr, rozwiązywanie nazw i wczesne linty przygotowują program; obniżenie do `HIR` umożliwia inferencję typów i dobór `trait`; `THIR` i `MIR` wspierają kontrolę wzorców oraz borrow checking; potem następują codegen, zwykle przez LLVM, i linkowanie. [Rustc Dev Guide](https://rustc-dev-guide.rust-lang.org/overview.html) opisuje szczegóły.
+To model mentalny aktualnej implementacji, nie stabilny interfejs `rustc`: parsowanie buduje `AST`; rozwijanie makr, rozwiązywanie nazw i wczesne linty przygotowują program; `HIR` służy inferencji, type checking i doborowi `trait`; po nim `THIR` wspiera wzorce oraz wyczerpalność, a konstrukcja `MIR`; borrow checking działa na `MIR`. Potem następują codegen, zwykle przez LLVM, i linkowanie. [Rustc Dev Guide](https://rustc-dev-guide.rust-lang.org/overview.html) opisuje szczegóły.
 
 ## Diagnostyka kompilatora
 
-Ten średnik powoduje, że blok ma typ `()`, nie `i32`; usuń go, gdy wartość ma być zwrócona.
+Średnik odrzuca wartość `42`; blok bez końcowego wyrażenia ocenia się do `()`, nie `i32`. Usuń go, gdy wartość ma być zwrócona.
 
 ~~~compile_fail
 fn odpowiedz() -> i32 {

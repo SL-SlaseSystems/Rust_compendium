@@ -29,15 +29,29 @@ fn main() {
 
 ## W03-3
 
-`?` przekazuje błąd parsowania do `main`, a `Result` pozostawia decyzję o statusie procesu implementacji `Termination`.
+`?` przekazuje błąd parsowania do `main`, a brak argumentu zamieniamy w błąd. Pomocnik jest testowalny deterministycznie; `main` rzeczywiście czyta `std::env::args().nth(1)`.
 
 ~~~rust
+fn parse_arg(tekst: Option<String>) -> Result<u32, String> {
+    let tekst = tekst.ok_or_else(|| "brak argumentu".to_owned())?;
+    tekst.parse::<u32>().map_err(|e| e.to_string())
+}
+
+fn main() {
+    assert_eq!(parse_arg(Some("42".into())), Ok(42));
+    assert!(parse_arg(None).is_err());
+}
+~~~
+
+Poniższy wariant jest oznaczony `no_run`, ponieważ doctest nie ma stabilnego argumentu procesu, lecz stanowi kompletny wariant programu:
+
+~~~rust,no_run
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let tekst = "42";
+    let tekst = std::env::args().nth(1).ok_or("brak argumentu")?;
     let liczba: u32 = tekst.parse()?;
-    assert_eq!(liczba, 42);
+    println!("{liczba}");
     Ok(())
 }
 ~~~
