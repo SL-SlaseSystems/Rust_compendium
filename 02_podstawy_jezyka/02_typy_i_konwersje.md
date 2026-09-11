@@ -7,13 +7,15 @@
 
 ## Cele
 
+Po tym rozdziale potrafisz:
+
 - dobierać reprezentację liczby, tekstu i kolekcji do kontraktu;
 - rozróżniać konwersję niejawną, rzutowanie i walidowaną zmianę typu;
 - diagnozować typowe błędy inferencji i konwersji.
 
 ## Model — reprezentacja i typ
 
-Liczby całkowite to `i8`…`i128`, `u8`…`u128`, `isize` i `usize`; dwa ostatnie zależą od targetu i służą rozmiarom/indeksom. Bez kontekstu integer domyślnie jest `i32`, float `f64`; przyrostki (`10_u8`, `2.0_f32`) ustalają typ. `bool` ma dwa stany. `char` jest czterobajtową wartością skalarną Unicode, nie grafemem ani stringiem. Krotka miesza typy, `()` jest unit, a `[T; N]` ma długość w typie. `!` opisuje wyrażenie, które nie wraca normalnie; nie polegaj na szczegółach fallbacku `!` zależnych od Edition 2024.
+Liczby całkowite (integers) to `i8`…`i128`, `u8`…`u128`, `isize` i `usize`; `usize` zależy od targetu i służy rozmiarom/indeksom, a `isize` jest jego znakiem odpowiednikiem, użytecznym np. dla offsetów. Bez kontekstu integer domyślnie jest `i32`, liczba zmiennoprzecinkowa (floating-point) `f64`; przyrostki (`10_u8`, `2.0_f32`) ustalają typ. `bool` ma dwa stany. `char` jest czterobajtową wartością skalarną Unicode, nie grafemem ani stringiem. Krotka miesza typy, `()` jest typem jednostkowym (unit), a `[T; N]` ma długość w typie. `!` opisuje wyrażenie, które nie wraca normalnie; nie polegaj na szczegółach fallbacku `!` zależnych od Edition 2024.
 
 ~~~rust
 fn main() {
@@ -26,7 +28,7 @@ fn main() {
 
 ## Arytmetyka i konwersje
 
-Przepełnienie w profilu `dev` zwykle wywołuje panic, a `release` zwykle ma wyłączone kontrole; ustawienia profilu mogą to zmienić, więc nie zakładaj zawsze zawijania. Wyraź intencję przez `checked_*`, `wrapping_*`, `saturating_*` lub `overflowing_*`.
+Przepełnienie arytmetyki runtime kontroluje `[profile.*] overflow-checks`: domyślnie `dev` je włącza, a `release` wyłącza, lecz oba profile można skonfigurować. Nie zakładaj zawsze zawijania. Dzielenie lub reszta dla podpisanego `MIN / -1` są zawsze sprawdzane i panikują; zwykłe `+`, `-`, `*` zależą od flagi. Wyraź intencję przez `checked_*`, `wrapping_*`, `saturating_*` lub `overflowing_*`.
 
 ~~~rust
 fn main() {
@@ -37,7 +39,7 @@ fn main() {
 }
 ~~~
 
-Coercions zachodzą tylko w określonych kontekstach, np. `&mut T` do `&T`; nie są ogólną konwersją liczbową. `as` ma zdefiniowane reguły, ale może utracić dane. `From`/`Into` są nieomylne, `TryFrom`/`TryInto` walidują, a `str::parse` używa `FromStr`; turbofish (`parse::<u16>()`) pomaga inferencji.
+Niejawne wymuszenia typu (coercions) zachodzą tylko w określonych kontekstach, np. `&mut T` do `&T`; nie są ogólną konwersją liczbową. `as` ma zdefiniowane reguły, ale może utracić dane. `From`/`Into` są nieomylne, `TryFrom`/`TryInto` są omylnymi konwersjami zwracającymi `Result`, a `str::parse` używa `FromStr`; turbofish (`parse::<u16>()`) pomaga inferencji.
 
 ~~~rust
 use std::convert::TryFrom;
@@ -70,7 +72,7 @@ Waliduj dane na granicy przez `TryFrom`/`parse`, nie przez `as`. Dla domeny twó
 
 - `P02-1` — podstawowe: porównaj `checked_add` i `wrapping_add`. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-1).
 - `P02-2` — praktyczne: przekonwertuj `u16` do `u8` bez utraty danych. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-2).
-- `P02-3` — pogłębione: napraw inferencję `"42".parse()`. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-3).
+- `P02-3` — pogłębione: porównaj turbofish, adnotację wyniku i kontekst odbiorcy dla `"42".parse()`. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-3).
 
 ## Powiązane tematy
 

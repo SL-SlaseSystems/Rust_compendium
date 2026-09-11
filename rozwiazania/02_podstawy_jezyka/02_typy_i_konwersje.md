@@ -21,8 +21,14 @@ fn main() { assert_eq!(u8::try_from(255_u16), Ok(255)); assert!(u8::try_from(256
 
 ## P02-3
 
-Adnotacja wyniku lub turbofish daje `parse` konkretny `FromStr`.
+Turbofish wybiera typ bezpośrednio, adnotacja wyniku przekazuje go wstecz, a typ parametru odbiorcy także może sterować inferencją.
 
 ~~~rust
-fn main() { let n = "42".parse::<u32>().expect("liczba"); assert_eq!(n, 42); }
+fn przyjmij(_: u16) {}
+fn main() {
+    let a = "42".parse::<u32>().expect("liczba");
+    let b: u16 = "42".parse().expect("liczba");
+    przyjmij("42".parse().expect("liczba"));
+    assert_eq!((a, b), (42, 42));
+}
 ~~~
