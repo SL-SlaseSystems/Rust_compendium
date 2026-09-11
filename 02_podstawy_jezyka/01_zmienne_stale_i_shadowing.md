@@ -15,7 +15,7 @@ Po tym rozdziale potrafisz:
 
 ## Model — binding, wartość i place
 
-Binding (wiązanie nazwy) wskazuje wartość albo place expression, czyli miejsce możliwe do odczytu lub zapisu. Zwykłe `let` wymaga wzorca nieobalalnego (irrefutable): musi zawsze pasować. Destrukturyzacja jest więc bezpośrednia i użyteczna.
+Wzorzec w `let` wiąże nazwę lub nazwy z dopasowaną wartością; późniejsze użycie identyfikatora może utworzyć place expression, czyli miejsce odczytu albo zapisu. Zwykłe `let` wymaga wzorca nieobalalnego (irrefutable): musi zawsze pasować. Wiązanie domyślnie przenosi wartość albo kopiuje ją dla `Copy`; wzorce referencji i `ref` mogą zamiast tego wiązać referencję. Destrukturyzacja jest więc bezpośrednia i użyteczna.
 
 ~~~rust
 fn main() {
@@ -26,9 +26,9 @@ fn main() {
 }
 ~~~
 
-`mut` dotyczy bindingu, nie koniecznie wnętrza obiektu: `Cell` i `Mutex` oferują interior mutability przez własne API. Inicjalizacja może być odroczona, lecz analiza definite assignment wymaga przypisania na każdej ścieżce przed odczytem.
+`mut` dotyczy bindingu, nie koniecznie wnętrza obiektu: `Cell` i `Mutex` oferują mutowalność wnętrza (interior mutability) przez własne API. Inicjalizacja może być odroczona, lecz analiza pewnej inicjalizacji (definite assignment) wymaga przypisania na każdej ścieżce przed odczytem.
 
-Shadowing tworzy nowy binding; może zmienić typ. Stary binding pozostaje w swoim drop scope, a jego wartość zwykle jest niszczona na końcu tego zakresu, nie w chwili ostatniego użycia ani automatycznie przy shadowingu. Nieliniowe lifetime'y (NLL) mogą zakończyć *pożyczkę* po ostatnim użyciu, ale nie przesuwają `Drop` wartości.
+Shadowing tworzy nowy binding; może zmienić typ. Stary binding pozostaje w swoim drop scope, a jego wartość zwykle jest niszczona na końcu tego zakresu, nie w chwili ostatniego użycia ani automatycznie przy shadowingu. Nieleksykalne czasy życia (non-lexical lifetimes, NLL) mogą zakończyć *pożyczkę* po ostatnim użyciu, ale nie przesuwają `Drop` wartości.
 
 ~~~rust
 fn main() {
@@ -39,7 +39,7 @@ fn main() {
 }
 ~~~
 
-`const` jest kopiowaną wartością obliczalną w czasie kompilacji i wymaga typu. `static` oznacza jedną globalną lokację przez cały program. Odczyt i zapis `static mut` są operacjami `unsafe`; w Edition 2024 tworzenie referencji do niego jest domyślnie odrzucane przez `static_mut_refs`, ponieważ aliasowanie globalnej mutacji łatwo łamie reguły pamięci. Preferuj atomiki albo blokady, nie „bezpieczny accessor” ukrywający `static mut`.
+`const` wymaga typu i wyrażenia obliczalnego w czasie kompilacji; nie ma jednej adresowalnej globalnej lokacji, a każde użycie oznacza osobną wartość. `static` oznacza jedną globalną lokację przez cały program. Odczyt i zapis `static mut` są operacjami `unsafe`; w Edition 2024 tworzenie referencji do niego jest domyślnie odrzucane przez `static_mut_refs`, ponieważ aliasowanie globalnej mutacji łatwo łamie reguły pamięci. Preferuj atomiki albo blokady, nie „bezpieczny accessor” ukrywający `static mut`.
 
 ~~~rust
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -73,7 +73,7 @@ fn main() {
 
 ## Zakres i kolejność `Drop`
 
-Wartości są niszczone przy wyjściu z ich leksykalnego drop scope, zasadniczo w odwrotnej kolejności utworzenia; shadowed bindingi nadal mają własne scope'y. To odrębne od NLL.
+Lokalne bindingi w tym samym leksykalnym drop scope są niszczone w odwrotnej kolejności utworzenia; shadowed bindingi nadal mają własne scope'y. Pola agregatu są natomiast niszczone w kolejności deklaracji. To odrębne od NLL.
 
 ## Praktyka produkcyjna
 
