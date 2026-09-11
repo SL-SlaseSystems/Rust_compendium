@@ -49,6 +49,9 @@ Cele opisują sprawdzalne rezultaty, a nie tylko zakres omawianego materiału.
 Każde ćwiczenie ma identyfikator w postaci `<dział><rozdział>-<numer>`,
 na przykład `O02-1`. Wpis podaje jeden poziom: „podstawowe”, „praktyczne”
 albo „pogłębione”, oraz link do dokładnej kotwicy w `rozwiazania/`.
+Nagłówek rozwiązania i jego kotwica używają dokładnie tego samego,
+stabilnego identyfikatora co ćwiczenie źródłowe. Po publikacji nie zmieniaj
+numeracji identyfikatorów ćwiczeń ani rozwiązań.
 
 Przykład:
 
@@ -89,6 +92,9 @@ Przy treściach zmiennych podawaj datę weryfikacji. Nie przedstawiaj planowanej
 funkcjonalności jako gwarantowanej części przyszłego wydania.
 
 ## Aktualność źródeł
+
+Bazą dokumentacji jest Rust 1.98.1, Edition 2024, zweryfikowane 10 września
+2026.
 
 Przy rozbieżności pierwszeństwo mają Rust Reference i aktualna dokumentacja
 API, a dopiero potem Rustonomicon. Każdą informację zależną od kanału lub
