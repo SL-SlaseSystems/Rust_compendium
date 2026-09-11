@@ -21,6 +21,41 @@ Nazwy elementów języka i API zapisuj jako kod. Nie nazywaj crate’a
 
 Układ wolno skrócić, gdy dana sekcja nie wnosi informacji.
 
+## Rozdział rozszerzony
+
+Rozdział rozszerzony zaczyna się dokładnie od poniższego nagłówka:
+
+~~~markdown
+[← Spis treści](../README.md)
+<!-- status: expanded -->
+
+# Tytuł
+
+## Cele
+
+Po tym rozdziale potrafisz:
+
+- opisać konkretny rezultat;
+- zastosować konkretną regułę.
+~~~
+
+Musi zawierać: `## Cele`, model lub reguły, poprawny blok `rust`,
+`## Diagnostyka kompilatora`, `## Praktyka produkcyjna`,
+`## Sprawdź, czy rozumiesz`, `## Ćwiczenia` oraz `## Powiązane tematy`.
+Cele opisują sprawdzalne rezultaty, a nie tylko zakres omawianego materiału.
+
+## Ćwiczenia
+
+Każde ćwiczenie ma identyfikator w postaci `<dział><rozdział>-<numer>`,
+na przykład `O02-1`. Wpis podaje jeden poziom: „podstawowe”, „praktyczne”
+albo „pogłębione”, oraz link do dokładnej kotwicy w `rozwiazania/`.
+
+Przykład:
+
+~~~markdown
+- `O02-1` — podstawowe: rozwiąż zadanie i porównaj z [rozwiązaniem](../rozwiazania/ownership.md#o02-1).
+~~~
+
 ## Bloki kodu
 
 Samowystarczalny kod oznaczaj jako Rust:
@@ -52,6 +87,15 @@ Manifesty, szkice API z crate’ów zewnętrznych i pseudokod oznaczaj jako
 
 Przy treściach zmiennych podawaj datę weryfikacji. Nie przedstawiaj planowanej
 funkcjonalności jako gwarantowanej części przyszłego wydania.
+
+## Aktualność źródeł
+
+Przy rozbieżności pierwszeństwo mają Rust Reference i aktualna dokumentacja
+API, a dopiero potem Rustonomicon. Każdą informację zależną od kanału lub
+zewnętrznej zależności oznacz osobno jako **stable**, **nightly** albo
+**third-party**. Przy twierdzeniu zależnym od wydania podaj datę weryfikacji.
+Nie pisz „sprawdzone na Rust 1.98.1”, jeśli przykład nie został wykonany tym
+toolchainem.
 
 ## Linki i odsyłacze
 
