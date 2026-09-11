@@ -50,26 +50,41 @@ def _indent_width(text: str) -> int:
     return width
 
 
+def _strip_indent(text: str, width: int) -> str:
+    index = 0
+    removed = 0
+    while index < len(text) and removed < width:
+        character = text[index]
+        if character == " ":
+            removed += 1
+        elif character == "\t":
+            next_tab_stop = removed + 4 - removed % 4
+            if next_tab_stop > width:
+                return " " * (next_tab_stop - width) + text[index + 1 :]
+            removed = next_tab_stop
+        else:
+            break
+        index += 1
+    return text[index:]
+
+
 def _outside_fences(lines: list[str]) -> tuple[list[str], bool, bool]:
     outside: list[str] = []
     fence_character = ""
     fence_length = 0
+    fence_container_indent = 0
     has_rust_fence = False
     list_content_indents: list[int] = []
 
     for line in lines:
-        match = FENCE_PATTERN.match(line)
-        if match:
-            marker, info = match.groups()
-            if not fence_character:
-                fence_character = marker[0]
-                fence_length = len(marker)
-                has_rust_fence |= info.strip().split(",", 1)[0] == "rust"
-            elif marker[0] == fence_character and len(marker) >= fence_length:
-                fence_character = ""
-                fence_length = 0
-            continue
         if fence_character:
+            match = FENCE_PATTERN.match(_strip_indent(line, fence_container_indent))
+            if match:
+                marker, _ = match.groups()
+                if marker[0] == fence_character and len(marker) >= fence_length:
+                    fence_character = ""
+                    fence_length = 0
+                    fence_container_indent = 0
             continue
         if not line.strip():
             outside.append(line)
@@ -79,6 +94,15 @@ def _outside_fences(lines: list[str]) -> tuple[list[str], bool, bool]:
         while list_content_indents and indentation < list_content_indents[-1]:
             list_content_indents.pop()
         code_base = list_content_indents[-1] if list_content_indents else 0
+
+        match = FENCE_PATTERN.match(_strip_indent(line, code_base))
+        if match:
+            marker, info = match.groups()
+            fence_character = marker[0]
+            fence_length = len(marker)
+            fence_container_indent = code_base
+            has_rust_fence |= info.strip().split(",", 1)[0] == "rust"
+            continue
         if indentation >= code_base + 4:
             continue
 

@@ -309,6 +309,25 @@ class ValidateMarkdownTests(MarkdownFixture):
 
         self.assertTrue(any("brak celu linku: missing.md" in p for p in problems))
 
+    def test_ignores_links_inside_fenced_code_nested_in_list(self) -> None:
+        self.write(
+            "chapter/list-fenced-code-link.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Lista z kodem
+
+            - Przykład:
+                ```text
+                [To nie jest odsyłacz](missing.md)
+                ```
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertEqual(problems, [])
+
     def test_ignores_expanded_marker_inside_code_fences(self) -> None:
         self.write(
             "chapter/documented-marker.md",
