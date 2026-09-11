@@ -1,84 +1,98 @@
 [← Spis treści](../README.md)
+<!-- status: expanded -->
 
 # Pierwszy program
 
-Minimalny program wykonywalny ma funkcję wejściową `main`:
+> Stan opisu: Rust 1.98.1, Edition 2024, zweryfikowany 10 września 2026 r. Przykłady wykonano lokalnie przez Rust 1.90.0, więc nie są deklaracją testu na 1.98.1.
+
+## Cele
+
+Po tym rozdziale potrafisz:
+
+- wskazać crate root i źródło nazw użytych przez program;
+- odczytać różnicę między instrukcją a wyrażeniem oraz wpływ średnika na typ;
+- zaprojektować `main` zwracające wynik i diagnozować podstawowe błędy kompilacji.
+
+## Model programu i crate root
+
+Crate root jest plikiem, od którego kompilator buduje pojedynczy crate. W pakiecie Cargo `src/main.rs` jest rootem binarnego crate'a, a `src/lib.rs` — rootem crate'a bibliotecznego; pakiet może mieć oba. Przy `rustc plik.rs` podany plik jest rootem crate'a bez konwencji Cargo. Prelude biblioteki standardowej wprowadza część najczęstszych nazw, jak `Option` i `Result`, lecz nie wszystkie ścieżki: `std::fs::read_to_string` pozostaje jawne albo wymaga `use`.
+
+`fn main` jest punktem wejścia binarium. Najczęstsze wyniki to `()` i `Result<(), E>`; ich przekształcenie w status procesu opisuje `std::process::Termination`. `Result` wypisuje błąd i zwraca status niepowodzenia zgodnie z implementacją `Termination`, ale szczegóły runtime'u nie są uniwersalnym kontraktem każdego środowiska. Zobacz [Termination](https://doc.rust-lang.org/std/process/trait.Termination.html) i [The Book: Hello, world](https://doc.rust-lang.org/book/ch01-02-hello-world.html).
+
+## Reguły: wyrażenia, makra i formatowanie
+
+Instrukcja wykonuje działanie, a wyrażenie oblicza wartość. Blok zwraca wartość ostatniego wyrażenia bez średnika; średnik zmienia je w instrukcję o typie `()`. `println!` jest makrem, nie funkcją: `!` uruchamia rozwinięcie makra. Literał formatu jest sprawdzany podczas kompilacji; `{nazwa}` przechwytuje nazwę z zakresu, `{}` używa `Display`, a `{:?}` — `Debug`.
 
 ~~~rust
+fn podatek(cena: i32) -> i32 {
+    let stawka = 23;
+    cena * stawka / 100
+}
+
 fn main() {
-    println!("Witaj, Rust!");
+    let produkt = "książka";
+    let cena = 100;
+    println!("{produkt}: podatek = {}", podatek(cena));
+    assert_eq!(podatek(cena), 23);
 }
 ~~~
 
-`fn` rozpoczyna deklarację funkcji. Ciało jest blokiem w nawiasach klamrowych.
-`println!` jest makrem — wykrzyknik odróżnia wywołanie makra od funkcji.
-Średnik kończy wyrażenie, którego wynik ignorujemy.
-
-## Formatowanie wartości
-
-Makra formatujące sprawdzają literał formatu podczas kompilacji:
-
-~~~rust
-fn main() {
-    let jezyk = "Rust";
-    let rok = 2015;
-    println!("{jezyk} 1.0 ukazał się w {rok} roku");
-    println!("hex: {rok:#x}, wyrównanie: {rok:>8}");
-    println!("debug: {:?}", vec![1, 2, 3]);
-}
-~~~
-
-`{}` używa `Display`, a `{:?}` — `Debug`. Wiele typów domenowych powinno
-implementować `Display` dopiero wtedy, gdy istnieje jedno sensowne,
-użytkowe przedstawienie.
-
-## `main` zwracające wynik
-
-Program może propagować błąd z `main`:
+`main -> Result` pozwala użyć `?` i przekazać błąd do granicy procesu.
 
 ~~~rust
 use std::error::Error;
-use std::fs;
+
+fn liczba(tekst: &str) -> Result<u32, Box<dyn Error>> {
+    Ok(tekst.parse()?)
+}
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let katalog = std::env::temp_dir();
-    let plik = katalog.join("rust-kompendium-pierwszy-program.txt");
-    fs::write(&plik, "dane")?;
-    let tekst = fs::read_to_string(&plik)?;
-    assert_eq!(tekst, "dane");
-    fs::remove_file(plik)?;
+    assert_eq!(liczba("42")?, 42);
     Ok(())
 }
 ~~~
 
-Typ `()` oznacza brak użytecznej wartości. `Box<dyn Error>` pozwala w małym
-programie przyjąć różne typy błędów. W bibliotece lepszy jest zazwyczaj
-konkretny enum błędu.
+## Uproszczony model kompilacji
 
-## Kompilacja bez Cargo
+To model mentalny aktualnej implementacji, nie stabilny interfejs `rustc`: parsowanie buduje `AST`; rozwijanie makr, rozwiązywanie nazw i wczesne linty przygotowują program; obniżenie do `HIR` umożliwia inferencję typów i dobór `trait`; `THIR` i `MIR` wspierają kontrolę wzorców oraz borrow checking; potem następują codegen, zwykle przez LLVM, i linkowanie. [Rustc Dev Guide](https://rustc-dev-guide.rust-lang.org/overview.html) opisuje szczegóły.
 
-Pojedynczy plik można skompilować bezpośrednio:
+## Diagnostyka kompilatora
 
-~~~text
-rustc main.rs
-./main
+Ten średnik powoduje, że blok ma typ `()`, nie `i32`; usuń go, gdy wartość ma być zwrócona.
+
+~~~compile_fail
+fn odpowiedz() -> i32 {
+    42;
+}
 ~~~
 
-W normalnym projekcie używa się Cargo, bo zarządza strukturą, flagami,
-zależnościami, testami i dokumentacją.
+Nierozpoznane makro zwykle oznacza literówkę, brak importu albo brak zależności, a nie błąd linkera. Kompilator wskazuje nazwę i zakres rozwiązywania nazw.
 
-## Typowe błędy
+~~~compile_fail
+fn main() {
+    printlin!("literówka");
+}
+~~~
 
-- pominięcie `!` w nazwie makra;
-- próba użycia niezadeklarowanej zmiennej;
-- średnik po wyrażeniu, którego wartość miała zostać zwrócona;
-- literówka w liczbie argumentów formatu.
+## Praktyka produkcyjna
 
-Komunikaty kompilatora zawierają kod błędu. Polecenie
-`rustc --explain E0382` pokazuje dłuższe objaśnienie danego kodu.
+W binarium traktuj `main` jako cienką granicę: zbuduj konfigurację, wywołaj logikę zwracającą konkretny `Result`, zdecyduj o komunikacie i statusie procesu. Biblioteka nie powinna kończyć procesu ani ukrywać błędów w `println!`. Używaj jawnych importów w granicach modułów i uruchamiaj `cargo check` wcześnie; jest szybszym sygnałem niż czekanie na linkowanie. [The Book: errors](https://doc.rust-lang.org/book/ch09-00-error-handling.html) rozróżnia błędy odzyskiwalne od `panic!`.
+
+## Sprawdź, czy rozumiesz
+
+1. Kiedy `src/main.rs` i `src/lib.rs` są różnymi crate rootami?
+2. Dlaczego końcowy średnik może unieważnić sygnaturę funkcji?
+3. Co zyskuje program przez `main -> Result`?
+
+## Ćwiczenia
+
+- `W03-1` — podstawowe: przewidź wynik `let x = { 2 + 3 }; println!("{x}");` i wyjaśnij rolę bloku. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/03_pierwszy_program.md#w03-1).
+- `W03-2` — praktyczne: napraw funkcję `fn f() -> String { String::from("ok"); }` bez zmiany jej kontraktu. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/03_pierwszy_program.md#w03-2).
+- `W03-3` — pogłębione: napisz `main -> Result`, która parsuje argument tekstowy i propaguje błąd bez `unwrap`. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/03_pierwszy_program.md#w03-3).
 
 ## Powiązane tematy
 
+- [Instalacja i toolchain](02_instalacja_i_toolchain.md)
 - [Funkcje, wyrażenia i instrukcje](../02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md)
-- [Cargo w praktyce](04_cargo_w_praktyce.md)
 - [`Option` i `Result`](../06_bledy/01_option_i_result.md)
+- [Cargo w praktyce](04_cargo_w_praktyce.md)
