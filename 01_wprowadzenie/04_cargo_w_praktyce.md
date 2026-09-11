@@ -25,7 +25,7 @@ name = "narzedzie-cli"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
-resolver = "2"
+resolver = "3"
 
 [dependencies]
 
@@ -36,6 +36,9 @@ resolver = "2"
 [[bin]]
 name = "admin"
 path = "src/bin/admin.rs"
+
+[lib]
+path = "src/lib.rs"
 ~~~
 
 Jedna paczka może mieć najwyżej jeden `lib`, wiele binariów oraz wiele przykładów, testów i benchmarków. Nazwa package'a może zawierać myślnik, lecz domyślna nazwa crate'a bibliotecznego zastępuje go podkreśleniem: package `narzedzie-cli` importuje się jako `narzedzie_cli`.
@@ -56,9 +59,9 @@ fn main() {
 
 Zależność może pochodzić z rejestru (domyślnie crates.io), repozytorium Git albo ścieżki lokalnej. Rejestr publikuje indeks metadanych i paczki; Cargo przechowuje pobrany indeks oraz archiwa w cache `$CARGO_HOME/registry`, a zależności Git w `$CARGO_HOME/git`. To szczegół wewnętrznego układu cache, nie format, na którym powinien opierać się skrypt projektu.
 
-Resolver wybiera wersje zgodne z wymaganiami SemVer, źródłami i ograniczeniami feature'ów, po czym zapisuje wynik w `Cargo.lock`. Kilka wersji tej samej paczki może istnieć, gdy graf nie daje się pogodzić; konflikt powstaje dopiero, gdy nie ma rozwiązania spełniającego wymagania. Dla wspólnej zależności Cargo unifikuje włączone features, dlatego powinny być addytywne. Przy `resolver = "2"` features zależności zwykłych nie są bezwarunkowo łączone z features używanymi wyłącznie przez zależności budowania lub deweloperskie. W `cargo test` albo `cargo build --all-targets` zależności deweloperskie mogą jednak uczestniczyć w budowie i zmienić obserwowany zestaw features.
+Resolver wybiera wersje zgodne z wymaganiami SemVer, źródłami i ograniczeniami feature'ów, po czym zapisuje wynik w `Cargo.lock`. Kilka wersji tej samej paczki może istnieć, gdy graf nie daje się pogodzić; konflikt powstaje dopiero, gdy nie ma rozwiązania spełniającego wymagania. Dla wspólnej zależności Cargo unifikuje włączone features, dlatego powinny być addytywne. Edition 2024 używa `resolver = "3"`. Zachowuje on zakres unifikacji features z resolvera 2 — zwykłe zależności nie łączą bezwarunkowo features użytych wyłącznie przez build- lub dev-dependencies — i dodaje wybór wersji świadomy `rust-version`, z mechanizmem fallback dla niezgodnych wersji. W `cargo test` albo `cargo build --all-targets` zależności deweloperskie mogą jednak uczestniczyć w budowie i zmienić obserwowany zestaw features.
 
-`[dependencies]` opisuje kod docelowy package'a. `[build-dependencies]` budują się dla hosta, bo używa ich `build.rs`; przy cross-kompilacji nie są automatycznie bibliotekami dla targetu. `[dev-dependencies]` są dostępne dla testów, przykładów i benchmarków package'a, a nie dla jego normalnej biblioteki jako zależności innego package'a. Tabele `[target.'cfg(...)']` dobierają zależności zależnie od platformy.
+`[dependencies]` opisuje kod docelowy package'a. `[build-dependencies]` budują się dla hosta, bo używa ich `build.rs`; przy cross-kompilacji nie są automatycznie bibliotekami dla targetu. Proceduralne makro użyte jako zwykła zależność także kompiluje się i wykonuje na hoście. `[dev-dependencies]` są dostępne dla testów, przykładów i benchmarków package'a, a nie dla jego normalnej biblioteki jako zależności innego package'a. Tabele `[target.'cfg(...)']` dobierają zależności zależnie od platformy.
 
 ## Pętla pracy, artefakty i profile
 
@@ -88,7 +91,7 @@ W CI `cargo ... --locked` kończy się błędem, jeśli lockfile nie istnieje al
 
 ## Diagnostyka kompilatora
 
-Gdy resolver zgłasza konflikt wersji, czytaj łańcuch „required by”: znajdź dwa niezgodne wymagania, sprawdź `cargo tree -i nazwa` i zdecyduj, czy podnieść wersję, zmienić feature, ujednolicić zależność czy rozdzielić package'e. Usunięcie wpisu z lockfile'a nie naprawia sprzeczności manifestów.
+Gdy resolver zgłasza konflikt wersji, najpierw czytaj łańcuch „required by” i manifesty wskazanych package'ów; przy istniejącym lockfile'u sprawdź też jego wpisy. `cargo tree -i nazwa` jest pomocne dopiero, gdy Cargo zdoła rozwiązać graf. Potem zdecyduj, czy podnieść wersję, zmienić feature, ujednolicić zależność czy rozdzielić package'e. Usunięcie wpisu z lockfile'a nie naprawia sprzeczności manifestów.
 
 „No such target” i błąd kompilatora o nieznanej platformie to różne problemy. `cargo run --bin admin` wymaga targetu Cargo o nazwie `admin` w układzie plików albo `[[bin]]`; `cargo build --target aarch64-unknown-linux-gnu` wymaga platformy znanej `rustc` oraz, w praktyce, odpowiedniego std/linkera. Nazwa po `--bin` nie jest trójką targetu kompilacji.
 
@@ -118,7 +121,7 @@ Oficjalne szczegóły: [targety Cargo](https://doc.rust-lang.org/cargo/reference
 
 ## Ćwiczenia
 
-- `W04-1` — podstawowe: przeanalizuj manifest z binarium, biblioteką i `dev-dependency`; wskaż, która zależność trafia do normalnego builda. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-1).
+- `W04-1` — podstawowe: przeanalizuj manifest z sekcji „Model” (`narzedzie-cli`, jawne `lib` i `bin`, `serde` oraz `pretty_assertions` w rozwiązaniu); wskaż, która zależność trafia do normalnego builda. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-1).
 - `W04-2` — praktyczne: dobierz polecenie do szybkiej kontroli biblioteki, uruchomienia binarium `admin` i pełnej kontroli targetów w CI. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-2).
 - `W04-3` — pogłębione: ustal politykę `Cargo.lock` dla workspace'a z CLI i publikowanej biblioteki oraz uzasadnij użycie `--locked`. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md#w04-3).
 

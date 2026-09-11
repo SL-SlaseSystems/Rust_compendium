@@ -4,7 +4,7 @@
 
 ## W04-1
 
-`[dependencies]` trafiają do normalnego builda biblioteki i binariów. `[dev-dependencies]` są dostępne przy testach, przykładach i benchmarkach, ale nie są zwykłą zależnością API biblioteki dla downstream. W tym manifeście `serde` jest zależnością normalną, a `pretty_assertions` — deweloperską. Blok jest manifestem, dlatego celowo nie jest testem Rust.
+To jest kompletny manifest analizowany w ćwiczeniu: ma jawny target biblioteczny i binarny. `[dependencies]` trafiają do normalnego builda biblioteki i binariów. `[dev-dependencies]` są dostępne przy testach, przykładach i benchmarkach, ale nie są zwykłą zależnością API biblioteki dla downstream. W tym manifeście `serde` jest zależnością normalną, a `pretty_assertions` — deweloperską. Blok jest manifestem, dlatego celowo nie jest testem Rust.
 
 ~~~text
 [package]
@@ -21,6 +21,9 @@ pretty_assertions = "1"
 [[bin]]
 name = "raport"
 path = "src/main.rs"
+
+[lib]
+path = "src/lib.rs"
 ~~~
 
 W package'u może istnieć także `src/lib.rs`; wtedy `raport` i testy wywołują publiczne API biblioteki. `serde` jest **third-party** i normalny build musi rozwiązać oraz skompilować tę zależność niezależnie od uruchomienia testów.
