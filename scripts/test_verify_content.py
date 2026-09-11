@@ -143,6 +143,37 @@ class ValidateMarkdownTests(MarkdownFixture):
             any("brak linku powrotnego na początku" in problem for problem in problems)
         )
 
+    def test_accepts_root_backlink_from_nested_solution(self) -> None:
+        self.write(
+            "rozwiazania/03_pamiec_i_wlasnosc/ownership.md",
+            """
+            [← Spis treści](../../README.md)
+
+            # Rozwiązania ownership
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertEqual(problems, [])
+
+    def test_rejects_wrong_root_backlink_from_nested_solution(self) -> None:
+        self.write(
+            "rozwiazania/03_pamiec_i_wlasnosc/ownership.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Rozwiązania ownership
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertTrue(
+            any("brak linku powrotnego na początku" in problem for problem in problems)
+        )
+        self.assertTrue(any("brak celu linku: ../README.md" in p for p in problems))
+
     def test_reports_expanded_marker_without_exercises_section(self) -> None:
         chapter = self.write_valid_expanded_chapter()
         chapter.write_text(
@@ -260,6 +291,23 @@ class ValidateMarkdownTests(MarkdownFixture):
         problems = validate_markdown(self.root, discover_markdown(self.root))
 
         self.assertEqual(problems, [])
+
+    def test_validates_markdown_links_in_nested_list_content(self) -> None:
+        self.write(
+            "chapter/nested-list-link.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Lista
+
+            - Materiały:
+                - [Brakujący materiał](missing.md)
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertTrue(any("brak celu linku: missing.md" in p for p in problems))
 
     def test_ignores_expanded_marker_inside_code_fences(self) -> None:
         self.write(

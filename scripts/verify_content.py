@@ -19,6 +19,7 @@ REQUIRED_SECTIONS = (
 LINK_PATTERN = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
 FENCE_PATTERN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 EXERCISE_ID_PATTERN = re.compile(r"`([A-Z]\d{2}-\d+)`")
+LIST_ITEM_PATTERN = re.compile(r"^([ \t]*)([-+*]|\d{1,9}[.)])([ \t]+)")
 
 
 def discover_markdown(root: Path) -> list[Path]:
@@ -37,11 +38,24 @@ def discover_markdown(root: Path) -> list[Path]:
     return sorted(discovered)
 
 
+def _indent_width(text: str) -> int:
+    width = 0
+    for character in text:
+        if character == " ":
+            width += 1
+        elif character == "\t":
+            width += 4 - width % 4
+        else:
+            break
+    return width
+
+
 def _outside_fences(lines: list[str]) -> tuple[list[str], bool, bool]:
     outside: list[str] = []
     fence_character = ""
     fence_length = 0
     has_rust_fence = False
+    list_content_indents: list[int] = []
 
     for line in lines:
         match = FENCE_PATTERN.match(line)
@@ -55,8 +69,25 @@ def _outside_fences(lines: list[str]) -> tuple[list[str], bool, bool]:
                 fence_character = ""
                 fence_length = 0
             continue
-        if not fence_character and not line.startswith(("    ", "\t")):
+        if fence_character:
+            continue
+        if not line.strip():
             outside.append(line)
+            continue
+
+        indentation = _indent_width(line)
+        while list_content_indents and indentation < list_content_indents[-1]:
+            list_content_indents.pop()
+        code_base = list_content_indents[-1] if list_content_indents else 0
+        if indentation >= code_base + 4:
+            continue
+
+        outside.append(line)
+        list_item = LIST_ITEM_PATTERN.match(line)
+        if list_item:
+            prefix, marker, spacing = list_item.groups()
+            content_indent = _indent_width(prefix) + len(marker) + len(spacing)
+            list_content_indents.append(content_indent)
 
     return outside, bool(fence_character), has_rust_fence
 
@@ -101,7 +132,10 @@ def validate_markdown(root: Path, files: list[Path]) -> list[str]:
 
         if path.parent != root and path.name != "README.md":
             first_nonempty = next((line for line in lines if line.strip()), "")
-            if first_nonempty != "[← Spis treści](../README.md)":
+            depth = len(path.parent.relative_to(root).parts)
+            backlink_target = "/".join([".."] * depth + ["README.md"])
+            expected_backlink = f"[← Spis treści]({backlink_target})"
+            if first_nonempty != expected_backlink:
                 problems.append(f"{relative_path}: brak linku powrotnego na początku")
 
         outside_text = "\n".join(outside_fences)
