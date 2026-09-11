@@ -4,7 +4,7 @@
 
 ## W02-1
 
-Skrót `+beta` ma pierwszeństwo, więc `cargo +beta check` uruchamia beta niezależnie od pliku projektu i override'u katalogu nadrzędnego. Bez skrótu `rustup` wybierze najbliższy `rust-toolchain.toml`; dopiero gdy go nie znajdzie, rozważy override, a na końcu globalny default. Weryfikacja wymaga `rustup show` w tym katalogu oraz `cargo +beta --version` dla skrótu.
+W tym scenariuszu skrót `+beta` ma pierwszeństwo, więc `cargo +beta check` uruchamia beta niezależnie od pliku projektu i override'u katalogu nadrzędnego. Bez skrótu `rustup` wybierze najbliższy `rust-toolchain.toml`; dopiero gdy go nie znajdzie, rozważy override, a na końcu globalny default. Weryfikacja wymaga `rustup show` w tym katalogu oraz `cargo +beta --version` dla skrótu.
 
 ## W02-2
 
@@ -22,4 +22,4 @@ Plik przypina wersję i zleca rustup doinstalowanie komponentów oraz `rust-std`
 
 Najpierw potwierdzam aktywny toolchain (`rustup show`) i obecność `armv7-unknown-linux-gnueabihf` właśnie w nim. Następnie czytam pełny komunikat linkera: brak `arm-linux-gnueabihf-gcc` wskazuje na brak narzędzia hosta, a brak pliku z sysrootu lub niezgodność formatu — na bibliotekę albo ABI targetu.
 
-Minimalna naprawa instaluje linuxowy cross-linker i zgodny sysroot w obrazie CI, po czym wskazuje linker w `.cargo/config.toml` dla targetu. Test kompilacji nie zastępuje uruchomienia na ARM. Osobny job MSRV używa przypiętej najniższej wersji; przejście current stable nie może go zastąpić, ponieważ oba joby mogą rozwiązać inny kompatybilny graf zależności.
+Minimalna naprawa instaluje linuxowy cross-linker i zgodny sysroot w obrazie CI, po czym wskazuje linker w `.cargo/config.toml` dla targetu. Test kompilacji nie zastępuje uruchomienia na ARM. Osobny job MSRV używa przypiętej najniższej wersji i sprawdza składnię, API `std` oraz kompatybilność wybranych zależności; przejście current stable nie może go zastąpić. Ze wspólnym, zablokowanym `Cargo.lock` joby zwykle testują ten sam graf. Bez lockfile albo przy resolverze skonfigurowanym na uwzględnianie `rust-version` wybór wersji zależności może się zmienić, więc trzeba go sprawdzić w CI.

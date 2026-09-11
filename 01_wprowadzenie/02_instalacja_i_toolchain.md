@@ -23,7 +23,7 @@ Kanały `stable`, `beta` i `nightly` mają różne role. `stable` jest właściw
 
 ## Reguły: komponenty, profile i konfiguracja
 
-Komponent jest częścią dystrybucji konkretnego toolchainu. `rustc` i `cargo` są podstawowe; `rustfmt`, `clippy`, `rust-docs`, `rust-src` i `rust-analyzer` są dodatkami, których dostępność może różnić się między kanałami i wydaniami. Profil `minimal`, `default` albo `complete` wybiera zestaw komponentów, a `components` go rozszerza. Sprawdzaj dostępność przez `rustup component list --toolchain <nazwa>`. Zobacz [model komponentów rustup](https://rust-lang.github.io/rustup/concepts/components.html).
+Komponent jest częścią dystrybucji konkretnego toolchainu. `rustc` i `cargo` są podstawowe; `rustfmt`, `clippy`, `rust-docs`, `rust-src` i `rust-analyzer` są dodatkami, których dostępność może różnić się między kanałami i wydaniami. Profil `minimal` instaluje `rustc`, `rust-std` i `cargo`; `default` dodaje zwykłe narzędzia, w tym dokumentację, `rustfmt` i `clippy`; `complete` próbuje zainstalować wszystkie dostępne komponenty. Ten ostatni profil jest zwykle niepotrzebny i może być niedostępny, gdy brakuje komponentu dla kanału lub hosta. W CI wybieraj `minimal` i deklaruj wymagane komponenty jawnie. Sprawdzaj dostępność przez `rustup component list --toolchain <nazwa>`. Zobacz [model komponentów rustup](https://rust-lang.github.io/rustup/concepts/components.html).
 
 Wersję współdzieloną przez zespół zapisuj w repozytorium. Ten blok jest konfiguracją, nie programem, dlatego używa `toml`.
 
@@ -43,7 +43,7 @@ targets = ["wasm32-unknown-unknown"]
 
 Host to platforma, na której działa `rustc`; target to platforma, dla której powstaje artefakt. Target triple, np. `aarch64-unknown-linux-gnu`, opisuje architekturę, system i środowisko ABI wyniku. [Tabele wsparcia platform](https://doc.rust-lang.org/rustc/platform-support.html) rozróżniają poziomy testowania i dostępność `std`; sama lista targetów nie gwarantuje uruchomienia produktu.
 
-`rustup target add --toolchain 1.98.1 wasm32-unknown-unknown` instaluje dla tego toolchainu `rust-std` targetu. Jest to konieczne, lecz często niewystarczające. Linkowanie natywne może wymagać linkera, sysrootu, bibliotek i SDK targetu. Skonfiguruj linker w `.cargo/config.toml` albo przez `CARGO_TARGET_<TRIPLE>_LINKER`; dla zależności z kodem C dobierz też zgodny kompilator C. [Cross-compilation w rustup](https://rust-lang.github.io/rustup/cross-compilation.html) ogranicza rolę `target add` do biblioteki standardowej.
+`rustup target add --toolchain 1.98.1 wasm32-unknown-unknown` instaluje dla tego toolchainu `rust-std` targetu. Jest to konieczne, lecz często niewystarczające. Linkowanie natywne może wymagać linkera, sysrootu, bibliotek i SDK targetu. Skonfiguruj linker w `.cargo/config.toml` albo przez zmienną środowiskową; dla `armv7-unknown-linux-gnueabihf` nazwa po normalizacji target triple to `CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER`. Dla zależności z kodem C dobierz też zgodny kompilator C. [Cross-compilation w rustup](https://rust-lang.github.io/rustup/cross-compilation.html) ogranicza rolę `target add` do biblioteki standardowej.
 
 Przykład sprawdza format części wersji bez zakładania, że linker targetu istnieje.
 
