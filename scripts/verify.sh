@@ -21,7 +21,7 @@ if command -v rustdoc >/dev/null 2>&1; then
             echo "Pominięto rustdoc dla 150-zaawansowanych-mechanizmow-rust.md: wykonywalne przykłady czekają na dedykowany etap atlasu." >&2
             continue
         fi
-        if grep -Eq '^(```|~~~)(rust|compile_fail|no_run|should_panic)' "$file"; then
+        if grep -Eq '^ {0,3}(```|~~~)(rust|compile_fail|no_run|should_panic)' "$file"; then
             rustdoc --test --edition 2024 "$file"
         fi
     done < "$content_list"

@@ -180,6 +180,42 @@ class ValidateMarkdownTests(MarkdownFixture):
 
         self.assertTrue(any("O02-1: brak identycznej kotwicy w rozwiązaniu" in p for p in problems))
 
+    def test_rejects_solution_anchor_inside_fenced_code_block(self) -> None:
+        self.write_valid_expanded_chapter()
+        self.write(
+            "rozwiazania/ownership.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Rozwiązania
+
+            ```text
+            <a id="o02-1"></a>
+            ```
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertTrue(any("O02-1: brak identycznej kotwicy w rozwiązaniu" in p for p in problems))
+
+    def test_rejects_solution_anchor_inside_indented_code_block(self) -> None:
+        self.write_valid_expanded_chapter()
+        self.write(
+            "rozwiazania/ownership.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Rozwiązania
+
+                ## O02-1
+            """,
+        )
+
+        problems = validate_markdown(self.root, discover_markdown(self.root))
+
+        self.assertTrue(any("O02-1: brak identycznej kotwicy w rozwiązaniu" in p for p in problems))
+
     def test_reports_duplicate_exercise_identifier(self) -> None:
         chapter = self.write_valid_expanded_chapter()
         duplicate = chapter.read_text(encoding="utf-8").replace(
@@ -264,6 +300,72 @@ class CliTests(MarkdownFixture):
 
 
 class VerifyWrapperTests(MarkdownFixture):
+    def test_runs_fences_indented_by_up_to_three_spaces_only(self) -> None:
+        scripts = self.root / "scripts"
+        scripts.mkdir()
+        shutil.copy2(PROJECT_ROOT / "scripts/verify.sh", scripts / "verify.sh")
+        shutil.copy2(
+            PROJECT_ROOT / "scripts/verify_content.py", scripts / "verify_content.py"
+        )
+        self.write(
+            "chapter/three-spaces.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Fence z trzema spacjami
+
+               ```rust
+               fn main() {}
+               ```
+            """,
+        )
+        self.write(
+            "chapter/four-spaces.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Blok wcięty czterema spacjami
+
+                ```rust
+                fn main() {}
+                ```
+            """,
+        )
+        bin_directory = self.root / "bin"
+        bin_directory.mkdir()
+        fake_rustdoc = bin_directory / "rustdoc"
+        fake_rustdoc.write_text(
+            """#!/bin/sh
+if [ "${1-}" = "--version" ]; then
+    echo "rustdoc fake"
+    exit 0
+fi
+printf '%s\\n' "$*" >> "$RUSTDOC_LOG"
+""",
+            encoding="utf-8",
+        )
+        fake_rustdoc.chmod(0o755)
+        rustdoc_log = self.root / "rustdoc.log"
+        environment = os.environ.copy()
+        environment["PATH"] = f"{bin_directory}:{environment['PATH']}"
+        environment["RUSTDOC_LOG"] = str(rustdoc_log)
+
+        result = subprocess.run(
+            ["bash", str(scripts / "verify.sh")],
+            cwd=self.root,
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        rustdoc_calls = (
+            rustdoc_log.read_text(encoding="utf-8") if rustdoc_log.exists() else ""
+        )
+        self.assertIn("chapter/three-spaces.md", rustdoc_calls)
+        self.assertNotIn("chapter/four-spaces.md", rustdoc_calls)
+
     def test_skips_only_atlas_rustdoc_and_keeps_chapters_and_solutions(self) -> None:
         scripts = self.root / "scripts"
         scripts.mkdir()

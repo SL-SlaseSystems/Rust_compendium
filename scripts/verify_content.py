@@ -17,7 +17,7 @@ REQUIRED_SECTIONS = (
     "## Powiązane tematy",
 )
 LINK_PATTERN = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
-FENCE_PATTERN = re.compile(r"^\s*(`{3,}|~{3,})(.*)$")
+FENCE_PATTERN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 EXERCISE_ID_PATTERN = re.compile(r"`([A-Z]\d{2}-\d+)`")
 
 
@@ -70,13 +70,17 @@ def _link_target(raw_target: str) -> tuple[str, str]:
 def _has_solution_anchor(path: Path, exercise_id: str, fragment: str) -> bool:
     if fragment != exercise_id.lower():
         return False
-    text = path.read_text(encoding="utf-8")
-    heading = re.compile(rf"^\s*#{{1,6}}\s+{re.escape(exercise_id)}\s*$", re.MULTILINE)
+    lines = path.read_text(encoding="utf-8").splitlines()
+    outside_fences, _, _ = _outside_fences(lines)
+    prose_lines = [
+        line for line in outside_fences if not line.startswith(("    ", "\t"))
+    ]
+    heading = re.compile(rf"^ {{0,3}}#{{1,6}}[ \t]+{re.escape(exercise_id)}[ \t]*$")
     explicit_anchor = re.compile(
         rf"<(?:a|span)\s+[^>]*(?:id|name)=[\"']{re.escape(fragment)}[\"'][^>]*>",
         re.IGNORECASE,
     )
-    return bool(heading.search(text) or explicit_anchor.search(text))
+    return any(heading.match(line) or explicit_anchor.search(line) for line in prose_lines)
 
 
 def validate_markdown(root: Path, files: list[Path]) -> list[str]:
