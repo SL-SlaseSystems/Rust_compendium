@@ -15,7 +15,7 @@ Po tym rozdziale potrafisz:
 
 ## Model — binding, wartość i place
 
-Wzorzec w `let` wiąże nazwę lub nazwy z dopasowaną wartością; późniejsze użycie identyfikatora może utworzyć place expression, czyli miejsce odczytu albo zapisu. Zwykłe `let` wymaga wzorca nieobalalnego (irrefutable): musi zawsze pasować. Wiązanie domyślnie przenosi wartość albo kopiuje ją dla `Copy`; wzorce referencji i `ref` mogą zamiast tego wiązać referencję. Destrukturyzacja jest więc bezpośrednia i użyteczna.
+Wzorzec w `let` wiąże nazwę lub nazwy z dopasowaną wartością; późniejsze użycie identyfikatora może utworzyć place expression, czyli miejsce odczytu albo zapisu. Zwykłe `let` wymaga wzorca nieobalalnego (irrefutable): musi zawsze pasować. Wiązanie domyślnie przenosi wartość albo kopiuje ją dla `Copy`; `ref`/`ref mut` oraz dziedziczony tryb wiązania z match ergonomics tworzą wiązania referencyjne. Wzorce `&`/`&mut` zamiast tego dopasowują, destrukturyzują i dereferencjują już istniejącą referencję. Destrukturyzacja jest więc bezpośrednia i użyteczna.
 
 ~~~rust
 fn main() {
@@ -73,7 +73,7 @@ fn main() {
 
 ## Zakres i kolejność `Drop`
 
-Lokalne bindingi w tym samym leksykalnym drop scope są niszczone w odwrotnej kolejności utworzenia; shadowed bindingi nadal mają własne scope'y. Pola agregatu są natomiast niszczone w kolejności deklaracji. To odrębne od NLL.
+Lokalne bindingi w tym samym leksykalnym drop scope są niszczone w odwrotnej kolejności deklaracji; shadowed bindingi nadal mają własne scope'y. Pola agregatu są natomiast niszczone w kolejności deklaracji. To odrębne od NLL.
 
 ## Praktyka produkcyjna
 
