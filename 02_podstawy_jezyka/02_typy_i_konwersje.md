@@ -15,7 +15,7 @@ Po tym rozdziale potrafisz:
 
 ## Model — reprezentacja i typ
 
-Liczby całkowite (integers) to `i8`…`i128`, `u8`…`u128`, `isize` i `usize`; `usize` zależy od targetu i służy rozmiarom/indeksom, a `isize` jest jego znakiem odpowiednikiem, użytecznym np. dla offsetów. Bez kontekstu integer domyślnie jest `i32`, liczba zmiennoprzecinkowa (floating-point) `f64`; przyrostki (`10_u8`, `2.0_f32`) ustalają typ. `bool` ma dwa stany. `char` jest czterobajtową wartością skalarną Unicode, nie grafemem ani stringiem. Krotka miesza typy, `()` jest typem jednostkowym (unit), a `[T; N]` ma długość w typie. `!` opisuje wyrażenie, które nie wraca normalnie; nie polegaj na szczegółach fallbacku `!` zależnych od Edition 2024.
+Liczby całkowite (integers) to `i8`…`i128`, `u8`…`u128`, `isize` i `usize`; `usize` zależy od targetu i służy rozmiarom/indeksom, a `isize` jest jego znakowym odpowiednikiem, użytecznym np. dla offsetów. Bez kontekstu integer domyślnie jest `i32`, liczba zmiennoprzecinkowa (floating-point) `f64`; przyrostki (`10_u8`, `2.0_f32`) ustalają typ. `bool` ma dwa stany. `char` jest czterobajtową wartością skalarną Unicode, nie grafemem ani stringiem. Krotka miesza typy, `()` jest typem jednostkowym (unit), a `[T; N]` ma długość w typie. `!` opisuje wyrażenie, które nie wraca normalnie; nie polegaj na szczegółach mechanizmu wyboru zastępczego (fallback) `!` zależnych od Edition 2024.
 
 ~~~rust
 fn main() {
@@ -28,7 +28,7 @@ fn main() {
 
 ## Arytmetyka i konwersje
 
-Przepełnienie arytmetyki runtime kontroluje `[profile.*] overflow-checks`: domyślnie `dev` je włącza, a `release` wyłącza, lecz oba profile można skonfigurować. Nie zakładaj zawsze zawijania. Dzielenie lub reszta dla podpisanego `MIN / -1` są zawsze sprawdzane i panikują; zwykłe `+`, `-`, `*` zależą od flagi. Wyraź intencję przez `checked_*`, `wrapping_*`, `saturating_*` lub `overflowing_*`.
+Przepełnienie arytmetyki w czasie wykonania (runtime) kontroluje `[profile.*] overflow-checks`: domyślnie `dev` je włącza, a `release` wyłącza, lecz oba profile można skonfigurować. Nie zakładaj zawsze zawijania. Dzielenie lub reszta dla podpisanego `MIN / -1` są zawsze sprawdzane i panikują; zwykłe `+`, `-`, `*` zależą od flagi. Wyraź intencję przez `checked_*`, `wrapping_*`, `saturating_*` lub `overflowing_*`.
 
 ~~~rust
 fn main() {
