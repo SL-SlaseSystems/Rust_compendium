@@ -103,4 +103,6 @@ dokumentację konkretnej funkcji.
 
 - [Dalsza nauka](dalsza_nauka.md)
 - [`unsafe`, soundness i model pamięci](21_unsafe_soundness_i_model_pamieci/README.md)
+- [Testowanie zaawansowane, fuzzing i Miri](26_testowanie_zaawansowane_fuzzing_i_miri/README.md)
+- [Bezpieczeństwo aplikacji](27_bezpieczenstwo_aplikacji/README.md)
 - [Zasady rozwijania kompendium](CONTRIBUTING.md)

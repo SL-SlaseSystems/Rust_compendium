@@ -40,6 +40,7 @@ nazwę przy pierwszym użyciu.
 | feature flag | Nazwana opcja Cargo włączająca addytywną funkcjonalność crate’a. |
 | FFI | Foreign Function Interface, granica z innym językiem/ABI. |
 | future | Wartość reprezentująca obliczenie mogące być jeszcze niegotowe. |
+| fuzzing | Automatyczne generowanie wejść w celu znajdowania awarii i naruszeń invariants. |
 | GAT | Generic Associated Type: associated type z własnymi parametrami. |
 | guard | Wartość RAII utrzymująca zasób lub blokadę do `Drop`. |
 | happens-before | Relacja widoczności i porządku w modelu pamięci. |
@@ -52,6 +53,7 @@ nazwę przy pierwszym użyciu.
 | macro expansion | Zastąpienie wywołania makra wygenerowanymi tokenami. |
 | MIR | Mid-level Intermediate Representation używana wewnątrz rustc. |
 | monomorphization | Generowanie wyspecjalizowanego kodu dla podstawień generics. |
+| observability | Zdolność wyjaśniania stanu systemu na podstawie logów, metryk i trace'ów. |
 | move | Przeniesienie ownership unieważniające poprzedni binding. |
 | MSRV | Minimum Supported Rust Version. |
 | newtype | Nowy typ jako struktura z jednym polem. |
@@ -93,3 +95,5 @@ nazwę przy pierwszym użyciu.
 - [Pamięć i własność](03_ownership_i_pamiec/02_ownership_move_i_copy.md)
 - [Traits](05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
 - [`unsafe`, soundness i model pamięci](21_unsafe_soundness_i_model_pamieci/README.md)
+- [Testowanie zaawansowane, fuzzing i Miri](26_testowanie_zaawansowane_fuzzing_i_miri/README.md)
+- [Observability i produkcja](29_observability_i_produkcja/README.md)

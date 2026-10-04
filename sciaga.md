@@ -286,3 +286,5 @@ fn main() {
 - [Pełny spis treści](README.md)
 - [Słownik](slownik.md)
 - [`unsafe`, soundness i model pamięci](21_unsafe_soundness_i_model_pamieci/README.md)
+- [Debugowanie i utrzymanie](25_debugowanie_i_utrzymanie/README.md)
+- [CI/CD i release engineering](28_ci_cd_i_release_engineering/README.md)

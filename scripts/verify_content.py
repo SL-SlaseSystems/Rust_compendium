@@ -70,6 +70,9 @@ LEGACY_SECTION_DIRS = (
     "zaawansowane",
     "rozwiazania/01_wprowadzenie",
 )
+MIGRATION_MANIFEST_PATH = Path(
+    "docs/superpowers/audits/2026-10-04-mapa-migracji-30-dzialow.json"
+)
 
 
 def discover_markdown(root: Path) -> list[Path]:
@@ -378,6 +381,8 @@ def validate_migration_manifest(
             continue
         for path in sorted(legacy_root.rglob("*.md")):
             relative_path = path.relative_to(root).as_posix()
+            if directory in EXPECTED_SECTION_DIRS and path == legacy_root / "README.md":
+                continue
             if relative_path not in sources:
                 problems.append(f"brak wpisu migracji dla: {relative_path}")
 
@@ -396,6 +401,14 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     problems = validate_markdown(root, files)
     problems.extend(validate_section_structure(root))
+    manifest_path = root / MIGRATION_MANIFEST_PATH
+    if manifest_path.is_file():
+        try:
+            entries = load_migration_manifest(manifest_path)
+        except ValueError as error:
+            problems.append(str(error))
+        else:
+            problems.extend(validate_migration_manifest(root, entries))
     if problems:
         print("\n".join(problems), file=sys.stderr)
         return 1

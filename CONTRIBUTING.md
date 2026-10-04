@@ -114,10 +114,15 @@ Każdy rozdział zaczyna się dokładnie od:
 Kończy się sekcją `## Powiązane tematy` z dwoma do pięciu linków. Linkuj do
 plików względnie, bez ścieżek systemowych.
 
+Każdy z 30 numerowanych działów ma własny `README.md` opisujący odbiorcę,
+wymagania wstępne, kolejność materiałów, rezultat i następny krok. Dodając lub
+przenosząc rozdział, zaktualizuj odpowiednią mapę oraz główny spis treści.
+
 ## Kontrola
 
-Przed uznaniem zmian za gotowe uruchom `bash scripts/verify.sh`. Celowo błędny
-przykład musi być blokiem `compile_fail` i zawierać wyjaśnienie rodzaju błędu.
+Przed uznaniem zmian za gotowe uruchom `bash scripts/verify.sh`. Skrypt
+sprawdza także układ 30 działów i manifest migracji. Celowo błędny przykład
+musi być blokiem `compile_fail` i zawierać wyjaśnienie rodzaju błędu.
 
 ## Powiązane tematy
 

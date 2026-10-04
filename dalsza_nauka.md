@@ -26,10 +26,10 @@ protokołu i biblioteka z publicznym API.
 
 Kolejność:
 
-1. [Pliki, I/O i procesy](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md)
-2. [Własne błędy](07_obsluga_bledow/04_wlasne_bledy_i_api.md)
-3. [Projektowanie API](14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
-4. [Wydajność](20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
+1. [Mapa aplikacji CLI](15_aplikacje_cli/README.md)
+2. [Pliki, I/O i procesy](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md)
+3. [Własne błędy](07_obsluga_bledow/04_wlasne_bledy_i_api.md)
+4. [Projektowanie API](14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
 
 Ekosystem do oceny: clap (argumenty), serde plus format konfiguracji, tracing
 (diagnostyka), anyhow/miette (raportowanie w aplikacji). Naucz się exit codes,
@@ -42,11 +42,11 @@ na katalogu tymczasowym.
 
 Kolejność:
 
-1. [Async](11_async_rust/01_future_async_i_await.md)
-2. [Anulowanie i timeouty](11_async_rust/04_anulowanie_timeouty_i_blocking.md)
-3. [Sieć i protokoły](13_io_siec_i_protokoly/02_siec_i_protokoly.md)
-4. [Architektura i DI](14_idiomy_wzorce_i_architektura/04_architektura_aplikacji_i_di.md)
-5. [Współbieżność](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)
+1. [Mapa web i API](16_web_i_api/README.md)
+2. [Async](11_async_rust/01_future_async_i_await.md)
+3. [Bazy danych i persystencja](17_bazy_danych_i_persystencja/README.md)
+4. [Serializacja, konfiguracja i integracje](18_serializacja_konfiguracja_i_integracje/README.md)
+5. [Observability i produkcja](29_observability_i_produkcja/README.md)
 
 Ekosystem do oceny: Tokio jako runtime, axum/actix-web jako HTTP, tower jako
 middleware, sqlx/diesel jako dane, serde jako serializacja, tracing jako
@@ -78,6 +78,7 @@ Kolejność:
 2. [Wątki, kanały i atomiki](10_wspolbieznosc/01_watki_i_scoped_threads.md)
 3. [FFI i ABI](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
 4. [Ścieżka `unsafe` i modelu pamięci](21_unsafe_soundness_i_model_pamieci/README.md)
+5. [Debugowanie i utrzymanie](25_debugowanie_i_utrzymanie/README.md)
 
 Pracuj z Miri i sanitizerami. Najpierw napisz bezpieczną wersję, potem profil.
 Projekt: safe wrapper na małe C API z testami null, błędów, callbacku,
@@ -87,7 +88,7 @@ ownership i wielowątkowości.
 
 Kolejność:
 
-1. [WebAssembly, `no_std` i embedded](23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md)
+1. [Mapa `no_std`, allocatorów i embedded](23_no_std_allocatory_i_embedded/README.md)
 2. [`no_std`, allocatory i embedded — zaawansowane](23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md)
 3. [Atomiki](10_wspolbieznosc/05_atomics_i_memory_ordering.md)
 4. [Pinning](11_async_rust/05_pin_unpin_i_self_referential.md)
@@ -100,7 +101,7 @@ testowany fake’em na hoście, z nieblokującą state machine.
 
 Kolejność:
 
-1. [WebAssembly](23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md)
+1. [Mapa WASM i wieloplatformowości](24_wasm_i_wieloplatformowosc/README.md)
 2. [FFI i ABI](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
 3. [Wydajność](20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
 
@@ -136,3 +137,4 @@ diagnostic issue, lintu lub testu UI, nie od nowej składni języka.
 - [Źródła](zrodla.md)
 - [Ściąga](sciaga.md)
 - [Słownik](slownik.md)
+- [Projekty przekrojowe](30_projekty_przekrojowe/README.md)

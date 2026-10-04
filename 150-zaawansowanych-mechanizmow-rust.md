@@ -1,8 +1,12 @@
 # 150 zaawansowanych mechanizmów języka Rust
 
+[← Spis treści](README.md)
+
 Praktyczny katalog zaawansowanych możliwości Rusta: od ownershipu i lifetime'ów, przez traity i typy generyczne, po `Future`, atomiki, makra proceduralne, projektowanie API, Cargo, testowanie, `unsafe`, `no_std`, optymalizację oraz FFI.
 
 > Stan API: wrzesień 2026. Materiał zakłada **Rust 1.98.1** i **Edition 2024**. Wszystkie przykłady języka i biblioteki standardowej są oparte na stabilnym Ruście, z wyjątkiem punktu 100, który został wyraźnie oznaczony jako `nightly`. Przykłady wykorzystujące Tokio, `proptest`, Miri, Loom lub Criterion są oznaczone jako zależne od narzędzia albo biblioteki. Fragmenty `unsafe` wymagają samodzielnego udowodnienia opisanych inwariantów bezpieczeństwa.
+
+Atlas jest indeksem mechanizmów, a nie liniowym kursem. Kontekst, wymagania wstępne i kolejność znajdziesz w mapach: [runtime i kompilator](19_runtime_pamiec_i_kompilator/README.md), [wydajność](20_wydajnosc_i_optymalizacja/README.md), [`unsafe`](21_unsafe_soundness_i_model_pamieci/README.md), [testowanie zaawansowane](26_testowanie_zaawansowane_fuzzing_i_miri/README.md) oraz [produkcja](29_observability_i_produkcja/README.md).
 
 ## Spis treści
 

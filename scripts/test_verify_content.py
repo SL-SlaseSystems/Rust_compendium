@@ -440,6 +440,13 @@ class ValidateSectionStructureTests(MarkdownFixture):
 
 
 class MigrationManifestTests(MarkdownFixture):
+    def test_allows_new_map_in_unchanged_section(self) -> None:
+        self.write("02_podstawy_jezyka/README.md", "# Mapa nowego działu\n")
+
+        problems = validate_migration_manifest(self.root, [])
+
+        self.assertEqual(problems, [])
+
     def test_reports_duplicate_missing_target_and_unmapped_legacy_file(self) -> None:
         self.write("01_wprowadzenie/source.md", "# Źródło\n")
         self.write("01_wprowadzenie/orphan.md", "# Pominięty plik\n")
@@ -480,6 +487,42 @@ class MigrationManifestTests(MarkdownFixture):
 
 
 class CliTests(MarkdownFixture):
+    def test_cli_reports_unfinished_migration(self) -> None:
+        self.write_valid_section_structure()
+        self.write(
+            "01_wprowadzenie/source.md",
+            """
+            [← Spis treści](../README.md)
+
+            # Nieprzeniesiony materiał
+            """,
+        )
+        self.write(
+            "docs/superpowers/audits/2026-10-04-mapa-migracji-30-dzialow.json",
+            """
+            {
+              "version": 1,
+              "moves": [
+                {
+                  "source": "01_wprowadzenie/source.md",
+                  "destination": "01_wprowadzenie_i_toolchain/README.md",
+                  "disposition": "merge"
+                }
+              ]
+            }
+            """,
+        )
+
+        result = subprocess.run(
+            ["python3", str(PROJECT_ROOT / "scripts/verify_content.py"), str(self.root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("źródło nadal istnieje po migracji", result.stderr)
+
     def test_cli_returns_zero_for_valid_content_and_one_for_invalid_content(self) -> None:
         self.write_valid_expanded_chapter()
         self.write_valid_section_structure()
