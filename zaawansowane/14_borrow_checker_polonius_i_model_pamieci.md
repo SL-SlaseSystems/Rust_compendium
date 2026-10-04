@@ -104,6 +104,6 @@ przestrzegać.
 
 ## Powiązane tematy
 
-- [Lifetimes](../03_pamiec_i_wlasnosc/05_lifetimes.md)
+- [Lifetimes](../03_ownership_i_pamiec/05_lifetimes.md)
 - [Raw pointers, aliasing i provenance](02_raw_pointers_aliasing_i_provenance.md)
 - [`unsafe` i soundness](01_unsafe_i_soundness.md)

@@ -76,5 +76,5 @@ Waliduj dane na granicy przez `TryFrom`/`parse`, nie przez `as`. Dla domeny twó
 
 ## Powiązane tematy
 
-- [`Option` i `Result`](../06_bledy/01_option_i_result.md)
-- [Newtype](../13_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md)
+- [`Option` i `Result`](../07_obsluga_bledow/01_option_i_result.md)
+- [Newtype](../14_idiomy_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md)

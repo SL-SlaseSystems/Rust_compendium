@@ -13,9 +13,9 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 - **Od zera:** czytaj katalogi `01`–`13` w kolejności, a potem wybierz tematy
   z katalogu `zaawansowane`.
 - **Masz doświadczenie w innym języku:** zacznij od
-  [ownership](03_pamiec_i_wlasnosc/02_ownership_move_i_copy.md), następnie
-  przejdź do [traits](04_typy_i_modelowanie/04_traits_i_associated_items.md),
-  [błędów](06_bledy/01_option_i_result.md) i [Cargo](07_moduly_i_cargo/02_crates_pakiety_i_workspaces.md).
+  [ownership](03_ownership_i_pamiec/02_ownership_move_i_copy.md), następnie
+  przejdź do [traits](05_generics_traits_i_system_typow/02_traits_i_associated_items.md),
+  [błędów](07_obsluga_bledow/01_option_i_result.md) i [Cargo](08_moduly_cargo_i_workspaces/02_crates_pakiety_i_workspaces.md).
 - **Szukasz konkretu:** użyj [ściągi](sciaga.md), [słownika](slownik.md) lub
   spisu poniżej.
 - **Poziom ekspercki:** przeczytaj najpierw
@@ -33,10 +33,10 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 
 ### 1. Wprowadzenie
 
-1. [Czym jest Rust](01_wprowadzenie/01_czym_jest_rust.md)
-2. [Instalacja i toolchain](01_wprowadzenie/02_instalacja_i_toolchain.md)
-3. [Pierwszy program](01_wprowadzenie/03_pierwszy_program.md)
-4. [Cargo w praktyce](01_wprowadzenie/04_cargo_w_praktyce.md)
+1. [Czym jest Rust](01_wprowadzenie_i_toolchain/01_czym_jest_rust.md)
+2. [Instalacja i toolchain](01_wprowadzenie_i_toolchain/02_instalacja_i_toolchain.md)
+3. [Pierwszy program](01_wprowadzenie_i_toolchain/03_pierwszy_program.md)
+4. [Cargo w praktyce](01_wprowadzenie_i_toolchain/04_cargo_w_praktyce.md)
 
 ### 2. Podstawy języka
 
@@ -48,83 +48,83 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 
 ### 3. Pamięć i własność
 
-1. [Stos, sterta i RAII](03_pamiec_i_wlasnosc/01_stos_sterta_i_raii.md)
-2. [Ownership, move i Copy](03_pamiec_i_wlasnosc/02_ownership_move_i_copy.md)
-3. [Referencje i borrowing](03_pamiec_i_wlasnosc/03_referencje_i_borrowing.md)
-4. [Slices i `str`](03_pamiec_i_wlasnosc/04_slices_i_str.md)
-5. [Lifetimes](03_pamiec_i_wlasnosc/05_lifetimes.md)
-6. [Smart pointery i interior mutability](03_pamiec_i_wlasnosc/06_smart_pointery_i_interior_mutability.md)
+1. [Stos, sterta i RAII](03_ownership_i_pamiec/01_stos_sterta_i_raii.md)
+2. [Ownership, move i Copy](03_ownership_i_pamiec/02_ownership_move_i_copy.md)
+3. [Referencje i borrowing](03_ownership_i_pamiec/03_referencje_i_borrowing.md)
+4. [Slices i `str`](03_ownership_i_pamiec/04_slices_i_str.md)
+5. [Lifetimes](03_ownership_i_pamiec/05_lifetimes.md)
+6. [Smart pointery i interior mutability](03_ownership_i_pamiec/06_smart_pointery_i_interior_mutability.md)
 
 ### 4. Typy i modelowanie
 
-1. [Struktury, enumy i metody](04_typy_i_modelowanie/01_struktury_enumy_i_metody.md)
-2. [Wzorce i `match`](04_typy_i_modelowanie/02_wzorce_i_match.md)
-3. [Generics i const generics](04_typy_i_modelowanie/03_generics_i_const_generics.md)
-4. [Traits i associated items](04_typy_i_modelowanie/04_traits_i_associated_items.md)
-5. [Konwersje, DST i trait objects](04_typy_i_modelowanie/05_konwersje_dst_i_trait_objects.md)
+1. [Struktury, enumy i metody](04_struktury_enumy_i_wzorce/01_struktury_enumy_i_metody.md)
+2. [Wzorce i `match`](04_struktury_enumy_i_wzorce/02_wzorce_i_match.md)
+3. [Generics i const generics](05_generics_traits_i_system_typow/01_generics_i_const_generics.md)
+4. [Traits i associated items](05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
+5. [Konwersje, DST i trait objects](05_generics_traits_i_system_typow/03_konwersje_dst_i_trait_objects.md)
 
 ### 5. Kolekcje i iteratory
 
-1. [Tablice, wektory i sekwencje](05_kolekcje_i_iteratory/01_tablice_wektory_i_sekwencje.md)
-2. [`String`, `str` i Unicode](05_kolekcje_i_iteratory/02_string_str_i_unicode.md)
-3. [Mapy, zbiory i Entry](05_kolekcje_i_iteratory/03_mapy_zbiory_i_entry.md)
-4. [Closures i rodzina `Fn`](05_kolekcje_i_iteratory/04_closures_i_fn_traits.md)
-5. [Iteratory](05_kolekcje_i_iteratory/05_iteratory.md)
+1. [Tablice, wektory i sekwencje](06_kolekcje_iteratory_i_closures/01_tablice_wektory_i_sekwencje.md)
+2. [`String`, `str` i Unicode](06_kolekcje_iteratory_i_closures/02_string_str_i_unicode.md)
+3. [Mapy, zbiory i Entry](06_kolekcje_iteratory_i_closures/03_mapy_zbiory_i_entry.md)
+4. [Closures i rodzina `Fn`](06_kolekcje_iteratory_i_closures/04_closures_i_fn_traits.md)
+5. [Iteratory](06_kolekcje_iteratory_i_closures/05_iteratory.md)
 
 ### 6. Błędy
 
-1. [`Option` i `Result`](06_bledy/01_option_i_result.md)
-2. [Propagacja i operator `?`](06_bledy/02_propagacja_i_operator_question_mark.md)
-3. [`panic!`, unwind i abort](06_bledy/03_panic_unwind_i_abort.md)
-4. [Własne błędy i projektowanie API](06_bledy/04_wlasne_bledy_i_api.md)
+1. [`Option` i `Result`](07_obsluga_bledow/01_option_i_result.md)
+2. [Propagacja i operator `?`](07_obsluga_bledow/02_propagacja_i_operator_question_mark.md)
+3. [`panic!`, unwind i abort](07_obsluga_bledow/03_panic_unwind_i_abort.md)
+4. [Własne błędy i projektowanie API](07_obsluga_bledow/04_wlasne_bledy_i_api.md)
 
 ### 7. Moduły i Cargo
 
-1. [Moduły, ścieżki i widoczność](07_moduly_i_cargo/01_moduly_sciezki_i_widocznosc.md)
-2. [Crates, pakiety i workspaces](07_moduly_i_cargo/02_crates_pakiety_i_workspaces.md)
-3. [Zależności, features i `cfg`](07_moduly_i_cargo/03_zaleznosci_features_i_cfg.md)
-4. [Profile, build scripts i publikowanie](07_moduly_i_cargo/04_profile_build_scripts_i_publikowanie.md)
+1. [Moduły, ścieżki i widoczność](08_moduly_cargo_i_workspaces/01_moduly_sciezki_i_widocznosc.md)
+2. [Crates, pakiety i workspaces](08_moduly_cargo_i_workspaces/02_crates_pakiety_i_workspaces.md)
+3. [Zależności, features i `cfg`](08_moduly_cargo_i_workspaces/03_zaleznosci_features_i_cfg.md)
+4. [Profile, build scripts i publikowanie](08_moduly_cargo_i_workspaces/04_profile_build_scripts_i_publikowanie.md)
 
 ### 8. Testowanie i jakość
 
-1. [Testy jednostkowe i integracyjne](08_testowanie_i_jakosc/01_testy_jednostkowe_i_integracyjne.md)
-2. [Testy dokumentacyjne i rustdoc](08_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md)
-3. [Clippy, rustfmt i linty](08_testowanie_i_jakosc/03_clippy_rustfmt_i_linty.md)
+1. [Testy jednostkowe i integracyjne](09_dokumentacja_testowanie_i_jakosc/01_testy_jednostkowe_i_integracyjne.md)
+2. [Testy dokumentacyjne i rustdoc](09_dokumentacja_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md)
+3. [Clippy, rustfmt i linty](09_dokumentacja_testowanie_i_jakosc/03_clippy_rustfmt_i_linty.md)
 4. [Benchmarki, profilowanie i Miri](08_testowanie_i_jakosc/04_benchmarki_profilowanie_i_miri.md)
 
 ### 9. Współbieżność
 
-1. [Wątki i scoped threads](09_wspolbieznosc/01_watki_i_scoped_threads.md)
-2. [Kanały i message passing](09_wspolbieznosc/02_kanaly_i_message_passing.md)
-3. [`Arc`, `Mutex`, `RwLock` i `Condvar`](09_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)
-4. [`Send`, `Sync` i atomiki](09_wspolbieznosc/04_send_sync_i_atomiki.md)
+1. [Wątki i scoped threads](10_wspolbieznosc/01_watki_i_scoped_threads.md)
+2. [Kanały i message passing](10_wspolbieznosc/02_kanaly_i_message_passing.md)
+3. [`Arc`, `Mutex`, `RwLock` i `Condvar`](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)
+4. [`Send`, `Sync` i atomiki](10_wspolbieznosc/04_send_sync_i_atomiki.md)
 
 ### 10. Async
 
-1. [`Future`, `async` i `await`](10_async/01_future_async_i_await.md)
-2. [Executor, `Waker` i `poll`](10_async/02_executor_waker_i_poll.md)
-3. [Taski, join, select i stream](10_async/03_taski_join_select_i_stream.md)
-4. [Anulowanie, timeouty i kod blokujący](10_async/04_anulowanie_timeouty_i_blocking.md)
+1. [`Future`, `async` i `await`](11_async_rust/01_future_async_i_await.md)
+2. [Executor, `Waker` i `poll`](11_async_rust/02_executor_waker_i_poll.md)
+3. [Taski, join, select i stream](11_async_rust/03_taski_join_select_i_stream.md)
+4. [Anulowanie, timeouty i kod blokujący](11_async_rust/04_anulowanie_timeouty_i_blocking.md)
 
 ### 11. Makra
 
-1. [`macro_rules!`](11_makra/01_macro_rules.md)
-2. [Higiena, fragmenty i repetition](11_makra/02_higiena_fragmenty_i_repetition.md)
-3. [Makra proceduralne](11_makra/03_makra_proceduralne.md)
+1. [`macro_rules!`](12_makra/01_macro_rules.md)
+2. [Higiena, fragmenty i repetition](12_makra/02_higiena_fragmenty_i_repetition.md)
+3. [Makra proceduralne](12_makra/03_makra_proceduralne.md)
 
 ### 12. Systemy i interoperacyjność
 
-1. [Pliki, I/O i procesy](12_systemy_i_interoperacyjnosc/01_pliki_io_i_procesy.md)
-2. [Sieć i protokoły](12_systemy_i_interoperacyjnosc/02_siec_i_protokoly.md)
+1. [Pliki, I/O i procesy](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md)
+2. [Sieć i protokoły](13_io_siec_i_protokoly/02_siec_i_protokoly.md)
 3. [FFI, ABI i `repr`](12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
 4. [WebAssembly, `no_std` i embedded](12_systemy_i_interoperacyjnosc/04_wasm_no_std_i_embedded.md)
 
 ### 13. Wzorce i architektura
 
-1. [Idiomy, newtype i extension traits](13_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md)
-2. [Builder, typestate i state machine](13_wzorce_i_architektura/02_builder_typestate_i_state_machine.md)
-3. [Projektowanie API i SemVer](13_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
-4. [Architektura aplikacji i dependency injection](13_wzorce_i_architektura/04_architektura_aplikacji_i_di.md)
+1. [Idiomy, newtype i extension traits](14_idiomy_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md)
+2. [Builder, typestate i state machine](14_idiomy_wzorce_i_architektura/02_builder_typestate_i_state_machine.md)
+3. [Projektowanie API i SemVer](14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
+4. [Architektura aplikacji i dependency injection](14_idiomy_wzorce_i_architektura/04_architektura_aplikacji_i_di.md)
 5. [Wydajność i zero-cost abstractions](13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
 
 ### 14. Zagadnienia zaawansowane

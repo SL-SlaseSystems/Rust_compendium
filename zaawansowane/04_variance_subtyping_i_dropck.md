@@ -104,6 +104,6 @@ aplikacji.
 
 ## Powiązane tematy
 
-- [Lifetimes](../03_pamiec_i_wlasnosc/05_lifetimes.md)
+- [Lifetimes](../03_ownership_i_pamiec/05_lifetimes.md)
 - [HRTB i GAT](05_hrtb_gat_rpit_i_impl_trait.md)
 - [Layout i niezainicjalizowana pamięć](03_layout_alignment_i_uninitialized_memory.md)

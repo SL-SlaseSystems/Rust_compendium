@@ -393,7 +393,7 @@ dlaczego nie powinny mieć jednego wspólnego typu.
 ## Powiązane tematy
 
 - [Sterowanie przepływem](04_sterowanie_przeplywem.md)
-- [Closures i rodzina `Fn`](../05_kolekcje_i_iteratory/04_closures_i_fn_traits.md)
-- [Ownership i przenoszenie](../03_pamiec_i_wlasnosc/02_ownership_move_i_copy.md)
-- [Pożyczanie i referencje](../03_pamiec_i_wlasnosc/03_referencje_i_borrowing.md)
-- [Propagacja i operator `?`](../06_bledy/02_propagacja_i_operator_question_mark.md)
+- [Closures i rodzina `Fn`](../06_kolekcje_iteratory_i_closures/04_closures_i_fn_traits.md)
+- [Ownership i przenoszenie](../03_ownership_i_pamiec/02_ownership_move_i_copy.md)
+- [Pożyczanie i referencje](../03_ownership_i_pamiec/03_referencje_i_borrowing.md)
+- [Propagacja i operator `?`](../07_obsluga_bledow/02_propagacja_i_operator_question_mark.md)

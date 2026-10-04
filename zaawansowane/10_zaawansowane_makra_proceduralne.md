@@ -105,6 +105,6 @@ build script tylko, gdy to rzeczywiście potrzebne.
 
 ## Powiązane tematy
 
-- [Podstawy makr proceduralnych](../11_makra/03_makra_proceduralne.md)
-- [Higiena makr deklaratywnych](../11_makra/02_higiena_fragmenty_i_repetition.md)
-- [Profile, build scripts i publikowanie](../07_moduly_i_cargo/04_profile_build_scripts_i_publikowanie.md)
+- [Podstawy makr proceduralnych](../12_makra/03_makra_proceduralne.md)
+- [Higiena makr deklaratywnych](../12_makra/02_higiena_fragmenty_i_repetition.md)
+- [Profile, build scripts i publikowanie](../08_moduly_cargo_i_workspaces/04_profile_build_scripts_i_publikowanie.md)

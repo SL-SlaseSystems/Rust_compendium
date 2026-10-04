@@ -143,6 +143,6 @@ Type alias `type Ukryty = impl Trait` (TAIT) pozostaje **nightly** pod bramką
 
 ## Powiązane tematy
 
-- [Traits i associated items](../04_typy_i_modelowanie/04_traits_i_associated_items.md)
+- [Traits i associated items](../05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
 - [Dyn compatibility](06_dyn_compatibility_vtables_i_dispatch.md)
-- [`Future` i async](../10_async/01_future_async_i_await.md)
+- [`Future` i async](../11_async_rust/01_future_async_i_await.md)

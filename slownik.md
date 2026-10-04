@@ -90,6 +90,6 @@ nazwę przy pierwszym użyciu.
 
 ## Powiązane tematy
 
-- [Pamięć i własność](03_pamiec_i_wlasnosc/02_ownership_move_i_copy.md)
-- [Traits](04_typy_i_modelowanie/04_traits_i_associated_items.md)
+- [Pamięć i własność](03_ownership_i_pamiec/02_ownership_move_i_copy.md)
+- [Traits](05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
 - [Zagadnienia zaawansowane](zaawansowane/README.md)

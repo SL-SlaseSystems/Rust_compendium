@@ -104,4 +104,4 @@ profilu i z planem audytu.
 
 - [Atomiki i memory ordering](08_atomics_i_memory_ordering.md)
 - [Raw pointers i provenance](02_raw_pointers_aliasing_i_provenance.md)
-- [`Arc` i blokady](../09_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)
+- [`Arc` i blokady](../10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)

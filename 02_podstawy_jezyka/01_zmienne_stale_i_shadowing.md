@@ -94,5 +94,5 @@ Używaj wzorców `let` do wydobycia struktury, jawnego typu przy granicach parso
 ## Powiązane tematy
 
 - [Typy i konwersje](02_typy_i_konwersje.md)
-- [Stos, sterta i RAII](../03_pamiec_i_wlasnosc/01_stos_sterta_i_raii.md)
-- [Smart pointery i interior mutability](../03_pamiec_i_wlasnosc/06_smart_pointery_i_interior_mutability.md)
+- [Stos, sterta i RAII](../03_ownership_i_pamiec/01_stos_sterta_i_raii.md)
+- [Smart pointery i interior mutability](../03_ownership_i_pamiec/06_smart_pointery_i_interior_mutability.md)

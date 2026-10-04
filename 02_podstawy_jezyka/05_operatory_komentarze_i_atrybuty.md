@@ -94,6 +94,6 @@ naprawia niejasnego znaczenia wyrażenia.
 
 ## Powiązane tematy
 
-- [Propagacja i operator `?`](../06_bledy/02_propagacja_i_operator_question_mark.md)
-- [Zależności, features i `cfg`](../07_moduly_i_cargo/03_zaleznosci_features_i_cfg.md)
-- [Testy dokumentacyjne i rustdoc](../08_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md)
+- [Propagacja i operator `?`](../07_obsluga_bledow/02_propagacja_i_operator_question_mark.md)
+- [Zależności, features i `cfg`](../08_moduly_cargo_i_workspaces/03_zaleznosci_features_i_cfg.md)
+- [Testy dokumentacyjne i rustdoc](../09_dokumentacja_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md)

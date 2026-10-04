@@ -60,7 +60,7 @@ bezpieczne API z nieprzyjaznymi wejściami.
 
 ## Powiązane tematy
 
-- [Pamięć i własność](../03_pamiec_i_wlasnosc/01_stos_sterta_i_raii.md)
-- [Traits i modelowanie](../04_typy_i_modelowanie/04_traits_i_associated_items.md)
+- [Pamięć i własność](../03_ownership_i_pamiec/01_stos_sterta_i_raii.md)
+- [Traits i modelowanie](../05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
 - [Benchmarki, profilowanie i Miri](../08_testowanie_i_jakosc/04_benchmarki_profilowanie_i_miri.md)
 - [Źródła](../zrodla.md)

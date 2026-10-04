@@ -107,6 +107,6 @@ fn main() {
 
 ## Powiązane tematy
 
-- [Wzorce i `match`](../04_typy_i_modelowanie/02_wzorce_i_match.md)
-- [Iteratory](../05_kolekcje_i_iteratory/05_iteratory.md)
-- [`Option` i `Result`](../06_bledy/01_option_i_result.md)
+- [Wzorce i `match`](../04_struktury_enumy_i_wzorce/02_wzorce_i_match.md)
+- [Iteratory](../06_kolekcje_iteratory_i_closures/05_iteratory.md)
+- [`Option` i `Result`](../07_obsluga_bledow/01_option_i_result.md)
