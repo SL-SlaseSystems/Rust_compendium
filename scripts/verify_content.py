@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -51,6 +52,23 @@ EXPECTED_SECTION_DIRS = (
     "28_ci_cd_i_release_engineering",
     "29_observability_i_produkcja",
     "30_projekty_przekrojowe",
+)
+LEGACY_SECTION_DIRS = (
+    "01_wprowadzenie",
+    "02_podstawy_jezyka",
+    "03_pamiec_i_wlasnosc",
+    "04_typy_i_modelowanie",
+    "05_kolekcje_i_iteratory",
+    "06_bledy",
+    "07_moduly_i_cargo",
+    "08_testowanie_i_jakosc",
+    "09_wspolbieznosc",
+    "10_async",
+    "11_makra",
+    "12_systemy_i_interoperacyjnosc",
+    "13_wzorce_i_architektura",
+    "zaawansowane",
+    "rozwiazania/01_wprowadzenie",
 )
 
 
@@ -287,6 +305,81 @@ def validate_section_structure(root: Path) -> list[str]:
 
     if (root / "zaawansowane").exists():
         problems.append("stary katalog nadal istnieje: zaawansowane/")
+
+    return problems
+
+
+def load_migration_manifest(path: Path) -> list[dict[str, str]]:
+    """Load and validate the versioned content-migration manifest."""
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"{path}: niepoprawny manifest: {error}") from error
+
+    if not isinstance(document, dict) or document.get("version") != 1:
+        raise ValueError(f"{path}: nieobsługiwana wersja manifestu")
+    moves = document.get("moves")
+    if not isinstance(moves, list):
+        raise ValueError(f"{path}: pole moves musi być listą")
+
+    entries: list[dict[str, str]] = []
+    for index, entry in enumerate(moves):
+        if not isinstance(entry, dict) or any(
+            not isinstance(entry.get(field), str)
+            for field in ("source", "destination", "disposition")
+        ):
+            raise ValueError(f"{path}: niepoprawny wpis migracji nr {index + 1}")
+        entries.append(
+            {
+                "source": entry["source"],
+                "destination": entry["destination"],
+                "disposition": entry["disposition"],
+            }
+        )
+    return entries
+
+
+def validate_migration_manifest(
+    root: Path, entries: list[dict[str, str]]
+) -> list[str]:
+    """Validate migration uniqueness, coverage and filesystem completion."""
+    root = root.resolve()
+    problems: list[str] = []
+    sources: set[str] = set()
+    move_destinations: set[str] = set()
+
+    for entry in entries:
+        source = entry.get("source", "")
+        destination = entry.get("destination", "")
+        disposition = entry.get("disposition", "")
+
+        if disposition not in {"move", "merge"}:
+            problems.append(f"nieznany sposób migracji: {disposition or '<pusty>'}")
+        if source in sources:
+            problems.append(f"zduplikowane źródło migracji: {source}")
+        else:
+            sources.add(source)
+        if disposition == "move":
+            if destination in move_destinations:
+                problems.append(f"zduplikowany cel migracji: {destination}")
+            else:
+                move_destinations.add(destination)
+
+        source_path = root / source
+        destination_path = root / destination
+        if source != destination and source_path.exists():
+            problems.append(f"źródło nadal istnieje po migracji: {source}")
+        if not destination_path.exists():
+            problems.append(f"brak celu migracji: {destination}")
+
+    for directory in LEGACY_SECTION_DIRS:
+        legacy_root = root / directory
+        if not legacy_root.is_dir():
+            continue
+        for path in sorted(legacy_root.rglob("*.md")):
+            relative_path = path.relative_to(root).as_posix()
+            if relative_path not in sources:
+                problems.append(f"brak wpisu migracji dla: {relative_path}")
 
     return problems
 

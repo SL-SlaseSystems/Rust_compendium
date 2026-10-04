@@ -10,7 +10,9 @@ from pathlib import Path
 
 from scripts.verify_content import (
     discover_markdown,
+    load_migration_manifest,
     validate_markdown,
+    validate_migration_manifest,
     validate_section_structure,
 )
 
@@ -435,6 +437,46 @@ class ValidateSectionStructureTests(MarkdownFixture):
                 "17_bazy_danych_i_persystencja/README.md"
             ],
         )
+
+
+class MigrationManifestTests(MarkdownFixture):
+    def test_reports_duplicate_missing_target_and_unmapped_legacy_file(self) -> None:
+        self.write("01_wprowadzenie/source.md", "# Źródło\n")
+        self.write("01_wprowadzenie/orphan.md", "# Pominięty plik\n")
+        entries = [
+            {
+                "source": "01_wprowadzenie/source.md",
+                "destination": "01_wprowadzenie_i_toolchain/source.md",
+                "disposition": "move",
+            },
+            {
+                "source": "01_wprowadzenie/source.md",
+                "destination": "01_wprowadzenie_i_toolchain/duplicate.md",
+                "disposition": "move",
+            },
+        ]
+
+        problems = validate_migration_manifest(self.root, entries)
+
+        self.assertTrue(any("zduplikowane źródło migracji" in p for p in problems))
+        self.assertTrue(any("brak celu migracji" in p for p in problems))
+        self.assertTrue(
+            any("brak wpisu migracji dla: 01_wprowadzenie/orphan.md" in p for p in problems)
+        )
+
+    def test_load_rejects_unknown_manifest_version(self) -> None:
+        manifest = self.write(
+            "manifest.json",
+            """
+            {
+              "version": 2,
+              "moves": []
+            }
+            """,
+        )
+
+        with self.assertRaisesRegex(ValueError, "nieobsługiwana wersja manifestu"):
+            load_migration_manifest(manifest)
 
 
 class CliTests(MarkdownFixture):
