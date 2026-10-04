@@ -9,6 +9,7 @@ python3 "$project_root/scripts/verify_content.py" "$project_root"
 
 find "$project_root" -type f -name '*.md' \
     -not -path "$project_root/.git/*" \
+    -not -path "$project_root/.worktrees/*" \
     -not -path "$project_root/target/*" \
     -not -path "$project_root/.superpowers/*" \
     -not -path "$project_root/docs/superpowers/*" \

@@ -83,7 +83,10 @@ def discover_markdown(root: Path) -> list[Path]:
         if not path.is_file():
             continue
         parts = path.relative_to(root).parts
-        if ".git" in parts or "target" in parts or ".superpowers" in parts:
+        if any(
+            excluded in parts
+            for excluded in (".git", ".worktrees", "target", ".superpowers")
+        ):
             continue
         if len(parts) >= 2 and parts[:2] == ("docs", "superpowers"):
             continue
