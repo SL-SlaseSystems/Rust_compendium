@@ -125,4 +125,4 @@ alokacja `Box` nie jest wymagana dla `&dyn Trait`.
 
 - [Konwersje, DST i trait objects](../05_generics_traits_i_system_typow/03_konwersje_dst_i_trait_objects.md)
 - [HRTB, GAT i RPIT](05_hrtb_gat_rpit_i_impl_trait.md)
-- [Monomorfizacja i optymalizacja](13_monomorfizacja_mir_llvm_i_optymalizacja.md)
+- [Monomorfizacja i optymalizacja](../20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md)

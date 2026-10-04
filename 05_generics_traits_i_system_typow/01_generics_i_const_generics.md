@@ -101,4 +101,4 @@ zawsze częścią kontraktu.
 
 - [Traits i associated items](02_traits_i_associated_items.md)
 - [Iteratory](../06_kolekcje_iteratory_i_closures/05_iteratory.md)
-- [Monomorfizacja i optymalizacja](../zaawansowane/13_monomorfizacja_mir_llvm_i_optymalizacja.md)
+- [Monomorfizacja i optymalizacja](../20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md)

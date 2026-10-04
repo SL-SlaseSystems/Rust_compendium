@@ -96,5 +96,5 @@ compatibility.
 ## Powiązane tematy
 
 - [Traits i associated items](02_traits_i_associated_items.md)
-- [Dyn compatibility, vtables i dispatch](../zaawansowane/06_dyn_compatibility_vtables_i_dispatch.md)
+- [Dyn compatibility, vtables i dispatch](../05_generics_traits_i_system_typow/06_dyn_compatibility_vtables_i_dispatch.md)
 - [Projektowanie publicznego API](../14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)

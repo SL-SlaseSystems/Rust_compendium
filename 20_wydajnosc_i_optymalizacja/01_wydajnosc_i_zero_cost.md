@@ -90,6 +90,6 @@ cele mogą być sprzeczne.
 
 ## Powiązane tematy
 
-- [Benchmarki i profilowanie](../08_testowanie_i_jakosc/04_benchmarki_profilowanie_i_miri.md)
-- [Monomorfizacja, MIR i LLVM](../zaawansowane/13_monomorfizacja_mir_llvm_i_optymalizacja.md)
-- [Layout i alignment](../zaawansowane/03_layout_alignment_i_uninitialized_memory.md)
+- [Benchmarki i profilowanie](../20_wydajnosc_i_optymalizacja/02_benchmarki_profilowanie_i_miri.md)
+- [Monomorfizacja, MIR i LLVM](../20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md)
+- [Layout i alignment](../21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)

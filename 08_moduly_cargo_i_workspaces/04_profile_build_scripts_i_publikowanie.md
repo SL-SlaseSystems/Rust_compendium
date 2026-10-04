@@ -78,6 +78,6 @@ z metadanych manifestu i może wymagać konfiguracji features/targetów.
 
 ## Powiązane tematy
 
-- [Wydajność i zero-cost abstractions](../13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
+- [Wydajność i zero-cost abstractions](../20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
 - [Projektowanie API i SemVer](../14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
-- [Benchmarki i profilowanie](../08_testowanie_i_jakosc/04_benchmarki_profilowanie_i_miri.md)
+- [Benchmarki i profilowanie](../20_wydajnosc_i_optymalizacja/02_benchmarki_profilowanie_i_miri.md)

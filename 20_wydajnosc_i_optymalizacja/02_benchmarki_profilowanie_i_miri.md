@@ -73,6 +73,6 @@ assembly, potwierdź profil, target CPU i reprezentatywność benchmarku.
 
 ## Powiązane tematy
 
-- [Wydajność i zero-cost abstractions](../13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
-- [Monomorfizacja, MIR i LLVM](../zaawansowane/13_monomorfizacja_mir_llvm_i_optymalizacja.md)
-- [`unsafe` i soundness](../zaawansowane/01_unsafe_i_soundness.md)
+- [Wydajność i zero-cost abstractions](../20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
+- [Monomorfizacja, MIR i LLVM](../20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

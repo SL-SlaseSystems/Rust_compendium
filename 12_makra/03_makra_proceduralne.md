@@ -86,5 +86,5 @@ wygenerowane API podlega SemVer jak kod ręczny.
 ## Powiązane tematy
 
 - [`macro_rules!`](01_macro_rules.md)
-- [Zaawansowane makra proceduralne](../zaawansowane/10_zaawansowane_makra_proceduralne.md)
+- [Zaawansowane makra proceduralne](../12_makra/04_zaawansowane_makra_proceduralne.md)
 - [Build scripts](../08_moduly_cargo_i_workspaces/04_profile_build_scripts_i_publikowanie.md)

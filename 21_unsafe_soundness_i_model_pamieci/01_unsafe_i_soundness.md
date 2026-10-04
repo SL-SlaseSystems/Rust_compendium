@@ -106,4 +106,4 @@ i nie można go sprawdzić, funkcja powinna być `unsafe`.
 
 - [Raw pointers, aliasing i provenance](02_raw_pointers_aliasing_i_provenance.md)
 - [Layout i niezainicjalizowana pamięć](03_layout_alignment_i_uninitialized_memory.md)
-- [FFI, bezpieczne otoczki i UB](11_ffi_safe_wrappers_i_ub.md)
+- [FFI, bezpieczne otoczki i UB](../22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md)

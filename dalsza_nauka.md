@@ -29,7 +29,7 @@ Kolejność:
 1. [Pliki, I/O i procesy](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md)
 2. [Własne błędy](07_obsluga_bledow/04_wlasne_bledy_i_api.md)
 3. [Projektowanie API](14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
-4. [Wydajność](13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
+4. [Wydajność](20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
 
 Ekosystem do oceny: clap (argumenty), serde plus format konfiguracji, tracing
 (diagnostyka), anyhow/miette (raportowanie w aplikacji). Naucz się exit codes,
@@ -76,8 +76,8 @@ Kolejność:
 
 1. [Pamięć i smart pointery](03_ownership_i_pamiec/06_smart_pointery_i_interior_mutability.md)
 2. [Wątki, kanały i atomiki](10_wspolbieznosc/01_watki_i_scoped_threads.md)
-3. [FFI i ABI](12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
-4. [Cały dział zaawansowany](zaawansowane/README.md)
+3. [FFI i ABI](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
+4. [Ścieżka `unsafe` i modelu pamięci](21_unsafe_soundness_i_model_pamieci/README.md)
 
 Pracuj z Miri i sanitizerami. Najpierw napisz bezpieczną wersję, potem profil.
 Projekt: safe wrapper na małe C API z testami null, błędów, callbacku,
@@ -87,10 +87,10 @@ ownership i wielowątkowości.
 
 Kolejność:
 
-1. [WebAssembly, `no_std` i embedded](12_systemy_i_interoperacyjnosc/04_wasm_no_std_i_embedded.md)
-2. [`no_std`, allocatory i embedded — zaawansowane](zaawansowane/12_no_std_allocatory_i_embedded.md)
-3. [Atomiki](zaawansowane/08_atomics_i_memory_ordering.md)
-4. [Pinning](zaawansowane/07_pin_unpin_i_self_referential.md)
+1. [WebAssembly, `no_std` i embedded](23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md)
+2. [`no_std`, allocatory i embedded — zaawansowane](23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md)
+3. [Atomiki](10_wspolbieznosc/05_atomics_i_memory_ordering.md)
+4. [Pinning](11_async_rust/05_pin_unpin_i_self_referential.md)
 
 Następnie Embedded Rust Book, discovery book dla płytki, embedded-hal oraz
 dokumentacja PAC/HAL. Projekt: sterownik czujnika oparty na traitach,
@@ -100,9 +100,9 @@ testowany fake’em na hoście, z nieblokującą state machine.
 
 Kolejność:
 
-1. [WebAssembly](12_systemy_i_interoperacyjnosc/04_wasm_no_std_i_embedded.md)
-2. [FFI i ABI](12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
-3. [Wydajność](13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
+1. [WebAssembly](23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md)
+2. [FFI i ABI](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
+3. [Wydajność](20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
 
 Przeglądaj wasm-bindgen guide, WASI i dokumentację runtime’u. Mierz rozmiar
 modułu, kopiowanie przez granicę JS/Wasm i startup. Projekt: parser
@@ -114,9 +114,9 @@ a nie bajt po bajcie.
 Kolejność:
 
 1. [Makra proceduralne](12_makra/03_makra_proceduralne.md)
-2. [MIR i LLVM](zaawansowane/13_monomorfizacja_mir_llvm_i_optymalizacja.md)
-3. [Borrow checker i Polonius](zaawansowane/14_borrow_checker_polonius_i_model_pamieci.md)
-4. [Nightly i feature gates](zaawansowane/15_nightly_unstable_i_feature_gates.md)
+2. [MIR i LLVM](20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md)
+3. [Borrow checker i Polonius](19_runtime_pamiec_i_kompilator/01_borrow_checker_polonius_i_model_pamieci.md)
+4. [Nightly i feature gates](08_moduly_cargo_i_workspaces/05_nightly_unstable_i_feature_gates.md)
 
 Następnie rustc-dev-guide, rustc contributor guide i RFC Book. Zacznij od
 diagnostic issue, lintu lub testu UI, nie od nowej składni języka.

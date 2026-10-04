@@ -107,6 +107,6 @@ ekosystemu.
 
 ## Powiązane tematy
 
-- [Podstawy WebAssembly, `no_std` i embedded](../12_systemy_i_interoperacyjnosc/04_wasm_no_std_i_embedded.md)
-- [Layout i `MaybeUninit`](03_layout_alignment_i_uninitialized_memory.md)
-- [Atomiki i memory ordering](08_atomics_i_memory_ordering.md)
+- [Podstawy WebAssembly, `no_std` i embedded](../23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md)
+- [Layout i `MaybeUninit`](../21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)
+- [Atomiki i memory ordering](../10_wspolbieznosc/05_atomics_i_memory_ordering.md)

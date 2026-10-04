@@ -83,4 +83,4 @@ użytkownikowi sekretów z komunikatów i backtrace.
 
 - [Własne błędy i API](04_wlasne_bledy_i_api.md)
 - [RAII](../03_ownership_i_pamiec/01_stos_sterta_i_raii.md)
-- [FFI, bezpieczne otoczki i UB](../zaawansowane/11_ffi_safe_wrappers_i_ub.md)
+- [FFI, bezpieczne otoczki i UB](../22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md)

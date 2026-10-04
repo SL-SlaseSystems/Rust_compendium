@@ -88,4 +88,4 @@ kontrolowanie. Narzędzia takie jak `cargo-audit` i `cargo-deny` są
 
 - [Profile, build scripts i publikowanie](04_profile_build_scripts_i_publikowanie.md)
 - [Clippy, rustfmt i linty](../09_dokumentacja_testowanie_i_jakosc/03_clippy_rustfmt_i_linty.md)
-- [`no_std` i allocatory](../zaawansowane/12_no_std_allocatory_i_embedded.md)
+- [`no_std` i allocatory](../23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md)

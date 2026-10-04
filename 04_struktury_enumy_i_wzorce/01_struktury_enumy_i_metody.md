@@ -116,4 +116,4 @@ przypadków.
 
 - [Wzorce i `match`](02_wzorce_i_match.md)
 - [Builder, typestate i state machine](../14_idiomy_wzorce_i_architektura/02_builder_typestate_i_state_machine.md)
-- [Layout, alignment i `repr`](../zaawansowane/03_layout_alignment_i_uninitialized_memory.md)
+- [Layout, alignment i `repr`](../21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)

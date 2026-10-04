@@ -87,4 +87,4 @@ danych. Zaawansowane porządki pamięci opisuje osobny rozdział.
 
 - [Kanały](02_kanaly_i_message_passing.md)
 - [`Send`, `Sync` i atomiki](04_send_sync_i_atomiki.md)
-- [Atomiki i memory ordering](../zaawansowane/08_atomics_i_memory_ordering.md)
+- [Atomiki i memory ordering](../10_wspolbieznosc/05_atomics_i_memory_ordering.md)

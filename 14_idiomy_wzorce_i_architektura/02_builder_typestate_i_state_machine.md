@@ -125,5 +125,5 @@ typestate w publiczne API, jeśli użytkownik musi stale erase’ować typ.
 ## Powiązane tematy
 
 - [Struktury i enumy](../04_struktury_enumy_i_wzorce/01_struktury_enumy_i_metody.md)
-- [`PhantomData` i variance](../zaawansowane/04_variance_subtyping_i_dropck.md)
+- [`PhantomData` i variance](../05_generics_traits_i_system_typow/04_variance_subtyping_i_dropck.md)
 - [Projektowanie API](03_projektowanie_api_i_semver.md)

@@ -107,5 +107,5 @@ wykonał dowolny zewnętrzny efekt dla soundness.
 ## Powiązane tematy
 
 - [`Future`, `Waker` i `poll`](../11_async_rust/02_executor_waker_i_poll.md)
-- [`PhantomData` i variance](04_variance_subtyping_i_dropck.md)
-- [`unsafe` i soundness](01_unsafe_i_soundness.md)
+- [`PhantomData` i variance](../05_generics_traits_i_system_typow/04_variance_subtyping_i_dropck.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

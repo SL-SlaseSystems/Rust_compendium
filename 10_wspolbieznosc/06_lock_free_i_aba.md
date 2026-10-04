@@ -102,6 +102,6 @@ profilu i z planem audytu.
 
 ## Powiązane tematy
 
-- [Atomiki i memory ordering](08_atomics_i_memory_ordering.md)
-- [Raw pointers i provenance](02_raw_pointers_aliasing_i_provenance.md)
+- [Atomiki i memory ordering](05_atomics_i_memory_ordering.md)
+- [Raw pointers i provenance](../21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md)
 - [`Arc` i blokady](../10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)

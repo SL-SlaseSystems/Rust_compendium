@@ -89,4 +89,4 @@ przez destrukcję stanu, co ma konsekwencje dla cancellation safety.
 
 - [Executor, `Waker` i `poll`](02_executor_waker_i_poll.md)
 - [Taski, join, select i stream](03_taski_join_select_i_stream.md)
-- [Pinning](../zaawansowane/07_pin_unpin_i_self_referential.md)
+- [Pinning](../11_async_rust/05_pin_unpin_i_self_referential.md)

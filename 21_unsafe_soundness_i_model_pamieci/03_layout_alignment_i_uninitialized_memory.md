@@ -106,5 +106,5 @@ ważnego obiektu.
 ## Powiązane tematy
 
 - [Raw pointers i provenance](02_raw_pointers_aliasing_i_provenance.md)
-- [FFI i `repr`](../12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
+- [FFI i `repr`](../22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
 - [`unsafe` i soundness](01_unsafe_i_soundness.md)

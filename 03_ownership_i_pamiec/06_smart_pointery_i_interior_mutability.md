@@ -92,5 +92,5 @@ niejasne ownership i przenieść błędy do runtime.
 ## Powiązane tematy
 
 - [`Arc`, `Mutex` i `RwLock`](../10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md)
-- [Pinning](../zaawansowane/07_pin_unpin_i_self_referential.md)
-- [`unsafe` i soundness](../zaawansowane/01_unsafe_i_soundness.md)
+- [Pinning](../11_async_rust/05_pin_unpin_i_self_referential.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

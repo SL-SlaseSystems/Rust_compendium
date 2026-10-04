@@ -124,4 +124,4 @@ ogólnych negatywnych bounds; nie projektuj API zakładając `T: !Trait`.
 
 - [Konwersje, DST i trait objects](03_konwersje_dst_i_trait_objects.md)
 - [Idiomy i extension traits](../14_idiomy_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md)
-- [HRTB, GAT i `impl Trait`](../zaawansowane/05_hrtb_gat_rpit_i_impl_trait.md)
+- [HRTB, GAT i `impl Trait`](../05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md)

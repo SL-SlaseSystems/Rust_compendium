@@ -88,4 +88,4 @@ lokalnie w tej samej kombinacji.
 
 - [Testy jednostkowe i integracyjne](01_testy_jednostkowe_i_integracyjne.md)
 - [Komentarze i atrybuty](../02_podstawy_jezyka/05_operatory_komentarze_i_atrybuty.md)
-- [`unsafe` i soundness](../zaawansowane/01_unsafe_i_soundness.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

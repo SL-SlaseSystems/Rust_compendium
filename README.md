@@ -19,7 +19,7 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 - **Szukasz konkretu:** użyj [ściągi](sciaga.md), [słownika](slownik.md) lub
   spisu poniżej.
 - **Poziom ekspercki:** przeczytaj najpierw
-  [mapę części zaawansowanej](zaawansowane/README.md).
+  [mapę `unsafe` i modelu pamięci](21_unsafe_soundness_i_model_pamieci/README.md).
 
 ## Legenda przykładów
 
@@ -90,7 +90,7 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 1. [Testy jednostkowe i integracyjne](09_dokumentacja_testowanie_i_jakosc/01_testy_jednostkowe_i_integracyjne.md)
 2. [Testy dokumentacyjne i rustdoc](09_dokumentacja_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md)
 3. [Clippy, rustfmt i linty](09_dokumentacja_testowanie_i_jakosc/03_clippy_rustfmt_i_linty.md)
-4. [Benchmarki, profilowanie i Miri](08_testowanie_i_jakosc/04_benchmarki_profilowanie_i_miri.md)
+4. [Benchmarki, profilowanie i Miri](20_wydajnosc_i_optymalizacja/02_benchmarki_profilowanie_i_miri.md)
 
 ### 9. Współbieżność
 
@@ -116,8 +116,8 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 
 1. [Pliki, I/O i procesy](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md)
 2. [Sieć i protokoły](13_io_siec_i_protokoly/02_siec_i_protokoly.md)
-3. [FFI, ABI i `repr`](12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
-4. [WebAssembly, `no_std` i embedded](12_systemy_i_interoperacyjnosc/04_wasm_no_std_i_embedded.md)
+3. [FFI, ABI i `repr`](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
+4. [WebAssembly, `no_std` i embedded](23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md)
 
 ### 13. Wzorce i architektura
 
@@ -125,26 +125,26 @@ stabilnym Rust 1.97.1 (stan na 12 sierpnia 2026).
 2. [Builder, typestate i state machine](14_idiomy_wzorce_i_architektura/02_builder_typestate_i_state_machine.md)
 3. [Projektowanie API i SemVer](14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)
 4. [Architektura aplikacji i dependency injection](14_idiomy_wzorce_i_architektura/04_architektura_aplikacji_i_di.md)
-5. [Wydajność i zero-cost abstractions](13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
+5. [Wydajność i zero-cost abstractions](20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
 
 ### 14. Zagadnienia zaawansowane
 
-1. [Mapa działu](zaawansowane/README.md)
-2. [`unsafe` i soundness](zaawansowane/01_unsafe_i_soundness.md)
-3. [Raw pointers, aliasing i provenance](zaawansowane/02_raw_pointers_aliasing_i_provenance.md)
-4. [Layout, alignment i niezainicjalizowana pamięć](zaawansowane/03_layout_alignment_i_uninitialized_memory.md)
-5. [Variance, subtyping i drop check](zaawansowane/04_variance_subtyping_i_dropck.md)
-6. [HRTB, GAT, RPIT i `impl Trait`](zaawansowane/05_hrtb_gat_rpit_i_impl_trait.md)
-7. [Dyn compatibility, vtables i dispatch](zaawansowane/06_dyn_compatibility_vtables_i_dispatch.md)
-8. [`Pin`, `Unpin` i typy self-referential](zaawansowane/07_pin_unpin_i_self_referential.md)
-9. [Atomiki i memory ordering](zaawansowane/08_atomics_i_memory_ordering.md)
-10. [Lock-free i problem ABA](zaawansowane/09_lock_free_i_aba.md)
-11. [Zaawansowane makra proceduralne](zaawansowane/10_zaawansowane_makra_proceduralne.md)
-12. [FFI, bezpieczne otoczki i UB](zaawansowane/11_ffi_safe_wrappers_i_ub.md)
-13. [`no_std`, allocatory i embedded](zaawansowane/12_no_std_allocatory_i_embedded.md)
-14. [Monomorfizacja, MIR, LLVM i optymalizacja](zaawansowane/13_monomorfizacja_mir_llvm_i_optymalizacja.md)
-15. [Borrow checker, Polonius i model pamięci](zaawansowane/14_borrow_checker_polonius_i_model_pamieci.md)
-16. [Nightly, unstable i feature gates](zaawansowane/15_nightly_unstable_i_feature_gates.md)
+1. [Mapa `unsafe` i modelu pamięci](21_unsafe_soundness_i_model_pamieci/README.md)
+2. [`unsafe` i soundness](21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)
+3. [Raw pointers, aliasing i provenance](21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md)
+4. [Layout, alignment i niezainicjalizowana pamięć](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)
+5. [Variance, subtyping i drop check](05_generics_traits_i_system_typow/04_variance_subtyping_i_dropck.md)
+6. [HRTB, GAT, RPIT i `impl Trait`](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md)
+7. [Dyn compatibility, vtables i dispatch](05_generics_traits_i_system_typow/06_dyn_compatibility_vtables_i_dispatch.md)
+8. [`Pin`, `Unpin` i typy self-referential](11_async_rust/05_pin_unpin_i_self_referential.md)
+9. [Atomiki i memory ordering](10_wspolbieznosc/05_atomics_i_memory_ordering.md)
+10. [Lock-free i problem ABA](10_wspolbieznosc/06_lock_free_i_aba.md)
+11. [Zaawansowane makra proceduralne](12_makra/04_zaawansowane_makra_proceduralne.md)
+12. [FFI, bezpieczne otoczki i UB](22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md)
+13. [`no_std`, allocatory i embedded](23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md)
+14. [Monomorfizacja, MIR, LLVM i optymalizacja](20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md)
+15. [Borrow checker, Polonius i model pamięci](19_runtime_pamiec_i_kompilator/01_borrow_checker_polonius_i_model_pamieci.md)
+16. [Nightly, unstable i feature gates](08_moduly_cargo_i_workspaces/05_nightly_unstable_i_feature_gates.md)
 
 ## Materiały przekrojowe
 

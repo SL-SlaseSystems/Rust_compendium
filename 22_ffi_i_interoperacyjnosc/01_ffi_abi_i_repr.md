@@ -84,6 +84,6 @@ przez ten sam allocator/API, który ją utworzył, chyba że ABI gwarantuje inac
 
 ## Powiązane tematy
 
-- [FFI, bezpieczne otoczki i UB](../zaawansowane/11_ffi_safe_wrappers_i_ub.md)
-- [Raw pointers i provenance](../zaawansowane/02_raw_pointers_aliasing_i_provenance.md)
-- [Layout i niezainicjalizowana pamięć](../zaawansowane/03_layout_alignment_i_uninitialized_memory.md)
+- [FFI, bezpieczne otoczki i UB](../22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md)
+- [Raw pointers i provenance](../21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md)
+- [Layout i niezainicjalizowana pamięć](../21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)

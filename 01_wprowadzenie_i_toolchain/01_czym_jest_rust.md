@@ -92,4 +92,4 @@ W każdym z tych przypadków zapisz mierzalne kryterium decyzji: budżet pamięc
 - [Instalacja i toolchain](02_instalacja_i_toolchain.md)
 - [Ownership, move i `Copy`](../03_ownership_i_pamiec/02_ownership_move_i_copy.md)
 - [Referencje i borrowing](../03_ownership_i_pamiec/03_referencje_i_borrowing.md)
-- [`unsafe` i soundness](../zaawansowane/01_unsafe_i_soundness.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

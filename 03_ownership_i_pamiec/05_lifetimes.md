@@ -101,5 +101,5 @@ się z variance i drop checking.
 ## Powiązane tematy
 
 - [Referencje i borrowing](03_referencje_i_borrowing.md)
-- [HRTB, GAT i `impl Trait`](../zaawansowane/05_hrtb_gat_rpit_i_impl_trait.md)
-- [Variance i drop check](../zaawansowane/04_variance_subtyping_i_dropck.md)
+- [HRTB, GAT i `impl Trait`](../05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md)
+- [Variance i drop check](../05_generics_traits_i_system_typow/04_variance_subtyping_i_dropck.md)

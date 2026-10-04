@@ -105,5 +105,5 @@ Zwykła aplikacja nie potrzebuje nightly tylko dlatego, że „jest nowsze”.
 ## Powiązane tematy
 
 - [Instalacja i toolchain](../01_wprowadzenie_i_toolchain/02_instalacja_i_toolchain.md)
-- [HRTB, GAT, RPIT i TAIT](05_hrtb_gat_rpit_i_impl_trait.md)
+- [HRTB, GAT, RPIT i TAIT](../05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md)
 - [Clippy, rustfmt i linty](../09_dokumentacja_testowanie_i_jakosc/03_clippy_rustfmt_i_linty.md)

@@ -85,5 +85,5 @@ niestabilnych narzędzi.
 ## Powiązane tematy
 
 - [Testy jednostkowe](01_testy_jednostkowe_i_integracyjne.md)
-- [Nightly i feature gates](../zaawansowane/15_nightly_unstable_i_feature_gates.md)
+- [Nightly i feature gates](../08_moduly_cargo_i_workspaces/05_nightly_unstable_i_feature_gates.md)
 - [Projektowanie API i MSRV](../14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md)

@@ -80,5 +80,5 @@ dedykowanej puli.
 ## Powiązane tematy
 
 - [`Future`, `async` i `await`](01_future_async_i_await.md)
-- [Pinning](../zaawansowane/07_pin_unpin_i_self_referential.md)
-- [`unsafe` i soundness](../zaawansowane/01_unsafe_i_soundness.md)
+- [Pinning](../11_async_rust/05_pin_unpin_i_self_referential.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

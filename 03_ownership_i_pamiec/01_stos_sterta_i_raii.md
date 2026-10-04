@@ -92,4 +92,4 @@ fn main() {
 
 - [Ownership, move i Copy](02_ownership_move_i_copy.md)
 - [Smart pointery](06_smart_pointery_i_interior_mutability.md)
-- [Layout i alignment](../zaawansowane/03_layout_alignment_i_uninitialized_memory.md)
+- [Layout i alignment](../21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)

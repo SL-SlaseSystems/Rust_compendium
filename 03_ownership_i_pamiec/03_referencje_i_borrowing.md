@@ -94,4 +94,4 @@ fn bledna_referencja() -> &'static String {
 
 - [Slices i `str`](04_slices_i_str.md)
 - [Lifetimes](05_lifetimes.md)
-- [Raw pointers i aliasing](../zaawansowane/02_raw_pointers_aliasing_i_provenance.md)
+- [Raw pointers i aliasing](../21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md)

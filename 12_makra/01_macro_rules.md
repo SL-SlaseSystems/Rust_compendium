@@ -86,4 +86,4 @@ narzędzia.
 
 - [Higiena, fragmenty i repetition](02_higiena_fragmenty_i_repetition.md)
 - [Makra proceduralne](03_makra_proceduralne.md)
-- [Zaawansowane makra proceduralne](../zaawansowane/10_zaawansowane_makra_proceduralne.md)
+- [Zaawansowane makra proceduralne](../12_makra/04_zaawansowane_makra_proceduralne.md)

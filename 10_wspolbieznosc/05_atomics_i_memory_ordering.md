@@ -122,5 +122,5 @@ konkretnym kontraktem.
 ## Powiązane tematy
 
 - [`Send`, `Sync` i atomiki](../10_wspolbieznosc/04_send_sync_i_atomiki.md)
-- [Lock-free i ABA](09_lock_free_i_aba.md)
-- [`unsafe` i soundness](01_unsafe_i_soundness.md)
+- [Lock-free i ABA](06_lock_free_i_aba.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

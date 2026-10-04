@@ -90,4 +90,4 @@ W CI rozdziel dwa tory. Tor MSRV przypina dokładną najniższą wersję, np. `c
 - [Pierwszy program](03_pierwszy_program.md)
 - [Cargo w praktyce](04_cargo_w_praktyce.md)
 - [Crates, pakiety i workspaces](../08_moduly_cargo_i_workspaces/02_crates_pakiety_i_workspaces.md)
-- [Edition, nightly i feature gates](../zaawansowane/15_nightly_unstable_i_feature_gates.md)
+- [Edition, nightly i feature gates](../08_moduly_cargo_i_workspaces/05_nightly_unstable_i_feature_gates.md)

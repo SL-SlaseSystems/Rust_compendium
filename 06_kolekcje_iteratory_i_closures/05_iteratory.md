@@ -102,4 +102,4 @@ dodają możliwości, nie gwarantują automatycznie lepszej wydajności.
 
 - [Closures](04_closures_i_fn_traits.md)
 - [`Option` i `Result`](../07_obsluga_bledow/01_option_i_result.md)
-- [Zero-cost abstractions](../13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
+- [Zero-cost abstractions](../20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)

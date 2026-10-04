@@ -104,6 +104,6 @@ wydajności: ważne są latency, throughput, cache, branch prediction i calls.
 
 ## Powiązane tematy
 
-- [Wydajność i zero-cost abstractions](../13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
-- [Benchmarki i profilowanie](../08_testowanie_i_jakosc/04_benchmarki_profilowanie_i_miri.md)
-- [Borrow checker i model pamięci](14_borrow_checker_polonius_i_model_pamieci.md)
+- [Wydajność i zero-cost abstractions](../20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)
+- [Benchmarki i profilowanie](../20_wydajnosc_i_optymalizacja/02_benchmarki_profilowanie_i_miri.md)
+- [Borrow checker i model pamięci](../19_runtime_pamiec_i_kompilator/01_borrow_checker_polonius_i_model_pamieci.md)

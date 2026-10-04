@@ -80,6 +80,6 @@ wydajnością. Mierz wynik binarny.
 
 ## Powiązane tematy
 
-- [`no_std`, allocatory i embedded — zaawansowane](../zaawansowane/12_no_std_allocatory_i_embedded.md)
+- [`no_std`, allocatory i embedded — zaawansowane](../23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md)
 - [Profile i build scripts](../08_moduly_cargo_i_workspaces/04_profile_build_scripts_i_publikowanie.md)
-- [FFI i ABI](03_ffi_abi_i_repr.md)
+- [FFI i ABI](../22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)

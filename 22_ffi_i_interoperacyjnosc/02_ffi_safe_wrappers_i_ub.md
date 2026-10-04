@@ -122,6 +122,6 @@ Zapisz encoding. `char*` nie gwarantuje UTF-8.
 
 ## Powiązane tematy
 
-- [Podstawy FFI, ABI i `repr`](../12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
-- [Raw pointers i provenance](02_raw_pointers_aliasing_i_provenance.md)
-- [`unsafe` i soundness](01_unsafe_i_soundness.md)
+- [Podstawy FFI, ABI i `repr`](../22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)
+- [Raw pointers i provenance](../21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)

@@ -81,5 +81,5 @@ poprawność, potem mierz contention.
 ## Powiązane tematy
 
 - [`Arc` i blokady](03_arc_mutex_rwlock_i_condvar.md)
-- [Atomiki i memory ordering](../zaawansowane/08_atomics_i_memory_ordering.md)
-- [Lock-free i ABA](../zaawansowane/09_lock_free_i_aba.md)
+- [Atomiki i memory ordering](../10_wspolbieznosc/05_atomics_i_memory_ordering.md)
+- [Lock-free i ABA](../10_wspolbieznosc/06_lock_free_i_aba.md)

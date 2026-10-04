@@ -82,4 +82,4 @@ pełnego Unicode użyj sprawdzonej biblioteki.
 
 - [Slices i `str`](../03_ownership_i_pamiec/04_slices_i_str.md)
 - [Pliki i I/O](../13_io_siec_i_protokoly/01_pliki_io_i_procesy.md)
-- [FFI, ABI i C strings](../12_systemy_i_interoperacyjnosc/03_ffi_abi_i_repr.md)
+- [FFI, ABI i C strings](../22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md)

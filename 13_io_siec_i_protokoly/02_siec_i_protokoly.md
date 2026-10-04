@@ -86,4 +86,4 @@ HTTP/2/3, proxy i polityki certyfikatów.
 
 - [Pliki, I/O i procesy](01_pliki_io_i_procesy.md)
 - [Async i blokowanie](../11_async_rust/04_anulowanie_timeouty_i_blocking.md)
-- [Layout i alignment](../zaawansowane/03_layout_alignment_i_uninitialized_memory.md)
+- [Layout i alignment](../21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md)

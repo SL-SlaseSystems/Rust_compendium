@@ -92,4 +92,4 @@ nazwę przy pierwszym użyciu.
 
 - [Pamięć i własność](03_ownership_i_pamiec/02_ownership_move_i_copy.md)
 - [Traits](05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
-- [Zagadnienia zaawansowane](zaawansowane/README.md)
+- [`unsafe`, soundness i model pamięci](21_unsafe_soundness_i_model_pamieci/README.md)

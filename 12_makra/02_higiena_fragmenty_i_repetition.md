@@ -102,4 +102,4 @@ narzędziem **third-party** pokazującym rozwinięcie.
 
 - [`macro_rules!`](01_macro_rules.md)
 - [Makra proceduralne](03_makra_proceduralne.md)
-- [Edition i feature gates](../zaawansowane/15_nightly_unstable_i_feature_gates.md)
+- [Edition i feature gates](../08_moduly_cargo_i_workspaces/05_nightly_unstable_i_feature_gates.md)

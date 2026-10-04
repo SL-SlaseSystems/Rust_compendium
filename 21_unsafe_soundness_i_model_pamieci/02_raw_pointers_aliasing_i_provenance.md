@@ -92,4 +92,4 @@ abstrakcji mutowalnej; `PhantomData` koryguje variance i drop semantics.
 
 - [`unsafe` i soundness](01_unsafe_i_soundness.md)
 - [Layout i niezainicjalizowana pamięć](03_layout_alignment_i_uninitialized_memory.md)
-- [Borrow checker i model pamięci](14_borrow_checker_polonius_i_model_pamieci.md)
+- [Borrow checker i model pamięci](../19_runtime_pamiec_i_kompilator/01_borrow_checker_polonius_i_model_pamieci.md)

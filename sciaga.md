@@ -285,4 +285,4 @@ fn main() {
 
 - [Pełny spis treści](README.md)
 - [Słownik](slownik.md)
-- [Zagadnienia zaawansowane](zaawansowane/README.md)
+- [`unsafe`, soundness i model pamięci](21_unsafe_soundness_i_model_pamieci/README.md)

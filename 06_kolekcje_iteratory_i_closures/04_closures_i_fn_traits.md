@@ -97,4 +97,4 @@ wywołującemu największą swobodę.
 
 - [Iteratory](05_iteratory.md)
 - [Wątki i scoped threads](../10_wspolbieznosc/01_watki_i_scoped_threads.md)
-- [HRTB i `impl Trait`](../zaawansowane/05_hrtb_gat_rpit_i_impl_trait.md)
+- [HRTB i `impl Trait`](../05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md)

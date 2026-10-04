@@ -82,4 +82,4 @@ alokowania nowego `String`. To ważny wzorzec projektowania kluczy API.
 
 - [Traits i associated items](../05_generics_traits_i_system_typow/02_traits_i_associated_items.md)
 - [Iteratory](05_iteratory.md)
-- [Wydajność i lokalność cache](../13_wzorce_i_architektura/05_wydajnosc_i_zero_cost.md)
+- [Wydajność i lokalność cache](../20_wydajnosc_i_optymalizacja/01_wydajnosc_i_zero_cost.md)

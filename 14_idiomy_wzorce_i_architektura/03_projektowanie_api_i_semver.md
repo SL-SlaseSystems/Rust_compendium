@@ -79,4 +79,4 @@ związać twoją wersję z SemVer zależności.
 
 - [Moduły i widoczność](../08_moduly_cargo_i_workspaces/01_moduly_sciezki_i_widocznosc.md)
 - [Własne błędy](../07_obsluga_bledow/04_wlasne_bledy_i_api.md)
-- [`unsafe` i soundness](../zaawansowane/01_unsafe_i_soundness.md)
+- [`unsafe` i soundness](../21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md)
