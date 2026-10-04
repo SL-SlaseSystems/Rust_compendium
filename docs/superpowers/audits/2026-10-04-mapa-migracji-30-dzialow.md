@@ -2,6 +2,9 @@
 
 Data audytu: 4 października 2026 r.
 
+Status: migracja wykonana i zweryfikowana. Dowody, macierz kontroli oraz
+backlog dalszej rozbudowy opisuje [wynik migracji](2026-10-04-wynik-migracji-30-dzialow.md).
+
 ## Stan bazowy
 
 Mapa opisuje migrację z gałęzi `codex/rozbudowa-rdzenia-rust` po commicie
@@ -119,4 +122,3 @@ one ponownie skierowane do kanonicznego działu `03_ownership_i_pamiec`.
 | `rozwiazania/01_wprowadzenie/02_instalacja_i_toolchain.md` | `rozwiazania/01_wprowadzenie_i_toolchain/02_instalacja_i_toolchain.md` | `move` |
 | `rozwiazania/01_wprowadzenie/03_pierwszy_program.md` | `rozwiazania/01_wprowadzenie_i_toolchain/03_pierwszy_program.md` | `move` |
 | `rozwiazania/01_wprowadzenie/04_cargo_w_praktyce.md` | `rozwiazania/01_wprowadzenie_i_toolchain/04_cargo_w_praktyce.md` | `move` |
-
