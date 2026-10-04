@@ -20,6 +20,38 @@ LINK_PATTERN = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
 FENCE_PATTERN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 EXERCISE_ID_PATTERN = re.compile(r"`([A-Z]\d{2}-\d+)`")
 LIST_ITEM_PATTERN = re.compile(r"^([ \t]*)([-+*]|\d{1,9}[.)])([ \t]+)")
+EXPECTED_SECTION_DIRS = (
+    "01_wprowadzenie_i_toolchain",
+    "02_podstawy_jezyka",
+    "03_ownership_i_pamiec",
+    "04_struktury_enumy_i_wzorce",
+    "05_generics_traits_i_system_typow",
+    "06_kolekcje_iteratory_i_closures",
+    "07_obsluga_bledow",
+    "08_moduly_cargo_i_workspaces",
+    "09_dokumentacja_testowanie_i_jakosc",
+    "10_wspolbieznosc",
+    "11_async_rust",
+    "12_makra",
+    "13_io_siec_i_protokoly",
+    "14_idiomy_wzorce_i_architektura",
+    "15_aplikacje_cli",
+    "16_web_i_api",
+    "17_bazy_danych_i_persystencja",
+    "18_serializacja_konfiguracja_i_integracje",
+    "19_runtime_pamiec_i_kompilator",
+    "20_wydajnosc_i_optymalizacja",
+    "21_unsafe_soundness_i_model_pamieci",
+    "22_ffi_i_interoperacyjnosc",
+    "23_no_std_allocatory_i_embedded",
+    "24_wasm_i_wieloplatformowosc",
+    "25_debugowanie_i_utrzymanie",
+    "26_testowanie_zaawansowane_fuzzing_i_miri",
+    "27_bezpieczenstwo_aplikacji",
+    "28_ci_cd_i_release_engineering",
+    "29_observability_i_produkcja",
+    "30_projekty_przekrojowe",
+)
 
 
 def discover_markdown(root: Path) -> list[Path]:
@@ -236,6 +268,29 @@ def validate_markdown(root: Path, files: list[Path]) -> list[str]:
     return problems
 
 
+def validate_section_structure(root: Path) -> list[str]:
+    """Validate the canonical section directories and root navigation."""
+    root = root.resolve()
+    problems: list[str] = []
+    root_readme = root / "README.md"
+    root_text = root_readme.read_text(encoding="utf-8") if root_readme.is_file() else ""
+    navigation_targets = {
+        _link_target(raw_target)[0] for raw_target in LINK_PATTERN.findall(root_text)
+    }
+
+    for section in EXPECTED_SECTION_DIRS:
+        readme_target = f"{section}/README.md"
+        if not (root / readme_target).is_file():
+            problems.append(f"brak README działu: {readme_target}")
+        if readme_target not in navigation_targets:
+            problems.append(f"README.md: brak linku do działu: {readme_target}")
+
+    if (root / "zaawansowane").exists():
+        problems.append("stary katalog nadal istnieje: zaawansowane/")
+
+    return problems
+
+
 def main(argv: list[str] | None = None) -> int:
     arguments = sys.argv[1:] if argv is None else argv
     if len(arguments) != 1:
@@ -247,6 +302,7 @@ def main(argv: list[str] | None = None) -> int:
         print("Brak plików Markdown.", file=sys.stderr)
         return 1
     problems = validate_markdown(root, files)
+    problems.extend(validate_section_structure(root))
     if problems:
         print("\n".join(problems), file=sys.stderr)
         return 1

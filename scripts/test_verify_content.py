@@ -8,10 +8,46 @@ import textwrap
 import unittest
 from pathlib import Path
 
-from scripts.verify_content import discover_markdown, validate_markdown
+from scripts.verify_content import (
+    discover_markdown,
+    validate_markdown,
+    validate_section_structure,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_SECTION_DIRS_FOR_TEST = (
+    "01_wprowadzenie_i_toolchain",
+    "02_podstawy_jezyka",
+    "03_ownership_i_pamiec",
+    "04_struktury_enumy_i_wzorce",
+    "05_generics_traits_i_system_typow",
+    "06_kolekcje_iteratory_i_closures",
+    "07_obsluga_bledow",
+    "08_moduly_cargo_i_workspaces",
+    "09_dokumentacja_testowanie_i_jakosc",
+    "10_wspolbieznosc",
+    "11_async_rust",
+    "12_makra",
+    "13_io_siec_i_protokoly",
+    "14_idiomy_wzorce_i_architektura",
+    "15_aplikacje_cli",
+    "16_web_i_api",
+    "17_bazy_danych_i_persystencja",
+    "18_serializacja_konfiguracja_i_integracje",
+    "19_runtime_pamiec_i_kompilator",
+    "20_wydajnosc_i_optymalizacja",
+    "21_unsafe_soundness_i_model_pamieci",
+    "22_ffi_i_interoperacyjnosc",
+    "23_no_std_allocatory_i_embedded",
+    "24_wasm_i_wieloplatformowosc",
+    "25_debugowanie_i_utrzymanie",
+    "26_testowanie_zaawansowane_fuzzing_i_miri",
+    "27_bezpieczenstwo_aplikacji",
+    "28_ci_cd_i_release_engineering",
+    "29_observability_i_produkcja",
+    "30_projekty_przekrojowe",
+)
 
 
 class MarkdownFixture(unittest.TestCase):
@@ -84,6 +120,13 @@ class MarkdownFixture(unittest.TestCase):
             - [Spis treści](../README.md)
             """,
         )
+
+    def write_valid_section_structure(self) -> None:
+        navigation = ["# Kompendium", ""]
+        for section in EXPECTED_SECTION_DIRS_FOR_TEST:
+            self.write(f"{section}/README.md", f"# {section}\n")
+            navigation.append(f"- [{section}]({section}/README.md)")
+        self.write("README.md", "\n".join(navigation))
 
 
 class ValidateMarkdownTests(MarkdownFixture):
@@ -360,9 +403,44 @@ class DiscoverMarkdownTests(MarkdownFixture):
         self.assertEqual(discovered, ["README.md", "chapter/kept.md"])
 
 
+class ValidateSectionStructureTests(MarkdownFixture):
+    def test_reports_missing_section_readmes(self) -> None:
+        self.write("README.md", "")
+
+        problems = validate_section_structure(self.root)
+
+        self.assertIn(
+            "brak README działu: 01_wprowadzenie_i_toolchain/README.md",
+            problems,
+        )
+        self.assertIn(
+            "brak README działu: 30_projekty_przekrojowe/README.md",
+            problems,
+        )
+
+    def test_reports_section_missing_from_root_navigation(self) -> None:
+        navigation: list[str] = ["# Kompendium", ""]
+        for section in EXPECTED_SECTION_DIRS_FOR_TEST:
+            self.write(f"{section}/README.md", f"# {section}\n")
+            if section != "17_bazy_danych_i_persystencja":
+                navigation.append(f"- [{section}]({section}/README.md)")
+        self.write("README.md", "\n".join(navigation))
+
+        problems = validate_section_structure(self.root)
+
+        self.assertEqual(
+            problems,
+            [
+                "README.md: brak linku do działu: "
+                "17_bazy_danych_i_persystencja/README.md"
+            ],
+        )
+
+
 class CliTests(MarkdownFixture):
     def test_cli_returns_zero_for_valid_content_and_one_for_invalid_content(self) -> None:
         self.write_valid_expanded_chapter()
+        self.write_valid_section_structure()
         valid = subprocess.run(
             ["python3", str(PROJECT_ROOT / "scripts/verify_content.py"), str(self.root)],
             capture_output=True,
@@ -384,6 +462,7 @@ class CliTests(MarkdownFixture):
 
 class VerifyWrapperTests(MarkdownFixture):
     def test_runs_fences_indented_by_up_to_three_spaces_only(self) -> None:
+        self.write_valid_section_structure()
         scripts = self.root / "scripts"
         scripts.mkdir()
         shutil.copy2(PROJECT_ROOT / "scripts/verify.sh", scripts / "verify.sh")
@@ -450,6 +529,7 @@ printf '%s\\n' "$*" >> "$RUSTDOC_LOG"
         self.assertNotIn("chapter/four-spaces.md", rustdoc_calls)
 
     def test_skips_only_atlas_rustdoc_and_keeps_chapters_and_solutions(self) -> None:
+        self.write_valid_section_structure()
         scripts = self.root / "scripts"
         scripts.mkdir()
         shutil.copy2(PROJECT_ROOT / "scripts/verify.sh", scripts / "verify.sh")
