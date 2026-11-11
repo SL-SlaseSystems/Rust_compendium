@@ -12,10 +12,10 @@ Obsługa błędów, pliki i procesy, Cargo, testy oraz podstawy architektury apl
 
 ## Kolejność materiałów
 
-1. Projektowanie komend, argumentów i kodów wyjścia.
-2. Konfiguracja warstwowa: argumenty, środowisko i pliki.
-3. Strumienie standardowe, potoki i obsługa sygnałów.
-4. Testy end-to-end oraz dystrybucja binariów.
+1. [Komendy, argumenty, kody wyjścia i konfiguracja](01_komendy_argumenty_i_konfiguracja.md) — publiczny kontrakt CLI i scalanie argumentów, środowiska oraz plików.
+2. [Strumienie, sygnały, testy procesu i dystrybucja](02_strumienie_sygnaly_testy_i_dystrybucja.md) — potoki, anulowanie, testy end-to-end i artefakty dla targetu.
+
+Każdy rozdział zawiera trzy ćwiczenia z pełnymi rozwiązaniami; najpierw wykonaj je samodzielnie, potem porównaj kontrakty i przypadki graniczne.
 
 ## Po tym dziale
 

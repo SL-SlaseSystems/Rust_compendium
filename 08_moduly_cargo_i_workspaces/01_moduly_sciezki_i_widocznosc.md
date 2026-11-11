@@ -1,6 +1,15 @@
 [← Spis treści](../README.md)
+<!-- status: expanded -->
 
 # Moduły, ścieżki i widoczność
+
+## Cele
+
+Po tym rozdziale potrafisz:
+
+- odróżnić organizację plików od publicznego drzewa nazw;
+- ochronić niezmienniki przez prywatność i stabilną fasadę;
+
 
 Moduły tworzą hierarchię nazw i granice prywatności. Nie są tym samym co
 pliki: deklaracja `mod` włącza moduł do drzewa crate’a, a plik jest tylko
@@ -85,6 +94,61 @@ nie umieszczaj w nim wszystkiego.
 `mod siec;` może wskazywać `siec.rs` lub `siec/mod.rs`. Współczesny styl
 preferuje zwykle `siec.rs` z podmodułami w `siec/`. Sam plik bez deklaracji
 `mod` nie staje się częścią crate’a.
+
+
+## Model — osiągalność jest częścią kontraktu
+
+`pub` na elemencie nie oznacza automatycznie, że konsument może dotrzeć do niego przez dowolną ścieżkę. Wszystkie istotne segmenty ścieżki muszą być dostępne albo trzeba udostępnić publiczny re-export. Prywatny moduł może zawierać publiczny typ używany wewnętrznie i eksportowany pod krótszą nazwą. Pozwala to rozdzielić drzewo implementacji od drzewa obietnic dla użytkownika.
+
+~~~rust
+mod implementacja {
+    pub struct Limit(u16);
+    impl Limit {
+        pub fn nowy(n: u16) -> Option<Self> { (n > 0).then_some(Self(n)) }
+        pub fn wartosc(&self) -> u16 { self.0 }
+    }
+}
+pub use implementacja::Limit;
+fn main() {
+    let limit = Limit::nowy(8).unwrap();
+    assert_eq!(limit.wartosc(), 8);
+    assert!(Limit::nowy(0).is_none());
+}
+~~~
+
+Konsument ma korzystać z `Limit`, a nie z nazwy folderu implementacyjnego. Prywatne pole wymusza przejście przez konstruktor. Re-export nie otwiera dostępu do tego pola; widoczność typu i jego pól to oddzielne decyzje. Test jednostkowy umieszczony w module potomnym może widzieć prywatne elementy przodka, dlatego sam taki test nie potwierdza ergonomii publicznego interfejsu. Do tego służy także osobny test integracyjny.
+
+`use` nie włącza pliku i nie buduje zależności w Cargo. Skraca ścieżkę do istniejącego elementu. `mod` deklaruje element w drzewie crate’a; kopiowanie tej samej deklaracji do `main.rs` i `lib.rs` buduje dwa oddzielne drzewa, a nie współdzielony moduł. W pakiecie z biblioteką i binarium binarium powinno zwykle importować bibliotekę po nazwie crate’a. To zapobiega duplikowaniu typów, statycznych wartości i testów.
+
+Ograniczona widoczność musi wskazywać przodka. `pub(in crate::domena)` nie jest systemem list dostępu pozwalającym wskazać dowolny moduł sąsiadujący. Ułatwia dzielenie dużego subsystemu bez obietnicy dla całego crate’a. Rozszerzanie widoczności tylko po to, by uciszyć błąd importu, może niepotrzebnie otworzyć konstrukcję niepoprawnych obiektów.
+
+Importy globowe są użyteczne w małym, kontrolowanym prelude oraz w testach, lecz utrudniają ustalenie pochodzenia metody lub typu. Dodanie nowego eksportu do zależności może wprowadzić konflikt nazw. Jawny import z aliasem daje czytelną diagnostykę i mniej zależy od przyszłego wzrostu interfejsu. Moduły nie zapewniają izolacji procesu ani uprawnień systemowych: prywatność jest sprawdzaną przez kompilator granicą dostępu do nazw.
+
+## Diagnostyka kompilatora
+
+`E0603` zwykle wskazuje element prywatny, a `E0616` prywatne pole. Sprawdź zamierzoną ścieżkę eksportu i konstruktor przed dopisaniem `pub`. `E0432` lub `E0433` może oznaczać brak deklaracji `mod`, błędny import albo zależność niezadeklarowaną w manifeście; to różne warstwy. Komunikat o dwóch niezgodnych typach o podobnej nazwie może wynikać z powtórnego włączenia tego samego pliku do dwóch crate’ów.
+
+## Praktyka produkcyjna
+
+Najpierw projektuj małą publiczną fasadę, a dopiero potem układaj pliki według wygody zespołu. Przeniesienie prywatnego modułu jest zwykle łatwiejsze od zmiany eksportowanej ścieżki. Kontroluj publiczne re-exporty, bo również są zobowiązaniem wersjonowania. Dla szerokiego API sprawdzaj dokumentację wygenerowaną tak, jak widzi ją konsument. Unikaj cyklicznej logiki między modułami nawet wtedy, gdy kompilator akceptuje wzajemne odwołania; brak cyklu w Cargo nie gwarantuje prostego kierunku odpowiedzialności wewnątrz crate’a.
+
+## Sprawdź, czy rozumiesz
+
+- Dlaczego publiczny typ wewnątrz prywatnego modułu może być dostępny przez re-export?
+- Co się stanie po zadeklarowaniu tego samego modułu w `lib.rs` i `main.rs`?
+- Dlaczego `pub(in ...)` musi wskazywać przodka?
+
+## Ćwiczenia
+
+- `B05-1` — podstawowe: Zamknij dodatni limit w strukturze z prywatnym polem i walidowanym konstruktorem. [Rozwiązanie](../rozwiazania/08_moduly_cargo_i_workspaces/01_moduly_sciezki_i_widocznosc.md#b05-1).
+- `B05-2` — praktyczne: Ukryj implementacyjny moduł i udostępnij typ przez publiczną fasadę. [Rozwiązanie](../rozwiazania/08_moduly_cargo_i_workspaces/01_moduly_sciezki_i_widocznosc.md#b05-2).
+- `B05-3` — pogłębione: Wyjaśnij i rozpisz drzewo plików biblioteki z cienkim binarium bez podwójnego `mod`. [Rozwiązanie](../rozwiazania/08_moduly_cargo_i_workspaces/01_moduly_sciezki_i_widocznosc.md#b05-3).
+
+## Źródła
+
+Kontrakty zweryfikowano 11 listopada 2026. Przykłady `std` przeznaczono dla Rust 1.90, Edition 2024; źródła internetowe mogą opisywać nowsze wydanie.
+
+- [Prywatność i widoczność](https://doc.rust-lang.org/reference/visibility-and-privacy.html)
 
 ## Powiązane tematy
 

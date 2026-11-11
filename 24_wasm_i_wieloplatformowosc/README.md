@@ -12,10 +12,8 @@ Cargo, features i `cfg`, serializacja, FFI oraz podstawy środowiska docelowego.
 
 ## Kolejność materiałów
 
-1. Zacznij od [wspólnego wprowadzenia do WebAssembly, `no_std` i embedded](../23_no_std_allocatory_i_embedded/01_wasm_no_std_i_embedded.md).
-2. Oddziel przenośny rdzeń od adapterów platformowych.
-3. Poznaj granicę host–guest, format danych i koszt kopiowania.
-4. Testuj na rzeczywistych targetach oraz w środowisku uruchomieniowym hosta.
+1. [WebAssembly: host, guest, przeglądarka i WASI](01_wasm_host_guest_i_wasi.md) — pełne omówienie, przykłady, pytania i ćwiczenia z rozwiązaniami.
+2. [Przenośny rdzeń i weryfikacja wielu targetów](02_przenosny_rdzen_i_testy_targetow.md) — pełne omówienie, przykłady, pytania i ćwiczenia z rozwiązaniami.
 
 ## Po tym dziale
 
@@ -24,3 +22,7 @@ Potrafisz rozdzielić logikę przenośną od integracji platformowej i świadomi
 ## Co dalej
 
 Rozwiń osobne materiały dla WASI, przeglądarki i wybranego toolchainu JavaScript. Nie zakładaj, że zachowanie natywne automatycznie przenosi się na WASM.
+
+## Ćwiczenia i rozwiązania
+
+Zadania znajdują się w rozdziałach. [Rozwiązania tego działu](../rozwiazania/24_wasm_i_wieloplatformowosc/README.md) zawierają omówienie decyzji i przypadków brzegowych.

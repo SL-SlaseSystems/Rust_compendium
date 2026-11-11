@@ -8,14 +8,14 @@ Dla osób łączących aplikację z plikami konfiguracyjnymi, formatami danych, 
 
 ## Wymagania wstępne
 
-Serdeczne opanowanie struktur i enumów, obsługi błędów, modułów oraz I/O.
+Dobra znajomość struktur i enumów, obsługi błędów, modułów oraz I/O.
 
 ## Kolejność materiałów
 
-1. Model danych i jawna ewolucja formatu.
-2. Serializacja tekstowa i binarna oraz walidacja granic.
-3. Konfiguracja warstwowa i bezpieczne zarządzanie sekretami.
-4. Retry, idempotencja, timeouty i odporność integracji.
+1. [Formaty danych, serializacja i walidacja granic](01_formaty_serializacja_i_walidacja.md) — ewolucja modelu, tekst, ramki binarne i walidacja.
+2. [Konfiguracja, sekrety, retry i idempotencja integracji](02_konfiguracja_sekrety_i_odpornosc_integracji.md) — warstwy konfiguracji, rotacja i odporność na nieznany wynik.
+
+Każdy rozdział zawiera trzy ćwiczenia z pełnymi rozwiązaniami; najpierw wykonaj je samodzielnie, potem porównaj kontrakty i przypadki graniczne.
 
 ## Po tym dziale
 

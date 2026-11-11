@@ -4,6 +4,12 @@ Polskojęzyczna ścieżka od pierwszego programu do projektowania produkcyjnych 
 
 > Przykłady znajdują się bezpośrednio w rozdziałach. Zachowane materiały eksperckie są częścią odpowiednich działów, a nie osobnym dodatkiem bez kontekstu.
 
+## Zakres rozbudowanego wydania
+
+Wszystkie 30 działów zawiera właściwe opracowania tematyczne. Rozdziały łączą model mechanizmu, precyzyjne reguły, wyjaśnione przykłady, diagnostykę, koszty i kompromisy produkcyjne. Pytania kontrolne oraz ćwiczenia na trzech poziomach prowadzą do osobnych rozwiązań. [Atlas 150 mechanizmów](150-zaawansowanych-mechanizmow-rust.md) wskazuje kanoniczne omówienie każdego punktu i wyjaśnia jego granice.
+
+**Wersje i sprawdzanie:** materiały używają Edition 2024. Testy wykonywalnych przykładów przeprowadzono lokalnym Rust 1.90.0; opis nowszego API, nightly, bibliotek zewnętrznych i platform docelowych jest oznaczony osobno. Sprawdzenie aktualnej dokumentacji nie oznacza wykonania kodu na jej toolchainie. Szczegóły zawiera [rejestr źródeł](zrodla.md).
+
 ## Jak korzystać z kompendium
 
 - **Pełna ścieżka:** przejdź działy 01–14, wybierz zastosowanie z 15–18, pogłęb mechanizmy w 19–29 i zakończ projektem z działu 30.
@@ -107,7 +113,7 @@ Jeżeli znasz już język z typami statycznymi, przejdź w tej kolejności:
 
 ## Weryfikacja
 
-Pełna kontrola linków, struktury, manifestu migracji oraz wykonywalnych przykładów:
+Kontrola linków, struktury, manifestu migracji oraz wszystkich bloków `rust`/`compile_fail`, w tym atlasu i rozwiązań:
 
 ~~~text
 bash scripts/verify.sh
@@ -119,4 +125,4 @@ Same testy walidatora treści:
 python3 -m unittest scripts/test_verify_content.py -v
 ~~~
 
-Skrypt wypisuje używaną wersję `rustdoc`. Część materiałów oznaczonych jako **third-party**, narzędziowych lub wymagających konkretnej platformy pozostaje przykładem opisowym.
+Skrypt wypisuje używaną wersję `rustdoc`. W środowisku bez `rustdoc` pomija testy kodu, co nie stanowi potwierdzenia poprawności przykładów. W razie błędu linkowania sprawdź zgodność linkera i wskazanego SDK. Część materiałów oznaczonych jako **third-party**, narzędziowych lub wymagających konkretnej platformy pozostaje przykładem opisowym.

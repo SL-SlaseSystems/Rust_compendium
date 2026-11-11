@@ -3,7 +3,7 @@
 
 # Instalacja i toolchain
 
-> Baza dokumentacji: Rust 1.98.1, Edition 2024, zweryfikowane 10 września 2026 r. Lokalne polecenia wykonano na Rust 1.90.0; nie są potwierdzeniem działania na 1.98.1. Opis dotyczy **stable**, poza miejscami oznaczonymi inaczej.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
 
 ## Cele
 
@@ -25,9 +25,9 @@ Kanały `stable`, `beta` i `nightly` mają różne role. `stable` jest właściw
 
 Komponent jest częścią dystrybucji konkretnego toolchainu. `rustc` i `cargo` są podstawowe; `rustfmt`, `clippy`, `rust-docs`, `rust-src` i `rust-analyzer` są dodatkami, których dostępność może różnić się między kanałami i wydaniami. Profil `minimal` instaluje `rustc`, `rust-std` i `cargo`; `default` dodaje zwykłe narzędzia, w tym dokumentację, `rustfmt` i `clippy`; `complete` próbuje zainstalować wszystkie dostępne komponenty. Ten ostatni profil jest zwykle niepotrzebny i może być niedostępny, gdy brakuje komponentu dla kanału lub hosta. W CI wybieraj `minimal` i deklaruj wymagane komponenty jawnie. Sprawdzaj dostępność przez `rustup component list --toolchain <nazwa>`. Zobacz [model komponentów rustup](https://rust-lang.github.io/rustup/concepts/components.html).
 
-Wersję współdzieloną przez zespół zapisuj w repozytorium. Ten blok jest konfiguracją, nie programem, dlatego używa `toml`.
+Wersję współdzieloną przez zespół zapisuj w repozytorium. Ten blok jest konfiguracją, nie programem, dlatego używa `text`.
 
-~~~toml
+~~~text
 [toolchain]
 channel = "1.98.1"
 profile = "minimal"
@@ -60,6 +60,14 @@ fn main() {
 }
 ~~~
 
+## Dowód wyboru środowiska
+
+Zapisuj wynik `rustc --version --verbose` oraz `cargo --version` w logu CI. Pierwsze polecenie podaje także host i identyfikator kompilatora. Zestaw je z `rustup show active-toolchain`: sama obecność wersji na liście zainstalowanych narzędzi nie dowodzi, że bieżący proces jej używa. IDE, terminal i runner CI mogą dziedziczyć różny `PATH` oraz `RUSTUP_TOOLCHAIN`.
+
+Override katalogowy i plik projektu mają szczególną regułę bliskości. Plik w katalogu dziecka wygrywa z override'em odległego rodzica, ale override ustawiony w tym samym katalogu ma pierwszeństwo przed plikiem. Dlatego nie wystarcza slogan „plik projektu zawsze wygrywa”. Skrót `+toolchain` oraz zmienna `RUSTUP_TOOLCHAIN` pozostają wyżej w hierarchii. [Oficjalny opis wyboru](https://rust-lang.github.io/rustup/overrides.html) potwierdza tę regułę; sprawdzono 11 listopada 2026 r.
+
+MSRV musi być zgodne z edition. Edition 2024 wymaga co najmniej Rust 1.85; test wersją 1.74 ma sens jedynie dla pakietu z wcześniejszą edition. Dla obecnego materiału testowanego na 1.90 można przypiąć 1.90 w zadaniu kontrolnym, ale nie wolno z tego wywnioskować, że jest to najniższa możliwa wersja wszystkich zależności. Deklaracja wsparcia wymaga osobnego sprawdzenia najniższej obiecanej wersji.
+
 ## Diagnostyka kompilatora
 
 - Sugestia `rustup target add` lub `can't find crate for core` zwykle oznacza brak `rust-std` dla wybranego targetu i toolchainu.
@@ -67,11 +75,18 @@ fn main() {
 - `component ... is unavailable` oznacza niedostępność składnika dla kanału, wersji lub hosta. Sprawdź listę komponentów i przypnij wersję.
 - Gdy current stable przechodzi lokalnie, lecz CI wspiera niższe MSRV (minimalną wspieraną wersję Rusta), błąd może wynikać z API lub semantyki po MSRV. `package.rust-version` komunikuje MSRV Cargo; zobacz [Cargo: `rust-version`](https://doc.rust-lang.org/cargo/reference/rust-version.html).
 
+Żądanie bramki eksperymentalnej w źródle nie przełącza toolchainu. Poniżej kanał **stable** odrzuca atrybut `feature` przez E0554. Gdy projekt celowo korzysta z **nightly**, musi wybrać nightly osobno oraz świadomie zaakceptować niestabilność używanej bramki `box_patterns`. Ten przykład testuje odmowę stable, a nie zachowanie tej funkcji języka.
+
+~~~compile_fail
+#![feature(box_patterns)]
+fn main() {}
+~~~
+
 ## Praktyka produkcyjna
 
 Dokumentację offline instaluje `rust-docs`; potem `rustup doc --std` lub `rustup doc --book` otwiera lokalną kopię. Przy pracy bez sieci potrzebne są wcześniej toolchainy, komponenty, targety i cache zależności — cache Cargo jest osobnym problemem od `rust-docs`.
 
-W CI rozdziel dwa tory. Tor MSRV przypina dokładną najniższą wersję, np. `cargo +1.74.0 test`, i chroni deklarowaną kompatybilność. Tor current stable aktualizuje się świadomie i uruchamia zwykłą macierz testów, formatowanie oraz linty. **nightly** może być osobnym sygnałem wczesnego ostrzegania, ale nie zastępuje stable ani MSRV. Aktualizację `rust-toolchain.toml`, `Cargo.lock` i obrazu CI przeglądaj razem z wynikiem testów.
+W CI rozdziel dwa tory. Tor MSRV przypina dokładną najniższą wersję, np. `cargo +1.85.0 test` dla Edition 2024, i chroni deklarowaną kompatybilność. Tor current stable aktualizuje się świadomie i uruchamia zwykłą macierz testów, formatowanie oraz linty. **nightly** może być osobnym sygnałem wczesnego ostrzegania, ale nie zastępuje stable ani MSRV. Aktualizację `rust-toolchain.toml`, `Cargo.lock` i obrazu CI przeglądaj razem z wynikiem testów.
 
 ## Sprawdź, czy rozumiesz
 
@@ -84,6 +99,10 @@ W CI rozdziel dwa tory. Tor MSRV przypina dokładną najniższą wersję, np. `c
 - `W02-1` — podstawowe: w katalogu potomnym projektu opisz, który toolchain wybierze `cargo`, gdy projekt ma `rust-toolchain.toml`, katalog nadrzędny ma override, a polecenie brzmi `cargo +beta check`. Podaj kolejność dowodzenia i sposób sprawdzenia. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/02_instalacja_i_toolchain.md#w02-1).
 - `W02-2` — praktyczne: zaprojektuj `rust-toolchain.toml` dla repozytorium używającego Rust 1.98.1, `rustfmt`, `clippy`, dokumentacji offline i targetu `wasm32-unknown-unknown`. Wyjaśnij, czego plik nie gwarantuje. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/02_instalacja_i_toolchain.md#w02-2).
 - `W02-3` — pogłębione: CI hostowane na macOS nie linkuje programu dla `armv7-unknown-linux-gnueabihf` mimo zainstalowanego targetu. Ułóż kolejność diagnostyki i minimalny plan naprawy, uwzględniając linker, ABI i MSRV. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/02_instalacja_i_toolchain.md#w02-3).
+
+## Źródła i zakres stabilności
+
+Wybór narzędzi: [rustup: overrides](https://rust-lang.github.io/rustup/overrides.html). Instalowane komponenty: [rustup: components](https://rust-lang.github.io/rustup/concepts/components.html). Minimum Edition 2024: [Edition Guide](https://doc.rust-lang.org/edition-guide/rust-2024/index.html). Sprawdzono 11 listopada 2026 r.
 
 ## Powiązane tematy
 

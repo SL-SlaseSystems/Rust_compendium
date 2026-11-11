@@ -16,6 +16,8 @@ Ownership, lifetimes, traits i doświadczenie z komunikatami kompilatora.
 
 ## Po tym dziale
 
+Każdy rozdział jest pogłębionym opracowaniem z pytaniami kontrolnymi, trzema ćwiczeniami i pełnymi rozwiązaniami.
+
 Umiesz odróżnić stabilne gwarancje języka od szczegółów bieżącej implementacji i lepiej diagnozować złożone konflikty pożyczek.
 
 ## Co dalej

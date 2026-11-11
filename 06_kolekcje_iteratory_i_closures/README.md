@@ -22,6 +22,20 @@ Ownership, struktury, enumy, generics i podstawy traits.
 
 Potrafisz dobrać kolekcję, bezpiecznie obsłużyć tekst Unicode i budować potoki iteratorów o kontrolowanym ownership.
 
+## Jak pracować z działem
+
+Zacznij od profilu operacji na danych: rozmiaru, kolejności, wyszukiwania i modyfikacji. Potem oddziel bajty UTF-8 od wartości `char` oraz grafemów. Dopiero znając własność danych, przejdź do closure i leniwych iteratorów; wtedy typ `Item` i sposób capture przestają być ukrytymi szczegółami.
+
+Zestawy `A24`–`A28` prowadzą od długości oraz pojemności wektora do kolejki priorytetowej, bezpiecznego prefiksu tekstu, deterministycznego raportu i własnego iteratora. Każde zadanie ma poziom oraz odsyłacz do pełnego rozwiązania. Rozwiązania opisują także to, czego dany kontrakt nie zapewnia: bajtowy prefiks może przerwać grafem, a porządek grup nie definiuje automatycznie porządku elementów wewnątrz grupy.
+
+## Punkt kontrolny
+
+Potrafisz dobrać `Vec`, `VecDeque`, `BinaryHeap`, `HashMap` lub `BTreeMap` według wymaganych operacji. Umiesz przewidzieć, kiedy callback potrzebuje `FnMut`, a kiedy `FnOnce`, i co zostanie skonsumowane przez iterator. Rozpoznajesz krótki obieg błędu bez mylenia go z wycofaniem wcześniejszych skutków.
+
+Do obsługi błędów przejdź z umiejętnością zebrania `Iterator<Item = Result<T, E>>` do `Result<Vec<T>, E>` i wskazania granicy, na której należy dodać kontekst domenowy.
+
 ## Co dalej
 
 Przejdź do obsługi błędów; `Option` i `Result` naturalnie łączą się z iteratorami i combinatorami.
+
+Następny dział: [Obsługa błędów](../07_obsluga_bledow/README.md).

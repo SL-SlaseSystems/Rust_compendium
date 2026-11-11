@@ -3,7 +3,7 @@
 
 # Pierwszy program
 
-> Stan opisu: Rust 1.98.1, Edition 2024, zweryfikowany 10 września 2026 r. Przykłady wykonano lokalnie przez Rust 1.90.0, więc nie są deklaracją testu na 1.98.1.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
 
 ## Cele
 
@@ -56,6 +56,27 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 To model mentalny aktualnej implementacji, nie stabilny interfejs `rustc`: parsowanie buduje `AST`; rozwijanie makr, rozwiązywanie nazw i wczesne linty przygotowują program; `HIR` służy inferencji, type checking i doborowi `trait`; po nim `THIR` wspiera wzorce oraz wyczerpalność, a konstrukcja `MIR`; borrow checking działa na `MIR`. Potem następują codegen, zwykle przez LLVM, i linkowanie. [Rustc Dev Guide](https://rustc-dev-guide.rust-lang.org/overview.html) opisuje szczegóły.
 
+## Oddzielenie wejścia od logiki
+
+Pierwszy działający program powinien mieć wyraźny kontrakt wejścia. Czy spacje są dopuszczalne? Czy liczba ujemna oznacza błąd? Czy pusty argument różni się od braku argumentu? `parse::<u32>()` samo nie usuwa spacji, a `trim` jest świadomą zmianą tego kontraktu. Warto przetestować te decyzje w funkcji przyjmującej `&str`, aby wynik nie zależał od argumentów procesu.
+
+~~~rust
+fn podwoj(wejscie: &str) -> Result<u32, &'static str> {
+    let liczba: u32 = wejscie.trim().parse().map_err(|_| "oczekiwano u32")?;
+    liczba.checked_mul(2).ok_or("wynik poza zakresem")
+}
+
+fn main() {
+    assert_eq!(podwoj(" 21 "), Ok(42));
+    assert_eq!(podwoj("-1"), Err("oczekiwano u32"));
+    assert_eq!(podwoj("4294967295"), Err("wynik poza zakresem"));
+}
+~~~
+
+Pierwsze `?` propaguje błąd po zamianie go na komunikat domenowy. Ostatnia linia zwraca `Result` bez dodatkowego opakowania. `checked_mul` czyni zachowanie przy przepełnieniu niezależnym od profilu kompilacji. Komunikaty są tu krótkimi literałami; większa biblioteka zwykle potrzebuje własnego enuma błędów, aby wywołujący rozróżniał przypadki bez analizowania tekstu.
+
+`println!` zapisuje na standardowe wyjście, które może być protokołem odczytywanym przez inny program. Diagnostykę kieruj przez `eprintln!` na standardowy strumień błędów. Przy wymaganiu pełnej kontroli błędów zapisu użyj `std::io::Write` i `Result`, ponieważ makra drukujące mogą panikować przy nieudanym zapisie. Nie mieszaj raportu danych z komunikatem debugowania.
+
 ## Diagnostyka kompilatora
 
 Średnik odrzuca wartość `42`; blok bez końcowego wyrażenia ocenia się do `()`, nie `i32`. Usuń go, gdy wartość ma być zwrócona.
@@ -89,6 +110,10 @@ W binarium traktuj `main` jako cienką granicę: zbuduj konfigurację, wywołaj 
 - `W03-1` — podstawowe: przewidź wynik `let x = { 2 + 3 }; println!("{x}");` i wyjaśnij rolę bloku. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/03_pierwszy_program.md#w03-1).
 - `W03-2` — praktyczne: napraw funkcję `fn f() -> String { String::from("ok"); }` bez zmiany jej kontraktu. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/03_pierwszy_program.md#w03-2).
 - `W03-3` — pogłębione: napisz `main -> Result`, która parsuje argument tekstowy i propaguje błąd bez `unwrap`. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/03_pierwszy_program.md#w03-3).
+
+## Źródła i zakres stabilności
+
+Granica procesu: [Termination](https://doc.rust-lang.org/std/process/trait.Termination.html). Błędy drukowania: [println!](https://doc.rust-lang.org/std/macro.println.html). Programowe argumenty: [args](https://doc.rust-lang.org/std/env/fn.args.html).
 
 ## Powiązane tematy
 

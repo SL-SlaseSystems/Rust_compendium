@@ -1,6 +1,15 @@
 [← Spis treści](../README.md)
+<!-- status: expanded -->
 
 # Lock-free i problem ABA
+
+## Cele
+
+Po tym rozdziale potrafisz:
+
+- oddzielić atomową aktualizację wskaźnika od odzyskiwania pamięci;
+- ocenić ABA, postęp i granice narzędzi testowych;
+
 
 Algorytm **lock-free** gwarantuje postęp systemu jako całości: jakiś wątek
 zakończy operację. **Wait-free** daje skończoną liczbę kroków każdemu
@@ -99,6 +108,59 @@ wolniejszy od mutexa usypiającego wątek.
 
 Najpierw użyj `Mutex`, kanału albo sprawdzonej kolekcji. Lock-free wybieraj po
 profilu i z planem audytu.
+
+
+## Model — tożsamość, życie i postęp
+
+Poprawna lock-free struktura potrzebuje co najmniej trzech argumentów: gdzie operacja staje się widoczna jako pojedyncza zmiana, dlaczego czytane obiekty nadal żyją oraz co gwarantuje postęp. Udany CAS może być punktem linearyzacji, ale nie rozwiązuje dwóch pozostałych pytań. „Nie używam mutexa” nie jest definicją lock-free: kod może czekać na inny wątek przez aktywne kręcenie się.
+
+ABA nie wymaga zwolnienia pamięci. Wystarczy, że obserwowana wartość przejdzie A → B → A, a poprawność zależy od informacji o zdarzeniach pośrednich. Recykling adresów czyni problem szczególnie groźnym dla wskaźników, lecz semantyczne ABA występuje też przy indeksach i stanach protokołu. Jeżeli algorytm potrzebuje tylko aktualnego maksimum, powrót do starej wartości może być niemożliwy albo nieistotny; problem ocenia się względem niezmiennika.
+
+~~~rust
+use std::sync::atomic::{AtomicUsize, Ordering};
+fn main() {
+    let stan = AtomicUsize::new(1);
+    let oczekiwane = stan.load(Ordering::SeqCst);
+    stan.store(2, Ordering::SeqCst);
+    stan.store(1, Ordering::SeqCst);
+    assert_eq!(stan.compare_exchange(oczekiwane, 3, Ordering::SeqCst, Ordering::SeqCst), Ok(1));
+}
+~~~
+
+CAS nie zna historii. Nawet SeqCst nie nakazuje mu odrzucać powrotu do tej samej wartości. Ten samowystarczalny przykład pokazuje ograniczenie kontraktu API, a nie błąd bezpieczeństwa pamięci. W strukturze wskaźnikowej odczyt historycznej krawędzi listy po takim sukcesie może naruszyć cały algorytm.
+
+Znacznik wersji zwiększa ilość porównywanej informacji, ale ma ograniczony zakres. Po zawinięciu licznika stara para adres–wersja może wrócić. Alignment udostępnia tylko określoną liczbę niskich bitów; nie wolno zakładać, że dowolna platforma ma wolne bity w wysokiej części adresu. Ponadto trzeba sprawdzić szerokość i dostępność atomowego porównania całej reprezentacji. Tagging nie jest automatycznie mechanizmem ochrony czasu życia.
+
+W reclamation najpierw usuwa się węzeł z osiągalnej struktury, następnie odkłada do późniejszego odzyskania, a dopiero po odpowiednim warunku niszczy. Epoch-based reclamation może opóźniać sprzątanie, gdy uczestnik długo pozostaje aktywny. Hazard pointers wymagają poprawnej publikacji ochrony i ponownej weryfikacji odczytanego wskaźnika. W obu technikach shutdown, reentrancy i destructory są częścią kontraktu.
+
+Ścisłe provenance i odpowiednie operacje na wskaźnikach pomagają zachować informację o alokacji podczas manipulacji adresem. Nie dowodzą jednak, że alokacja nadal istnieje ani że aliasowanie jest poprawne. Przekonwertowanie pointera na liczbę i z powrotem nie jest uniwersalnym substytutem jawnego zarządzania czasem życia.
+
+## Diagnostyka kompilatora
+
+Kompilator zaakceptuje CAS o błędnej semantyce ABA, jeśli typy się zgadzają. Miri może wykryć wykonane niepoprawne dereferencje, ale nie udowodni ogólnego postępu. Model checker działa na opisanym modelu; test wykorzystujący zwykłe atomiki zamiast odpowiedników narzędzia może nie podlegać oczekiwanej eksploracji. Błąd braku atomiki określonej szerokości wymaga sprawdzenia `target_has_atomic` i projektu reprezentacji, a nie bezwarunkowego `unsafe`.
+
+## Praktyka produkcyjna
+
+Przed wdrożeniem porównaj zwykły mutex i sprawdzoną kolekcję **third-party**. Mierz nie tylko średnią przepustowość, ale też ogony opóźnień, zużycie CPU i tempo odzyskiwania pamięci. Określ zakres gwarancji postępu, uwzględniając allocator, destruktory oraz bibliotekę reclamation. Pod presją wiele nieudanych CAS może zdominować koszt pracy. Wybór lock-free powinien mieć uzasadniony cel, dokumentację dowodu oraz właściciela audytu; sam pozytywny stress test nie zamyka zadania poprawności.
+
+## Sprawdź, czy rozumiesz
+
+- Czy ABA wymaga użycia allocatora?
+- Dlaczego SeqCst nie pozwala CAS odtworzyć historii?
+- Co może zatrzymać odzyskiwanie pamięci w schemacie epokowym?
+
+## Ćwiczenia
+
+- `B18-1` — podstawowe: Pokaż sekwencję A → B → A, po której CAS nadal kończy się sukcesem. [Rozwiązanie](../rozwiazania/10_wspolbieznosc/06_lock_free_i_aba.md#b18-1).
+- `B18-2` — praktyczne: Rozpisz fazy usunięcia węzła i warunek jego bezpiecznego zniszczenia. [Rozwiązanie](../rozwiazania/10_wspolbieznosc/06_lock_free_i_aba.md#b18-2).
+- `B18-3` — pogłębione: Porównaj mutex i lock-free według postępu, opóźnień i pamięci dla przeciążonej kolejki. [Rozwiązanie](../rozwiazania/10_wspolbieznosc/06_lock_free_i_aba.md#b18-3).
+
+## Źródła
+
+Kontrakty zweryfikowano 11 listopada 2026. Przykłady `std` przeznaczono dla Rust 1.90, Edition 2024; źródła internetowe mogą opisywać nowsze wydanie.
+
+- [AtomicPtr i uwaga o ABA](https://doc.rust-lang.org/std/sync/atomic/struct.AtomicPtr.html#method.compare_exchange)
+- [Pointer provenance](https://doc.rust-lang.org/std/ptr/index.html#provenance)
 
 ## Powiązane tematy
 

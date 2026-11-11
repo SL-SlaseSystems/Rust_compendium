@@ -58,7 +58,7 @@ nazwę przy pierwszym użyciu.
 | MSRV | Minimum Supported Rust Version. |
 | newtype | Nowy typ jako struktura z jednym polem. |
 | NLL | Non-Lexical Lifetimes: analiza kończąca loans według użycia i przepływu. |
-| orphan rule | Zakaz implementowania obcego traitu dla obcego typu. |
+| orphan rule | Reguły lokalności implementacji traitu i pokrycia parametrów; lokalny typ może umożliwiać implementację obcego traitu przy spełnieniu szczegółowych warunków. |
 | ownership | Własność określająca, kto odpowiada za wartość i jej `Drop`. |
 | package | Jednostka Cargo opisana manifestem. |
 | panic | Nienormalne zakończenie bieżącego przepływu przez unwind lub abort. |
@@ -89,6 +89,31 @@ nazwę przy pierwszym użyciu.
 | wake | Sygnał dla executora, że task należy ponownie pollować. |
 | workspace | Grupa pakietów Cargo ze wspólnym lockfile i katalogiem build. |
 | ZST | Zero-Sized Type, typ o rozmiarze zero. |
+
+## Pojęcia projektowe i produkcyjne
+
+| Termin | Znaczenie i granica |
+|---|---|
+| authentication | Ustalenie tożsamości; samo nie przyznaje dostępu do konkretnego zasobu. |
+| authorization | Decyzja o dozwolonej operacji na zasobie dla ustalonej tożsamości. |
+| budget | Wspólny limit kosztu, czasu lub prób, obejmujący także kolejki i retry. |
+| cardinality | Liczba różnych kombinacji etykiet metryki; nieograniczone identyfikatory mogą mnożyć koszt backendu. |
+| deadline | Ostateczny termin całej operacji; różni się od ponawianego timeoutu każdej próby. |
+| drain | Faza zamykania: odmowa nowych prac i kontrolowane kończenie już przyjętych. |
+| error budget | Dopuszczona część niespełnienia SLO w określonym oknie i mierze. |
+| harness | Mały adapter uruchamiający badany kod w kontrolowanych warunkach testu/fuzzera. |
+| host / guest | Gospodarz udostępnia możliwości, gość wykonuje moduł, np. WebAssembly. |
+| idempotency | Powtórzenie logicznie tej samej operacji nie tworzy kolejnego skutku według ustalonego kontraktu. |
+| liveness probe | Kontrola, czy proces wymaga odzyskania działania, np. restartu; nie musi oznaczać gotowości do obsługi ruchu. |
+| readiness probe | Kontrola gotowości do przyjmowania nowych operacji. |
+| provenance artefaktu | Informacja o źródłach i procesie budowania; odrębna od provenance wskaźnika. |
+| round-trip | Własność odtworzenia modelu przez decode(encode(x)); wymaga założeń o reprezentacji i równości. |
+| SBOM | Software Bill of Materials: lista komponentów artefaktu; sama nie dowodzi ich bezpieczeństwa. |
+| shrinking | Upraszczanie wejścia zachowującego porażkę property testu. |
+| SLI | Service Level Indicator: mierzalny wskaźnik zachowania usługi z jawnym mianownikiem. |
+| SLO | Service Level Objective: cel dla SLI w określonym oknie. |
+| span | Okres i kontekst pracy w telemetrii; w diagnostyce kompilatora także zakres tekstu źródłowego. |
+| threat model | Opis aktywów, zagrożeń, granic zaufania i założeń ochrony. |
 
 ## Powiązane tematy
 

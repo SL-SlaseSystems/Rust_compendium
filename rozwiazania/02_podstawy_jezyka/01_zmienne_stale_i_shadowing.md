@@ -14,6 +14,18 @@ fn main() {
 }
 ~~~
 
+
+Wersja z parametrem sprawdza obie realne ścieżki. Typowanie wymaga pełnej inicjalizacji niezależnie od wyniku konkretnego testu.
+
+~~~rust
+fn wybierz(warunek: bool) -> i32 {
+    let wynik;
+    if warunek { wynik = 42; } else { wynik = 0; }
+    wynik
+}
+fn main() { assert_eq!(wybierz(true), 42); assert_eq!(wybierz(false), 0); }
+~~~
+
 ## P01-2
 
 Kolejne `let` opisują kolejne reprezentacje tego samego wejścia; `mut` nie jest potrzebne.
@@ -26,6 +38,9 @@ fn main() {
     assert_eq!(port, 8080);
 }
 ~~~
+
+
+`trim` pożycza pierwotny literał, a `parse` tworzy nową wartość liczbową. Shadowing wyraża kolejne reprezentacje portu i pozwala porzucić niepotrzebne nazwy pośrednie. `expect` jest tutaj dopuszczone dla stałych danych ćwiczenia; wejście z konfiguracji powinno zwracać `Result` i określać, czy port zero jest legalny w danej domenie.
 
 ## P01-3
 
@@ -48,3 +63,6 @@ fn main() {
     assert_eq!(*log.borrow(), ["nowy", "stary"]);
 }
 ~~~
+
+
+Gdyby zamiast drugiego `let x` użyto przypisania do `let mut x`, stara wartość zostałaby zniszczona podczas przypisania, a nie dopiero przy wyjściu z zakresu. NLL może skrócić pożyczkę dziennika, ale nie przenosi destruktorów znaczników do miejsc ich ostatniego użycia. Przy zasobie takim jak blokada lepiej ujawnić granicę wewnętrznym blokiem lub `drop` niż polegać na przesłoniętej nazwie.

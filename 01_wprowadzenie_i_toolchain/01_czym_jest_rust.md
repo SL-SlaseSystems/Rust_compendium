@@ -3,8 +3,8 @@
 
 # Czym jest Rust
 
-> Stan opisu: Rust 1.98.1, Edition 2024, zweryfikowany 10 września 2026 r.
-> Przykłady w tym rozdziale korzystają wyłącznie ze **stable** biblioteki standardowej.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
 
 ## Cele
 
@@ -50,6 +50,14 @@ Abstrakcje o zerowym koszcie (zero-cost abstractions), takie jak iteratory, gene
 
 Ten model przenosi część pracy na kompilację. Duże grafy zależności, wiele instancji generyków, złożone granice `trait` i trudne do wywnioskowania typy mogą wydłużyć kompilację, zwiększyć zużycie pamięci kompilatora oraz utrudnić diagnostykę. Są to kompromisy, nie wada ani dowód wyższości języka.
 
+## Co konkretnie mierzyć w prototypie
+
+Gwarancja języka jest własnością poprawnego programu, a nie dowodem, że każda użyta zależność jest poprawna. Bezpieczna funkcja biblioteki może opierać się wewnętrznie na `unsafe`; błąd tej implementacji narusza jej obietnicę. Przy audycie odróżnij używanie bezpiecznego API od dowodu poprawności wszystkich warstw pod nim. Dotyczy to również systemowych alokatorów i kodu obcego. Przegląd granicy powinien obejmować warunki wstępne, wszystkie sposoby wywołania i zachowanie przy błędzie.
+
+Dla przykładowego narzędzia dzienników ustal wejścia o różnych rozmiarach, limit pamięci oraz to, czy wynik można wypisywać strumieniowo. Zmierz wersję `release` na tym samym sprzęcie i tych samych danych. Zapisz osobno czas budowania od zera, czas małej zmiany i czas wykonania gotowego programu. Wynik jednego pomiaru nie rozstrzyga wszystkich trzech problemów: szybszy runtime może wymagać kosztowniejszej kompilacji.
+
+Bezpieczeństwo pamięci dopuszcza wyciek pamięci, `panic!` i świadome przerwanie procesu. Nie oznacza też odporności na błędne uprawnienia ani wyczerpanie zasobów. Jeżeli usługa poprawnie trzyma milion aktywnych buforów, system typów nie uzna ich za błąd. Limit liczby żądań oraz rozmiaru bufora jest osobnym niezmiennikiem aplikacji. To dobry przykład przejścia od gwarancji języka do wymagania produktu.
+
 ## Diagnostyka kompilatora
 
 Poniższy przykład celowo nie kompiluje się: `String` nie implementuje `Copy`, więc przypisanie przenosi jego własność do `drugi`. Użycie `pierwszy` po tym przeniesieniu łamie kontrakt właściciela; kompilator zwykle wskaże miejsce przeniesienia i późniejszego użycia jako „borrow of moved value”.
@@ -86,6 +94,10 @@ W każdym z tych przypadków zapisz mierzalne kryterium decyzji: budżet pamięc
 - `W01-1` — podstawowe: dla CLI, które przetwarza lokalnie milion wierszy dziennika, wypisz trzy kryteria wyboru Rusta i jedno kryterium, które może przemawiać za inną technologią. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/01_czym_jest_rust.md#w01-1).
 - `W01-2` — praktyczne: opisz granice odpowiedzialności bezpiecznego Rusta w usłudze sieciowej obsługującej współbieżne żądania. Wskaż po jednym ryzyku, którego model typów nie usuwa, i mechanizm jego ograniczenia. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/01_czym_jest_rust.md#w01-2).
 - `W01-3` — pogłębione: zaproponuj decyzję dla komponentu systemowego z FFI. Uzasadnij, gdzie umieścisz `unsafe`, jakie niezmienniki udokumentujesz i kiedy koszt kompilacji lub ekosystemu zmieni wybór. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/01_czym_jest_rust.md#w01-3).
+
+## Źródła i zakres stabilności
+
+Granice `unsafe`: [Reference: unsafety](https://doc.rust-lang.org/reference/unsafety.html) i [undefined behavior](https://doc.rust-lang.org/reference/behavior-considered-undefined.html). Lokalne przykłady sprawdzane są na Rust 1.90.0; parametry wewnętrznej architektury kompilatora nie są stabilnym API.
 
 ## Powiązane tematy
 

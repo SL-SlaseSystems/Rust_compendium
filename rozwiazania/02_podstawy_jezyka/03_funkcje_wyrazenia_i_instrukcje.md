@@ -28,6 +28,9 @@ fn main() {
 Adnotacje `_` są tu testem przewidywanych typów, nie koniecznością w zwykłym
 programie.
 
+
+Blok nadaje zakres lokalnej nazwie `x`; po wyjściu pozostaje tylko zwrócona wartość liczbowa. Jeżeli końcowym wyrażeniem byłoby `&x`, wynik próbowałby pożyczać lokalne dane i kompilator odrzuciłby jego użycie poza blokiem. Poprawność typu wyniku obejmuje więc zarówno `()` wobec liczby, jak i ważność ewentualnych referencji.
+
 ## P03-2
 
 Adnotacja `fn(i32) -> i32` tworzy oczekiwany kontekst koercji. Dzięki niej
@@ -57,6 +60,9 @@ fn main() {
 
 Gdyby closure użyło wartości z otoczenia, zawierałoby stan i nie mogłoby zostać
 skoercjonowane do zwykłego wskaźnika funkcji.
+
+
+Oba wskaźniki mają zgodną sygnaturę i ABI Rusta. Koercja nie zapewnia stabilnego ABI dla przekazania do biblioteki C. Closure bez przechwyceń może stać się wskaźnikiem, ponieważ nie trzeba przenosić dodatkowego środowiska. Wersja przechwytująca lokalny `offset` wymaga generyka po `Fn` albo odpowiednio przechowywanego obiektu callbacku.
 
 ## P03-3
 
@@ -96,3 +102,6 @@ kompilatorowi wyspecjalizować `przetworz` dla konkretnego typu polityki.
 konwencji wywołania. Sam wybór ABI C nie gwarantuje jeszcze poprawności całej
 granicy FFI — typy danych, panika i kontrakty bezpieczeństwa wymagają osobnego
 projektu.
+
+
+W przykładzie arytmetyka dotyczy małych wartości. W rzeczywistym callbacku C trzeba ustalić zachowanie przepełnienia i paniki, bo panika nie może dowolnie przekraczać obcej granicy ABI. Sam kod nie wywołuje zewnętrznej biblioteki, dlatego sprawdza mechanikę typu callbacku, a nie kompletność integracji FFI. Kontrakt C obejmuje również czas życia ewentualnego kontekstu przekazanego przez wskaźnik.

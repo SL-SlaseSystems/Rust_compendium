@@ -12,10 +12,10 @@ Obsługa błędów, async dla klientów asynchronicznych, serializacja i podstaw
 
 ## Kolejność materiałów
 
-1. Granica repozytorium i mapowanie typów domenowych.
-2. Połączenia, pule, transakcje i propagacja błędów.
-3. Migracje schematu i zgodność wersji.
-4. Testy integracyjne, izolacja danych i strategie odtwarzania.
+1. [Repozytoria, mapowanie typów, pule i transakcje](01_repozytoria_pule_i_transakcje.md) — granica domeny, połączenia, atomowość, izolacja i błędy.
+2. [Migracje schematu, testy integracyjne i odtwarzanie danych](02_migracje_testy_i_odtwarzanie.md) — zgodność wersji, izolacja testów i próby odtworzenia.
+
+Każdy rozdział zawiera trzy ćwiczenia z pełnymi rozwiązaniami; najpierw wykonaj je samodzielnie, potem porównaj kontrakty i przypadki graniczne.
 
 ## Po tym dziale
 

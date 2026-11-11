@@ -12,10 +12,8 @@ Cargo, testowanie, SemVer, profile kompilacji i podstawy systemu kontroli wersji
 
 ## Kolejność materiałów
 
-1. Szybka pętla CI: formatowanie, linty, testy i dokumentacja.
-2. Macierz toolchainów, targetów i minimalnej wspieranej wersji Rust.
-3. Powtarzalne buildy, cache, artefakty i SBOM.
-4. Wersjonowanie, changelog, podpisywanie, publikacja i rollback.
+1. [Pipeline CI, MSRV i macierz konfiguracji](01_pipeline_ci_msrv_i_targety.md) — pełne omówienie, przykłady, pytania i ćwiczenia z rozwiązaniami.
+2. [Wydania, pochodzenie artefaktów i rollback](02_wydania_artefakty_i_rollback.md) — pełne omówienie, przykłady, pytania i ćwiczenia z rozwiązaniami.
 
 ## Po tym dziale
 
@@ -24,3 +22,7 @@ Potrafisz zbudować pipeline, który wcześnie wykrywa regresje i wytwarza ident
 ## Co dalej
 
 Dodaj testy bezpieczeństwa i smoke test po wdrożeniu. Uprawnienia publikowania ogranicz do najmniejszego koniecznego zakresu.
+
+## Ćwiczenia i rozwiązania
+
+Zadania znajdują się w rozdziałach. [Rozwiązania tego działu](../rozwiazania/28_ci_cd_i_release_engineering/README.md) zawierają omówienie decyzji i przypadków brzegowych.

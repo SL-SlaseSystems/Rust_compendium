@@ -18,10 +18,6 @@ find "$project_root" -type f -name '*.md' \
 if command -v rustdoc >/dev/null 2>&1; then
     echo "Sprawdzanie przykładów przez $(rustdoc --version)"
     while IFS= read -r file; do
-        if [ "$file" = "$project_root/150-zaawansowanych-mechanizmow-rust.md" ]; then
-            echo "Pominięto rustdoc dla 150-zaawansowanych-mechanizmow-rust.md: wykonywalne przykłady czekają na dedykowany etap atlasu." >&2
-            continue
-        fi
         if grep -Eq '^ {0,3}(```|~~~)(rust|compile_fail|no_run|should_panic)' "$file"; then
             rustdoc --test --edition 2024 "$file"
         fi

@@ -3,8 +3,8 @@
 
 # Funkcje, wyrażenia i instrukcje
 
-> Stan opisu: Rust 1.98.1, Edition 2024, zweryfikowany 10 września 2026 r.;
-> przykłady wykonano lokalnie przez Rust 1.90.0.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
 
 ## Cele
 
@@ -316,6 +316,14 @@ Po `return` sterowanie nie przejdzie do `7`. Zwykle jest to ostrzeżenie lintu;
 napraw warunek sterujący — nie wyciszaj automatycznie informacji o zgubionej
 ścieżce.
 
+## Pożyczka wyniku a dobór funkcji pomocniczej
+
+Rozdzielenie funkcji nie powinno przypadkowo rozszerzać praw do zasobu. Pomocnik, który tylko oblicza długość, przyjmuje `&str` i zwraca liczbę; pomocnik zwracający fragment zachowuje zależność od wejścia. Gdy wynik ma przeżyć bufor wejściowy, musi posiadać dane, na przykład jako `String`. Sama zamiana nazwy funkcji albo dodanie `return` nie zmienia tej zależności.
+
+Kosztowny etap wykonuj po wczesnej walidacji argumentów. Wczesny `return Err(...)` skraca zakres pożyczek i sprawia, że dalsza część funkcji może zakładać spełnienie warunków. Jeżeli po każdej instrukcji trzeba sprawdzać ten sam warunek, rozważ konstruktor typu walidowanego, który zamknie ten niezmiennik. Sygnatura staje się wtedy zapisem dowodu: funkcja przyjmująca `Port` nie musi ponownie sprawdzać zakresu liczby.
+
+Do testowania nie potrzebujesz alternatywnego `main` ani specjalnego runtime'u. Wydziel funkcję przyjmującą jawne dane i porównuj jej wynik. Funkcje korzystające bezpośrednio z globalnego zegara, zmiennych środowiska i standardowego wejścia są trudniejsze do odtwarzania; cienki adapter może przekazać te wartości jako parametry bez zmiany całej architektury.
+
 ## Praktyka produkcyjna
 
 - Traktuj sygnaturę funkcji jak mały kontrakt: pokazuj w niej pożyczanie,
@@ -370,7 +378,7 @@ fn main() {
 }
 ~~~
 
-[Rozwiązanie](../rozwiazania/02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md#p03-1)
+`P03-1` — podstawowe: porównaj pełny program i uzasadnienie. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md#p03-1)
 
 ### P03-2 · Poziom: praktyczne
 
@@ -379,7 +387,7 @@ najpierw wskazywać `dodaj_jeden`, a potem `odejmij_jeden`. Następnie przypisz 
 drugiego wskaźnika nieasynchroniczne closure bez przechwyceń i przetestuj oba
 wywołania. Nie używaj `Box`, `dyn` ani rzutowania `as`.
 
-[Rozwiązanie](../rozwiazania/02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md#p03-2)
+`P03-2` — praktyczne: porównaj pełny program i uzasadnienie. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md#p03-2)
 
 ### P03-3 · Poziom: pogłębione
 
@@ -388,7 +396,11 @@ politykę, która może przechwycić konfigurację, oraz callback o ABI C. Dobie
 typy (`Fn*`, `fn` albo `extern "C" fn`), przygotuj test obu granic i uzasadnij,
 dlaczego nie powinny mieć jednego wspólnego typu.
 
-[Rozwiązanie](../rozwiazania/02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md#p03-3)
+`P03-3` — pogłębione: porównaj pełny program i uzasadnienie. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md#p03-3)
+
+## Źródła i zakres stabilności
+
+Wyrażenia blokowe: [Reference: block expressions](https://doc.rust-lang.org/reference/expressions/block-expr.html). Typy funkcji: [function item types](https://doc.rust-lang.org/reference/types/function-item.html) oraz [function pointer types](https://doc.rust-lang.org/reference/types/function-pointer.html).
 
 ## Powiązane tematy
 

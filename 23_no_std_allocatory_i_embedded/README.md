@@ -19,6 +19,8 @@ Pierwszy materiał jest wspólnym wprowadzeniem do WebAssembly, `no_std` i embed
 
 ## Po tym dziale
 
+Każdy rozdział jest pogłębionym opracowaniem z pytaniami kontrolnymi, trzema ćwiczeniami i pełnymi rozwiązaniami.
+
 Rozumiesz granicę `core`/`alloc`/`std`, wymagania środowiska uruchomieniowego i odpowiedzialność własnego allocatora.
 
 ## Co dalej

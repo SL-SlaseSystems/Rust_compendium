@@ -30,6 +30,9 @@ path = "src/lib.rs"
 
 `src/lib.rs` tworzy crate `narzedzie_cli`, więc bin `admin` i testy wywołują jego publiczne API. `serde` jest **third-party** i normalny build musi rozwiązać oraz skompilować tę zależność niezależnie od uruchomienia testów.
 
+
+Target binarny korzystający z biblioteki wymaga publicznego API, ponieważ jest osobnym crate'em, nawet w tym samym package'u. Prywatna funkcja `etykieta` w `src/lib.rs` nie stanie się dostępna tylko dlatego, że oba pliki mają wspólny manifest. Testy jednostkowe wewnątrz modułu biblioteki i testy integracyjne spoza niej mają przez to różne uprawnienia dostępu.
+
 ## W04-2
 
 Do szybkiej kontroli biblioteki wybierz `cargo check --lib`: sprawdza typy i zależności bez końcowego linkowania binarium. Do uruchomienia konkretnego targetu użyj `cargo run --bin admin`. CI wykrywające błędy w przykładach, testach, binariach i benchmarkach powinno dołączyć `cargo check --all-targets` i niezależne kroki formatowania, lintów, testów oraz dokumentacji.
@@ -44,6 +47,9 @@ cargo run --bin admin -- status
 ~~~
 
 `--all-features` pozostaw tylko wtedy, gdy unia funkcji jest wspierana. Gdy `postgres` i `sqlite` są celowo alternatywnymi backendami, uruchom dwa jawne przebiegi, na przykład `--features postgres` i `--features sqlite`, zamiast uznać ich wspólny build za kontrakt package'a.
+
+
+Przejście `cargo check` nie dowodzi udanego linkowania zależności natywnych, a `cargo doc` bez testów nie dowodzi wykonania przykładów. Do sprawdzenia dokumentacji potrzebne jest również `cargo test --doc`. Dla workspace'a polecenia wymagają świadomego wyboru `--workspace` albo `-p`, bo domyślni członkowie mogą nie obejmować wszystkich produktów.
 
 ## W04-3
 
@@ -62,3 +68,6 @@ fn main() {
     assert_eq!(wersja_raportu("1.0.0"), "raport 1.0.0");
 }
 ~~~
+
+
+Powtarzalny graf nie jest jeszcze powtarzalnym artefaktem binarnym. Do wydania zapisujemy wersję kompilatora i linkera, target, wersje bibliotek systemowych oraz istotną konfigurację `build.rs`. Lockfile nie może zablokować zmian zewnętrznego systemowego SDK. Weryfikacja na świeżym runnerze pomaga wykryć zależność od lokalnego cache, ale nie zastępuje zapisu pochodzenia artefaktu.

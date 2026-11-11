@@ -122,6 +122,19 @@ Kolejność:
 Następnie rustc-dev-guide, rustc contributor guide i RFC Book. Zacznij od
 diagnostic issue, lintu lub testu UI, nie od nowej składni języka.
 
+## Kamienie milowe do samodzielnej oceny
+
+| Po etapie | Dowód opanowania | Materiał do uzupełnienia przy trudnościach |
+|---|---|---|
+| Fundamenty 01–04 | Parser pożycza wejście, a enum wyklucza niepoprawne stany. Potrafisz wyjaśnić błąd borrow bez przypadkowego clone. | Ownership, lifetimes i wzorce |
+| Abstrakcje 05–09 | Biblioteka ma małą publiczną fasadę, własny błąd, doctesty i test zewnętrznego klienta. | Traits, konwersje, moduły i rustdoc |
+| Współbieżność 10–14 | Ograniczony pipeline zachowuje dane przy przeciążeniu i kończy wszystkie zadania według polityki. | Kanały, task ownership, anulowanie i architektura |
+| Zastosowania 15–18 | CLI lub API waliduje granice i ma test błędu integracji bez prawdziwej sieci. | Transport, model domeny, transakcje i retry |
+| Niski poziom 19–24 | Potrafisz zapisać invariant unsafe i odróżnić test natywny od testu docelowej platformy. | Model pamięci, FFI i adaptery targetów |
+| Produkcja 25–30 | Projekt ma reprodukcję regresji, limit zasobów, mierzalny cel i wykonalny plan powrotu. | Debugowanie, testy zaawansowane, bezpieczeństwo i operacje |
+
+Wybieraj ćwiczenie, które wymaga uzasadnienia decyzji. Najpierw napisz własne rozwiązanie, potem porównaj je z odpowiednią kotwicą w katalogu `rozwiazania/`. Różny kod może być poprawny, jeżeli zachowuje te same niezmienniki i kontrakt; sam podobny wynik dla jednego inputu nie wystarcza.
+
 ## Praktyka celowa
 
 - odtwarzaj mechanizm w małej wersji, ale produkcyjnie używaj sprawdzonego API;

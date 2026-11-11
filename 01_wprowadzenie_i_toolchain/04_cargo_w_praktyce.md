@@ -3,7 +3,7 @@
 
 # Cargo w praktyce
 
-> Stan opisu: Rust 1.98.1, Edition 2024, zweryfikowany 10 września 2026 r. Polecenia dotyczą kanału **stable**, chyba że oznaczono inaczej.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
 
 ## Cele
 
@@ -91,6 +91,14 @@ cargo doc --no-deps
 
 W CI `cargo ... --locked` kończy się błędem, jeśli lockfile nie istnieje albo musiałby się zmienić. `--frozen` oznacza zarazem `--locked` i `--offline`; ma sens tylko, gdy wymagany indeks i paczki są już w cache. Aktualizację wykonuj świadomie przez `cargo update` lub zmianę manifestu, przeglądaj diff lockfile'a i potem sprawdź nowy graf. `--offline` może wybrać inaczej niż tryb online, jeżeli lokalny cache nie zna nowszych danych.
 
+## Granica między odtwarzalnym grafem a artefaktem
+
+Ten sam lockfile nie gwarantuje identycznych bajtów binarium. Wynik zależy także od kompilatora, targetu, linkera, bibliotek natywnych, zmiennych środowiska i skryptów `build.rs`. Wydanie powinno rejestrować te dane razem z wersją źródeł. `cargo metadata --format-version 1 --no-deps` pomaga narzędziom czytać strukturę workspace'a bez analizowania formatowanych komunikatów człowieka.
+
+Argumenty programu oddziela się od argumentów Cargo przez `--`: w `cargo run --bin admin -- --help` pierwsze `--bin` wybiera artefakt, a `--help` trafia do procesu `admin`. Analogiczny separator w `cargo test nazwa -- --nocapture` przekazuje opcję do harnessu testów. Pozorna nieskuteczność flagi często wynika z przekazania jej do niewłaściwej warstwy.
+
+Wspólny cache CI przyspiesza budowanie, ale klucz cache powinien uwzględniać istotne wersje narzędzi, platformę i graf zależności. Nie używaj pobranego `target/` jako dowodu, że źródła przechodzą pełny build na świeżym runnerze. W razie nieoczekiwanego wyniku sprawdź dokładną komendę i konfigurację; `cargo clean` jest kosztowną próbą diagnostyczną, a nie rutynowym lekarstwem na błędny manifest.
+
 ## Diagnostyka kompilatora
 
 Gdy resolver zgłasza konflikt wersji, najpierw czytaj łańcuch „required by” i manifesty wskazanych package'ów; przy istniejącym lockfile'u sprawdź też jego wpisy. `cargo tree -i nazwa` jest pomocne dopiero, gdy Cargo zdoła rozwiązać graf. Potem zdecyduj, czy podnieść wersję, zmienić feature, ujednolicić zależność czy rozdzielić package'e. Usunięcie wpisu z lockfile'a nie naprawia sprzeczności manifestów.
@@ -126,6 +134,10 @@ Oficjalne szczegóły: [targety Cargo](https://doc.rust-lang.org/cargo/reference
 - `W04-1` — podstawowe: przeanalizuj manifest `narzedzie-cli` z sekcji „Model” (jawne `lib` i bin `admin`, `serde`, `pretty_assertions`); wskaż, która zależność trafia do normalnego builda. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/04_cargo_w_praktyce.md#w04-1).
 - `W04-2` — praktyczne: dobierz polecenie do szybkiej kontroli biblioteki, uruchomienia binarium `admin` i pełnej kontroli targetów w CI. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/04_cargo_w_praktyce.md#w04-2).
 - `W04-3` — pogłębione: ustal politykę `Cargo.lock` dla workspace'a z CLI i publikowanej biblioteki oraz uzasadnij użycie `--locked`. Porównaj z [rozwiązaniem](../rozwiazania/01_wprowadzenie_i_toolchain/04_cargo_w_praktyce.md#w04-3).
+
+## Źródła i zakres stabilności
+
+Wybór grafu: [Cargo resolver](https://doc.rust-lang.org/cargo/reference/resolver.html). Dane maszynowe: [cargo metadata](https://doc.rust-lang.org/cargo/commands/cargo-metadata.html). Reprodukcja zależności: [Cargo.lock](https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html). Sprawdzono 11 listopada 2026 r.
 
 ## Powiązane tematy
 

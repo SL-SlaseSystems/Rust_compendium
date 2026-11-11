@@ -17,6 +17,8 @@ Dla osób łączących Rust z C lub innym ABI i budujących bezpieczne granice m
 
 ## Po tym dziale
 
+Każdy rozdział jest pogłębionym opracowaniem z pytaniami kontrolnymi, trzema ćwiczeniami i pełnymi rozwiązaniami.
+
 Umiesz zdefiniować stabilną granicę ABI, ustalić ownership danych i opakować ryzykowny interfejs w małe, testowalne API.
 
 ## Co dalej

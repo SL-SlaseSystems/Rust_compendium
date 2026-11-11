@@ -93,8 +93,11 @@ funkcjonalności jako gwarantowanej części przyszłego wydania.
 
 ## Aktualność źródeł
 
-Bazą dokumentacji jest Rust 1.98.1, Edition 2024, zweryfikowane 10 września
-2026.
+Bazą składni jest Edition 2024. W rozbudowie z 11 listopada 2026 r.
+wykonywalne przykłady sprawdzano lokalnym Rust 1.90.0, a kontrakty porównywano
+z aktualną dokumentacją stable. Nowsze API, w tym elementy od Rust 1.98,
+pozostają opisowe do czasu testu odpowiednim toolchainem. Nie traktuj
+wersji dokumentacji internetowej jako wersji użytej do wykonania kodu.
 
 Przy rozbieżności pierwszeństwo mają Rust Reference i aktualna dokumentacja
 API, a dopiero potem Rustonomicon. Każdą informację zależną od kanału lub

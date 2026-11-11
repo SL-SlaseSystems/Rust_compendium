@@ -12,10 +12,8 @@ Cargo, testy, obsługa błędów, podstawy systemu operacyjnego i doświadczenie
 
 ## Kolejność materiałów
 
-1. Minimalna reprodukcja, logi i czytanie backtrace.
-2. Debugger, symbole, core dump i analiza stanu procesu.
-3. Izolowanie regresji, `cargo bisect-rustc` i aktualizacje zależności.
-4. Dług techniczny, migracje API i procedury incydentowe.
+1. [Reprodukcja błędu, backtrace i debugger](01_reprodukcja_backtrace_i_debugger.md) — pełne omówienie, przykłady, pytania i ćwiczenia z rozwiązaniami.
+2. [Regresje, aktualizacje i utrzymanie po incydencie](02_regresje_migracje_i_incydenty.md) — pełne omówienie, przykłady, pytania i ćwiczenia z rozwiązaniami.
 
 ## Po tym dziale
 
@@ -24,3 +22,7 @@ Potrafisz zawęzić problem, zebrać dowody i naprawić przyczynę bez maskowani
 ## Co dalej
 
 Połącz debugowanie z testami zaawansowanymi i obserwowalnością. Utrzymuj małe reprodukcje jako testy regresji.
+
+## Ćwiczenia i rozwiązania
+
+Zadania znajdują się w rozdziałach. [Rozwiązania tego działu](../rozwiazania/25_debugowanie_i_utrzymanie/README.md) zawierają omówienie decyzji i przypadków brzegowych.

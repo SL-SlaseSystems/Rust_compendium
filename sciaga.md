@@ -281,6 +281,66 @@ fn main() {
 - Czy `Send`/`Sync` i atomiki mają dowód?
 - Czy komentarz `SAFETY` odpowiada na wszystkie punkty?
 
+## Dobór własności i pamięci
+
+| Potrzeba | Typ / operacja | Pytanie przed wyborem |
+|---|---|---|
+| Odczyt tekstu bez zachowania | `&str` | Czy wynik pożycza wejście? |
+| Własny modyfikowalny bufor | `String`, `Vec<T>` | Jaki jest limit długości i pojemności? |
+| Jeden właściciel wartości na stercie | `Box<T>` | Czy potrzebny jest DST, rekursja albo stabilne miejsce alokacji? |
+| Współwłasność w jednym wątku | `Rc<T>` / `Weak<T>` | Czy graf może utworzyć silny cykl? |
+| Współwłasność między wątkami | `Arc<T>` | Co synchronizuje wnętrze? Sam Arc tego nie robi. |
+| Mała mutacja bez referencji wnętrza | `Cell<T>` | Czy można zastępować całe wartości? |
+| Dynamiczne pożyczki w jednym wątku | `RefCell<T>` | Czy konflikt ma panikować, czy zwracać błąd `try_borrow`? |
+| Mutacja współbieżna | `Mutex<T>` / `RwLock<T>` | Czy sekcja ma ograniczony czas i spójną kolejność blokad? |
+| Własne i pożyczone dane | `Cow<'a, T>` | W jakim momencie naprawdę potrzebna jest kopia? |
+
+`Clone` ma semantykę typu: String kopiuje bufor, Arc dodaje współwłasność. `Copy` nie oznacza „mały koszt” ani braku logicznego znaczenia. Lifetime opisuje relację pożyczek, nie przedłuża istnienia danych.
+
+## Granice wejścia i błędy
+
+| Sytuacja | Wzorzec |
+|---|---|
+| Niepoprawna liczba | `parse`, `TryFrom` i jawny błąd; bez stratnego `as` |
+| Rachunek długości | `checked_add` / `checked_mul`, potem porównanie z limitem |
+| Bezpieczne cięcie | `slice.get(zakres)` i walidacja UTF-8, gdy potrzebny tekst |
+| Oczekiwany brak | `Option`; błąd z kontekstem to `Result` |
+| Błąd następnej warstwy | `?` z zachowaniem przyczyny, nie automatyczny `unwrap` |
+| Operacja częściowa I/O | Śledzenie postępu albo właściwy `read_exact` / `write_all` |
+| Retry skutku zewnętrznego | Wspólny budżet, deadline i kontrakt idempotencji |
+
+Limit wejścia sprawdzaj przed kosztowną alokacją i także po dekompresji. Parametryzacja SQL chroni wartości; nazwy kolumn i zasobów wymagają własnej polityki. Uwierzytelnienie ustala tożsamość, a autoryzacja sprawdza prawo do konkretnej operacji.
+
+## Współbieżność i async — szybkie decyzje
+
+- `thread::scope` — lokalne dane mogą być pożyczone, bo scope czeka na wątki.
+- Kanał ograniczony — określ, czy przeciążenie czeka, odrzuca, czy ogranicza producenta.
+- `Condvar` — stan pod mutexem, oczekiwanie w pętli; samo notify nie jest stanem.
+- `Release` / `Acquire` — wskaż odczyt z właściwego zapisu i relację happens-before.
+- `Future` — `Pending` wymaga późniejszego wake; utworzenie future nie uruchamia całego ciała.
+- `Pin` — stabilizuje pointee według kontraktu; przeniesienie uchwytu nie musi przenosić danych.
+- `spawn_blocking` — ogranicz liczbę prac; timeout nie cofa już rozpoczętego efektu.
+- `select` — sprawdź anulowanie przegranej operacji, zachowany stan i fairness.
+- Shutdown — przestań przyjmować pracę, rozgłoś decyzję, poczekaj do wspólnego deadline.
+
+## Jakiego dowodu potrzebujesz
+
+| Cel | Narzędzie / wynik | Ograniczenie |
+|---|---|---|
+| Typy i borrow | `cargo check` | Nie wykonuje programu |
+| Zachowanie przykładów | `rustdoc --test`, testy | Tylko przebyte przypadki i właściwe środowisko |
+| Własność dla wielu danych | property tests | Generator i własność mogą być błędne |
+| Nieoczekiwane wejścia | fuzzing z zachowanym korpusem | Budżet nie daje pełnego pokrycia |
+| Wybrane UB Rust | Miri | Nie stanowi dowodu całej soundness |
+| Przeploty modelu | Loom | Musi widzieć modelowane prymitywy |
+| Wydajność | benchmark i profil | Profil i dane muszą odpowiadać pytaniu |
+| Przenośność | build oraz test na targetcie | Natywny test nie jest testem Wasm/embedded |
+| Release | Identyfikowalny artefakt i smoke test | Lockfile nie ustala całego środowiska |
+
+## Produkcyjna pętla diagnozy
+
+Objaw → reprodukcja → jedna hipoteza → mały eksperyment → test regresji → poprawka → weryfikacja wpływu. Zachowaj wersję artefaktu, narzędzi i konfiguracji bez sekretów. Alert powinien wskazywać zagrożenie dla użytkownika i prowadzić do procedury; sam procent CPU nie opisuje powodzenia operacji. Rollback binarium wymaga zgodności z już zapisanymi danymi.
+
 ## Powiązane tematy
 
 - [Pełny spis treści](README.md)

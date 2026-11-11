@@ -669,7 +669,7 @@ printf '%s\\n' "$*" >> "$RUSTDOC_LOG"
         self.assertIn("chapter/three-spaces.md", rustdoc_calls)
         self.assertNotIn("chapter/four-spaces.md", rustdoc_calls)
 
-    def test_skips_only_atlas_rustdoc_and_keeps_chapters_and_solutions(self) -> None:
+    def test_runs_atlas_chapters_and_solutions(self) -> None:
         self.write_valid_section_structure()
         scripts = self.root / "scripts"
         scripts.mkdir()
@@ -743,9 +743,8 @@ printf '%s\\n' "$*" >> "$RUSTDOC_LOG"
         rustdoc_calls = rustdoc_log.read_text(encoding="utf-8")
         self.assertIn("chapter/regular.md", rustdoc_calls)
         self.assertIn("rozwiazania/regular.md", rustdoc_calls)
-        self.assertNotIn("150-zaawansowanych-mechanizmow-rust.md", rustdoc_calls)
-        self.assertIn("150-zaawansowanych-mechanizmow-rust.md", result.stderr)
-        self.assertIn("wykonywalne przykłady czekają na dedykowany etap atlasu", result.stderr)
+        self.assertIn("150-zaawansowanych-mechanizmow-rust.md", rustdoc_calls)
+        self.assertNotIn("wykonywalne przykłady czekają na dedykowany etap atlasu", result.stderr)
 
 
 if __name__ == "__main__":

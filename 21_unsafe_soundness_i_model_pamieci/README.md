@@ -20,6 +20,8 @@ Bardzo dobra znajomość ownership, lifetimes, layoutu typów i API biblioteki s
 
 ## Po tym dziale
 
+Każdy rozdział jest pogłębionym opracowaniem z pytaniami kontrolnymi, trzema ćwiczeniami i pełnymi rozwiązaniami.
+
 Potrafisz spisać invariants, ograniczyć powierzchnię `unsafe` i wystawić bezpieczne API, którego kontrakt można testować.
 
 ## Co dalej

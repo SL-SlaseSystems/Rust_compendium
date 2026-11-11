@@ -22,6 +22,20 @@ Dział 1 oraz działające polecenia `cargo check`, `cargo run` i `cargo test`.
 
 Umiesz wyrażać obliczenia za pomocą typów, funkcji, bloków i kontroli przepływu oraz interpretować podstawowe błędy kompilatora.
 
+## Jak pracować z działem
+
+Kolejność prowadzi od nazwania wartości przez reprezentację danych do granic funkcji i decyzji sterowania. Przy każdym przykładzie najpierw zapisz typ wyniku. Dopiero potem uruchom kod: część najważniejszych różnic, takich jak końcowy średnik albo stratne `as`, nie jest widoczna w samej nazwie zmiennej.
+
+Rozdziały o bindingach, liczbach i funkcjach zachowują zadania `P01`–`P03`. Sterowanie przepływem oraz operatory dodają zadania `A08` i `A09`. Każdy zestaw ma poziom podstawowy, praktyczny oraz pogłębiony i prowadzi do konkretnego rozwiązania. Celowo niekompilujące się przykłady tłumaczą rodzaj naruszonego kontraktu; nie traktuj ich jako kodu do kopiowania do programu.
+
+## Punkt kontrolny
+
+Napisz funkcję przyjmującą tekst liczbowy, jawnie wybierającą typ oraz regułę błędu, a następnie przetwórz kilka wartości pętlą bez ręcznego indeksowania. Wyjaśnij, które działania konsumują dane, co daje `()` i dlaczego przepełnienie nie może zależeć od niejawnego założenia o profilu.
+
+Do następnego działu przejdź, gdy potrafisz oddzielić binding, wartość i referencję oraz opisać warunek zakończenia pętli. Nie musisz jeszcze znać formalnych adnotacji lifetime.
+
 ## Co dalej
 
 Przejdź do ownership i pamięci — to centralny model, który nadaje sens większości reguł Rust.
+
+Następny dział: [Ownership i pamięć](../03_ownership_i_pamiec/README.md).

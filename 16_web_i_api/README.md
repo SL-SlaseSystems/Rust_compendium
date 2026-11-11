@@ -12,10 +12,10 @@ Async Rust, sieć, serializacja, obsługa błędów i testowanie.
 
 ## Kolejność materiałów
 
-1. Model żądania i odpowiedzi, routing oraz stan aplikacji.
-2. Ekstrakcja, walidacja i jednolity model błędów API.
-3. Middleware, limity, timeouty i kontrolowane zamykanie.
-4. Testy kontraktowe, integracyjne i uruchomienie produkcyjne.
+1. [HTTP, routing, stan aplikacji i błędy API](01_http_routing_stan_i_bledy.md) — żądania, odpowiedzi, ekstrakcja, walidacja i jednolity model błędu.
+2. [Middleware, limity, testy i kontrolowane zamykanie](02_middleware_limity_testy_i_shutdown.md) — kolejność warstw, timeouty, testy kontraktowe i start produkcyjny.
+
+Każdy rozdział zawiera trzy ćwiczenia z pełnymi rozwiązaniami; najpierw wykonaj je samodzielnie, potem porównaj kontrakty i przypadki graniczne.
 
 ## Po tym dziale
 

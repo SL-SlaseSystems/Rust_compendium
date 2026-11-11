@@ -4,7 +4,7 @@
 
 Praktyczny katalog zaawansowanych możliwości Rusta: od ownershipu i lifetime'ów, przez traity i typy generyczne, po `Future`, atomiki, makra proceduralne, projektowanie API, Cargo, testowanie, `unsafe`, `no_std`, optymalizację oraz FFI.
 
-> Stan API: wrzesień 2026. Materiał zakłada **Rust 1.98.1** i **Edition 2024**. Wszystkie przykłady języka i biblioteki standardowej są oparte na stabilnym Ruście, z wyjątkiem punktu 100, który został wyraźnie oznaczony jako `nightly`. Przykłady wykorzystujące Tokio, `proptest`, Miri, Loom lub Criterion są oznaczone jako zależne od narzędzia albo biblioteki. Fragmenty `unsafe` wymagają samodzielnego udowodnienia opisanych inwariantów bezpieczeństwa.
+> Aktualizacja objaśnień i odsyłaczy: 11 listopada 2026. Stan pierwotnych przykładów: wrzesień 2026. Materiał używa **Edition 2024**; nowsze API ma osobno wskazaną wymaganą wersję. Kod samowystarczalny `rust` jest sprawdzany lokalnym Rust 1.90.0. Punkty 112 i 120 wymagają nowszego API (Rust 1.98), a punkt 100 kanału `nightly`; te fragmenty oraz integracje narzędziowe są oznaczone jako opisowe `text`. Przykłady wykorzystujące Tokio, `proptest`, Miri, Loom lub Criterion są oznaczone jako zależne od narzędzia albo biblioteki. Fragmenty `unsafe` wymagają samodzielnego udowodnienia opisanych inwariantów bezpieczeństwa.
 
 Atlas jest indeksem mechanizmów, a nie liniowym kursem. Kontekst, wymagania wstępne i kolejność znajdziesz w mapach: [runtime i kompilator](19_runtime_pamiec_i_kompilator/README.md), [wydajność](20_wydajnosc_i_optymalizacja/README.md), [`unsafe`](21_unsafe_soundness_i_model_pamieci/README.md), [testowanie zaawansowane](26_testowanie_zaawansowane_fuzzing_i_miri/README.md) oraz [produkcja](29_observability_i_produkcja/README.md).
 
@@ -28,6 +28,11 @@ Atlas jest indeksem mechanizmów, a nie liniowym kursem. Kontekst, wymagania wst
 
 ### 1. Semantyka przenoszenia (`move`)
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/02_ownership_move_i_copy.md).
+
+**Granica mechanizmu:** Przeniesienie oddaje obowiązek zarządzania zasobem; nie obiecuje określonej liczby kopii maszynowych.
+
+
 Przypisanie wartości nieimplementującej `Copy` przenosi jej ownership. Stara zmienna przestaje być dostępna, co zapobiega podwójnemu zwolnieniu zasobu.
 
 ```rust
@@ -45,6 +50,11 @@ fn main() {
 **Zastosowanie:** jawne przekazywanie odpowiedzialności za pliki, sockety, bufory i uchwyty.
 
 ### 2. `Copy` kontra jawny `Clone`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/02_ownership_move_i_copy.md).
+
+**Granica mechanizmu:** Clone nie oznacza zawsze głębokiej kopii: Rc i Arc klonują współwłasność, a nie sam zasób.
+
 
 `Copy` oznacza niejawne, bitowe kopiowanie bez destruktora. `Clone` może wykonywać kosztowną, głęboką kopię i dlatego jest wywoływany jawnie.
 
@@ -67,6 +77,11 @@ fn main() {
 
 ### 3. Współdzielone i wyłączne borrow
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/03_referencje_i_borrowing.md).
+
+**Granica mechanizmu:** Rozłączność dotyczy używanego miejsca pamięci; dwie mutowalne pożyczki rozłącznych fragmentów mogą współistnieć.
+
+
 W danej chwili można mieć wiele `&T` albo dokładnie jedno `&mut T`. Ta reguła eliminuje wyścigi danych już podczas kompilacji.
 
 ```rust
@@ -84,6 +99,11 @@ fn main() {
 **Zastosowanie:** bezpieczna mutacja bez garbage collectora i bez blokad w kodzie jednowątkowym.
 
 ### 4. Reborrow referencji mutowalnej
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/03_referencje_i_borrowing.md).
+
+**Granica mechanizmu:** Reborrow czasowo ogranicza starszą referencję; jawne przeniesienie do zmiennej może zachowywać się inaczej niż wywołanie funkcji.
+
 
 Przekazanie `&mut *reference` tworzy krótszy reborrow zamiast przenosić samą referencję mutowalną.
 
@@ -108,6 +128,11 @@ fn main() {
 
 ### 5. Non-Lexical Lifetimes (NLL)
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/03_referencje_i_borrowing.md).
+
+**Granica mechanizmu:** Ostatnie użycie to intuicja: analiza zależy także od przepływu sterowania i użyć podczas destrukcji.
+
+
 Borrow kończy się przy ostatnim rzeczywistym użyciu referencji, a nie dopiero przy końcu bloku leksykalnego.
 
 ```rust
@@ -124,6 +149,11 @@ fn main() {
 
 ### 6. Two-phase borrows
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](19_runtime_pamiec_i_kompilator/01_borrow_checker_polonius_i_model_pamieci.md).
+
+**Granica mechanizmu:** Rezerwacja i aktywacja dotyczą wybranych niejawnych pożyczek; nie legalizują dowolnego zagnieżdżenia jawnych &mut.
+
+
 W wybranych, niejawnych borrowach metod Rust najpierw rezerwuje `&mut`, a aktywuje go dopiero przy wywołaniu. Dzięki temu argument może wcześniej odczytać ten sam obiekt.
 
 ```rust
@@ -137,6 +167,11 @@ fn main() {
 **Zastosowanie:** wywołania w stylu `collection.push(collection.len())` bez ręcznych zmiennych pomocniczych.
 
 ### 7. Częściowe przeniesienie wartości
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/02_ownership_move_i_copy.md).
+
+**Granica mechanizmu:** Po częściowym move używaj pozostałych pól; typ z własnym Drop nakłada dodatkowe ograniczenia przenoszenia pól.
+
 
 Można przenieść jedno pole struktury, pozostawiając pola typu `Copy` lub pożyczone pola nadal dostępne. Cała struktura nie może już jednak zostać użyta jako jedna wartość.
 
@@ -157,6 +192,11 @@ fn main() {
 **Zastosowanie:** rozpakowywanie agregatów bez zbędnego klonowania wszystkich pól.
 
 ### 8. `ref`, `ref mut` i binding `@` we wzorcach
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](04_struktury_enumy_i_wzorce/02_wzorce_i_match.md).
+
+**Granica mechanizmu:** Wzorzec może przenosić lub pożyczać; sprawdź typ bindingu i reguły match ergonomics właściwe dla edition.
+
 
 Wzorzec może pożyczyć fragment wartości albo jednocześnie nazwać całą dopasowaną wartość.
 
@@ -180,6 +220,11 @@ fn inspect(command: Command) {
 
 ### 9. Jawne zależności lifetime'ów
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/05_lifetimes.md).
+
+**Granica mechanizmu:** Adnotacja opisuje zależność istniejących pożyczek i nie przedłuża życia lokalnej wartości.
+
+
 Adnotacja lifetime nie wydłuża życia danych — opisuje relację między referencjami wejściowymi i wynikiem.
 
 ```rust
@@ -198,6 +243,11 @@ fn main() {
 
 ### 10. Reguły lifetime elision
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/05_lifetimes.md).
+
+**Granica mechanizmu:** Elision usuwa potrzebę pisania części parametrów; nie oznacza braku zależności lifetime.
+
+
 W typowych sygnaturach kompilator sam wyprowadza lifetime'y. W metodzie wynik jest domyślnie wiązany z lifetime'em `&self`.
 
 ```rust
@@ -215,6 +265,11 @@ impl Header {
 
 ### 11. Ograniczenia lifetime: `T: 'a` i `'a: 'b`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/05_lifetimes.md).
+
+**Granica mechanizmu:** T: 'a ogranicza referencje wewnątrz typu; nie nakazuje, aby sama wartość istniała przez całe 'a.
+
+
 `T: 'a` oznacza, że wszystkie referencje zawarte w `T` żyją co najmniej `'a`. Relacja `'long: 'short` pozwala skrócić dłuższy borrow.
 
 ```rust
@@ -230,6 +285,11 @@ struct View<'a, T: 'a> {
 **Zastosowanie:** generyczne kontenery widoków i API łączące kilka poziomów pożyczania.
 
 ### 12. Higher-Ranked Trait Bounds (`for<'a>`)
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md).
+
+**Granica mechanizmu:** Dla każdego lifetime oznacza inny kontrakt niż jeden lifetime wybrany przez wywołującego.
+
 
 HRTB wymaga, aby ograniczenie działało dla każdego możliwego lifetime'u, a nie dla jednego wybranego przez wywołującego.
 
@@ -253,6 +313,11 @@ fn main() {
 
 ### 13. Wariancja lifetime'ów i typów
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/04_variance_subtyping_i_dropck.md).
+
+**Granica mechanizmu:** Przed skróceniem lifetime sprawdź wariancję całej konstrukcji, szczególnie wnętrza mutowalnego.
+
+
 Referencja `&'long T` jest kowariantna po lifetime, więc można ją skrócić. Wnętrze `Cell<T>` jest inwariantne, ponieważ pozwala zastępować wartość.
 
 ```rust
@@ -270,6 +335,11 @@ fn shorten<'long: 'short, 'short>(_: Covariant<'long>) -> Covariant<'short> {
 **Zastosowanie:** poprawne projektowanie typów opartych na surowych wskaźnikach i `unsafe`.
 
 ### 14. Typy fantomowe przez `PhantomData`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/04_variance_subtyping_i_dropck.md).
+
+**Granica mechanizmu:** PhantomData wpływa na wariancję, auto-traity i analizę destrukcji; nie przechowuje ani nie alokuje T.
+
 
 `PhantomData<T>` zajmuje zero bajtów, ale informuje analizę typów o logicznym posiadaniu, wariancji i auto-traitach.
 
@@ -291,6 +361,11 @@ let distance = Quantity::<Meter> { value: 12.0, _unit: PhantomData };
 **Zastosowanie:** jednostki miary, identyfikatory domenowe i typestate bez kosztu runtime.
 
 ### 15. RAII i własny `Drop`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/01_stos_sterta_i_raii.md).
+
+**Granica mechanizmu:** Drop zwykle sprząta przy wyjściu z zakresu; abort, forget i wycieki wykluczają bezwarunkową obietnicę wykonania.
+
 
 Destruktor wykonuje się deterministycznie przy wyjściu wartości z zakresu, również podczas unwindingu paniki.
 
@@ -316,6 +391,11 @@ impl Transaction {
 
 ### 16. `mem::take`, `replace` i `swap`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/01_stos_sterta_i_raii.md).
+
+**Granica mechanizmu:** Sprawdź invariant stanu zastępczego: take wymaga Default, replace przyjmuje konkretną nową wartość.
+
+
 Funkcje przenoszą wartość zza `&mut` bez naruszania zasady, że miejsce musi zawsze zawierać poprawny `T`.
 
 ```rust
@@ -338,6 +418,11 @@ mem::swap(&mut a, &mut b);
 
 ### 17. `Box<T>`, DST i ograniczenie `?Sized`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/03_konwersje_dst_i_trait_objects.md).
+
+**Granica mechanizmu:** Metadane wskaźnika do DST są częścią widoku; ?Sized rozluźnia wymaganie parametru, nie pozwala mieć dowolnego lokalnego str.
+
+
 `Box` nadaje dynamicznie rozmiarowemu `str` lub `dyn Trait` rozmiar znanego wskaźnika. `?Sized` znosi domyślne ograniczenie `T: Sized`.
 
 ```rust
@@ -354,6 +439,11 @@ fn main() {
 **Zastosowanie:** typy trait object, slices i API akceptujące zarówno rozmiarowe, jak i DST.
 
 ### 18. `Rc`, `Weak` i przerywanie cykli
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/06_smart_pointery_i_interior_mutability.md).
+
+**Granica mechanizmu:** Cykl silnych Rc wycieka; Weak służy obserwacji i wymaga obsługi braku właściciela po upgrade.
+
 
 `Rc<T>` zapewnia współdzielony ownership w jednym wątku, a `Weak<T>` nie zwiększa silnego licznika i zapobiega cyklom.
 
@@ -379,6 +469,11 @@ fn main() {
 
 ### 19. Ręczne zarządzanie destruktorem przez `ManuallyDrop`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** ManuallyDrop nie naprawia ownership; osobno udowodnij brak podwójnego zniszczenia i poprawność publicznego API.
+
+
 `ManuallyDrop<T>` blokuje automatyczne wywołanie `Drop`. Sam nie służy do przechowywania niezainicjalizowanej pamięci.
 
 ```rust
@@ -394,6 +489,11 @@ fn main() {
 **Zastosowanie:** implementacje kontenerów, unionów i transfer ownershipu przez FFI.
 
 ### 20. Bezpieczna reprezentacja niezainicjalizowanej pamięci przez `MaybeUninit`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Nie odczytuj MaybeUninit przed pełną inicjalizacją; awaria po częściowym zapisie wymaga jawnego sprzątania.
+
 
 `MaybeUninit<T>` wyłącza założenie kompilatora, że pamięć już zawiera poprawny `T`. `assume_init` jest bezpieczne dopiero po pełnej inicjalizacji.
 
@@ -418,6 +518,11 @@ fn main() {
 
 ### 21. Newtype pattern
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](14_idiomy_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md).
+
+**Granica mechanizmu:** Nowy typ powinien utrwalać znaczenie i invariant; alias typu nie tworzy odrębnej tożsamości.
+
+
 Jednopolowa struktura tworzy odrębny typ bez kosztu runtime i pozwala implementować obce traity dla lokalnego wrappera.
 
 ```rust
@@ -436,6 +541,11 @@ fn main() {
 **Zastosowanie:** value objects DDD, waluty, jednostki i zapobieganie zamianie identyfikatorów.
 
 ### 22. Typestate pattern
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](14_idiomy_wzorce_i_architektura/02_builder_typestate_i_state_machine.md).
+
+**Granica mechanizmu:** Typestate przenosi część przejść do typów, ale stan zewnętrznego urządzenia może nadal zmienić się niezależnie.
+
 
 Stan obiektu jest parametrem typu, więc niedozwolone przejścia nie mają odpowiedniej metody i nie kompilują się.
 
@@ -465,6 +575,11 @@ impl Connection<Open> {
 
 ### 23. Zero-Sized Types (ZST)
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Rozmiar zero nie oznacza braku wymagań wyrównania ani możliwości użycia dowolnego adresu.
+
+
 Typ bez pól zajmuje zero bajtów, ale nadal uczestniczy w typowaniu i dispatchu.
 
 ```rust
@@ -485,6 +600,11 @@ assert_eq!(std::mem::size_of::<Json>(), 0);
 **Zastosowanie:** tagi typów, strategie wybierane podczas kompilacji i markery stanów.
 
 ### 24. Enum jako algebraiczny typ danych
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](04_struktury_enumy_i_wzorce/01_struktury_enumy_i_metody.md).
+
+**Granica mechanizmu:** Warianty enumu modelują dozwolone stany; oddziel payload wariantu od niezależnych flag z kombinacjami bez znaczenia.
+
 
 Każdy wariant może przechowywać inne dane, a wyczerpujący `match` wymusza obsłużenie wszystkich stanów.
 
@@ -508,6 +628,11 @@ fn status(value: &Acquisition) -> &str {
 
 ### 25. Niche optimization
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Optymalizacja niszy ma udokumentowane gwarancje tylko dla wybranych typów; nie zakładaj layoutu każdego Option<T>.
+
+
 Kompilator może wykorzystać niedozwoloną reprezentację typu jako discriminant `Option`. Dla typów takich jak `NonZeroUsize` gwarantuje to brak dodatkowego bajtu.
 
 ```rust
@@ -523,6 +648,11 @@ assert_eq!(
 **Zastosowanie:** opcjonalne uchwyty i indeksy bez narzutu pamięci.
 
 ### 26. Typ nigdy (`!`)
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](02_podstawy_jezyka/03_funkcje_wyrazenia_i_instrukcje.md).
+
+**Granica mechanizmu:** Wyrażenie niewracające może dopasować się do oczekiwanego typu; szczegóły fallback zależą od edition.
+
 
 `!` oznacza obliczenie, które nigdy nie zwraca sterowania. Może zostać skoercjonowane do oczekiwanego typu.
 
@@ -544,6 +674,11 @@ fn parse_or_exit(text: &str) -> u32 {
 
 ### 27. Const generics
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/01_generics_i_const_generics.md).
+
+**Granica mechanizmu:** Długość w typie pomaga statycznie, lecz dozwolone wyrażenia const w generics mają konkretne ograniczenia stabilności.
+
+
 Wartość stała może być parametrem typu. Różne długości tablic stają się różnymi typami sprawdzanymi przez kompilator.
 
 ```rust
@@ -563,6 +698,11 @@ assert_eq!(header.len(), 16);
 
 ### 28. Associated types
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Associated type wybiera implementacja traitu; parametr generyczny dopuszcza różne implementacje tej samej relacji.
+
+
 Associated type wiąże jedną implementację typu wynikowego z implementorem traitu i upraszcza sygnatury względem dodatkowego parametru generycznego.
 
 ```rust
@@ -581,6 +721,11 @@ fn count<R: Repository>(repo: &R, id: u64) -> Result<usize, R::Error> {
 **Zastosowanie:** repozytoria, iteratory i traity z typem zależnym od implementacji.
 
 ### 29. Generic Associated Types (GAT)
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md).
+
+**Granica mechanizmu:** GAT może wiązać wynik z pożyczką self, lecz jego użycie nadal podlega ograniczeniom borrow checkera.
+
 
 GAT pozwala, aby associated type sam miał parametry, np. lifetime widoku pożyczonego z `self`.
 
@@ -610,6 +755,11 @@ impl<'data> LendingIterator for Windows<'data> {
 
 ### 30. Associated constants
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Associated const jest elementem kontraktu implementacji; użycie jako wymiar generyczny może mieć dodatkowe ograniczenia.
+
+
 Trait może wymagać stałej zależnej od implementującego typu.
 
 ```rust
@@ -631,6 +781,11 @@ assert_eq!(Telemetry::MAGIC, *b"TLMY");
 
 ### 31. Złożone bounds w klauzuli `where`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/01_generics_i_const_generics.md).
+
+**Granica mechanizmu:** Bound udostępnia wyłącznie gwarantowane operacje; nie zakładaj dodatkowej metody wynikającej z jednej konkretnej implementacji.
+
+
 `where` pozwala czytelnie opisać zależności między typami, associated types i lifetime'ami.
 
 ```rust
@@ -650,6 +805,11 @@ where
 
 ### 32. Supertraits
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Supertrait nakłada wymaganie na implementatora, nie dziedziczy automatycznie pól ani reprezentacji.
+
+
 Trait może wymagać implementacji innego traitu. Metody supertraitu stają się częścią kontraktu.
 
 ```rust
@@ -668,6 +828,11 @@ trait Named: Display {
 
 ### 33. Domyślne metody traitu
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Metoda domyślna może korzystać tylko z kontraktu traitu; zmiana publicznego zestawu metod wymaga oceny kompatybilności.
+
+
 Trait może dostarczyć implementację wykorzystującą inne wymagane metody, a konkretny typ może ją nadpisać.
 
 ```rust
@@ -683,6 +848,11 @@ trait Summary {
 **Zastosowanie:** rozszerzalne API z minimalnym obowiązkiem implementatora.
 
 ### 34. Blanket implementations
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Blanket impl upraszcza użycie, ale zajmuje przestrzeń przyszłych implementacji i może powodować konflikt coherence.
+
 
 Implementacja może objąć każdy typ spełniający ograniczenie. To podstawa wielu konwersji i extension traits.
 
@@ -706,6 +876,11 @@ where
 
 ### 35. Coherence i orphan rule
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Orphan rule ma precyzyjne wyjątki dotyczące lokalności i pokrycia parametrów; skrót obcy–obcy nie zastępuje reguły.
+
+
 Implementacja jest dozwolona, gdy trait albo implementowany typ jest lokalny. Zapewnia to jedną, jednoznaczną implementację dla każdej pary.
 
 ```rust
@@ -723,6 +898,11 @@ impl fmt::Display for Labels { // obcy trait dla lokalnego typu
 **Zastosowanie:** unikanie konfliktów implementacji między niezależnymi crate'ami.
 
 ### 36. Sealed trait pattern
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](14_idiomy_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md).
+
+**Granica mechanizmu:** Prywatny supertrait pozwala kontrolować implementatorów; publiczny kontrakt nadal wymaga przemyślanej ewolucji.
+
 
 Publiczny trait może dziedziczyć po prywatnym traitcie, przez co użytkownik może go używać, ale nie implementować poza crate'em.
 
@@ -747,6 +927,11 @@ mod api {
 
 ### 37. Trait objects i dynamic dispatch
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/06_dyn_compatibility_vtables_i_dispatch.md).
+
+**Granica mechanizmu:** Dynamic dispatch nie wymaga zawsze alokacji: &dyn Trait pożycza już istniejący obiekt.
+
+
 `dyn Trait` przechowuje wskaźnik do danych i vtable. Pozwala zebrać heterogeniczne typy za wspólnym interfejsem.
 
 ```rust
@@ -762,6 +947,11 @@ fn execute_all(plugins: &[Box<dyn Plugin>], input: &str) -> Vec<String> {
 **Zastosowanie:** pluginy, adaptery i wybór implementacji w runtime.
 
 ### 38. Dyn compatibility
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/06_dyn_compatibility_vtables_i_dispatch.md).
+
+**Granica mechanizmu:** Sprawdź cały trait, jego supertraity i metody; Self: Sized może wyłączyć metodę z interfejsu obiektu.
+
 
 Metoda trait object nie może być generyczna, zwracać nieograniczonego `Self` ani mieć opaque return type. Niedynamiczną metodę można wyłączyć przez `where Self: Sized`.
 
@@ -781,6 +971,11 @@ trait Service {
 **Zastosowanie:** projektowanie traitów działających zarówno statycznie, jak i przez vtable.
 
 ### 39. Trait object upcasting
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/06_dyn_compatibility_vtables_i_dispatch.md).
+
+**Granica mechanizmu:** Upcasting zmienia widok na supertrait; nie daje dowolnego downcastu do implementacji konkretnego typu.
+
 
 Obiekt podtraitu może zostać skoercjonowany do obiektu jego supertraitu. Mechanizm jest stabilny od Rust 1.86.
 
@@ -802,6 +997,11 @@ fn base_view(value: &dyn Extended) -> &dyn Base {
 
 ### 40. `impl Trait` i typy opaque
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md).
+
+**Granica mechanizmu:** Ukryty typ wyniku wybiera autor funkcji i musi być jeden dla wszystkich gałęzi zwracających.
+
+
 W argumentach `impl Trait` jest skrótem dla parametru generycznego. W wyniku ukrywa konkretny typ wybrany przez funkcję.
 
 ```rust
@@ -816,6 +1016,11 @@ assert_eq!(result, [1, 3]);
 **Zastosowanie:** ukrywanie skomplikowanych typów iteratorów i stabilniejsze publiczne API.
 
 ### 41. Return-position `impl Trait` in traits (RPITIT)
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md).
+
+**Granica mechanizmu:** RPITIT ukrywa associated type; jego bounds, w tym Send, są częścią publicznej użyteczności API.
+
 
 Metoda traitu może zwrócić `impl Trait`; kompilator traktuje go jak anonimowy associated type wybrany przez implementację.
 
@@ -834,6 +1039,11 @@ impl Values for Vec<i32> {
 **Zastosowanie:** statycznie dispatchowane iteratory bez ręcznego GAT lub `Box<dyn Iterator>`.
 
 ### 42. `async fn` w traitach
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md).
+
+**Granica mechanizmu:** Stabilne async fn w traitach nie oznacza automatycznie dyn compatibility ani future z gwarancją Send.
+
 
 Stabilny Rust pozwala deklarować asynchroniczne metody traitu. Taki trait nie jest automatycznie dyn-compatible, ponieważ wynik jest ukrytym `Future`.
 
@@ -854,6 +1064,11 @@ async fn print_user<G: UserGateway>(gateway: &G, id: u64) -> Result<(), G::Error
 
 ### 43. Universal Function Call Syntax (UFCS)
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/02_traits_i_associated_items.md).
+
+**Granica mechanizmu:** Pełna składnia rozstrzyga konkretną implementację; przy konflikcie najpierw sprawdź typ odbiorcy i importy traitów.
+
+
 Pełna ścieżka `<Type as Trait>::method` rozstrzyga konflikt metod albo wskazuje konkretną implementację.
 
 ```rust
@@ -872,6 +1087,11 @@ let binary = Binary::encode(&message);
 **Zastosowanie:** konflikty nazw i jawny wybór zachowania traitu.
 
 ### 44. `Deref` coercion
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/03_referencje_i_borrowing.md).
+
+**Granica mechanizmu:** Deref coercion działa w określonych miejscach; nie jest uniwersalnym mechanizmem konwersji wszystkich kontenerów.
+
 
 Implementacja `Deref` może automatycznie przekształcić `&Wrapper` do `&Target` podczas wywołania funkcji lub metody.
 
@@ -895,6 +1115,11 @@ greet(&name);
 
 ### 45. Auto-traity `Send` i `Sync`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/04_send_sync_i_atomiki.md).
+
+**Granica mechanizmu:** Send i Sync wynikają z kontraktu całego typu; ręczna implementacja unsafe wymaga dowodu, nie samego przekonania.
+
+
 `Send` pozwala przenieść wartość między wątkami, a `Sync` pozwala współdzielić `&T`. Kompilator wyprowadza je ze składowych typu.
 
 ```rust
@@ -914,6 +1139,11 @@ fn main() {
 ## Closures, konwersje, iteratory i błędy — 46–60
 
 ### 46. Traity `Fn`, `FnMut` i `FnOnce`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/04_closures_i_fn_traits.md).
+
+**Granica mechanizmu:** Rodzina Fn opisuje sposób używania przechwyceń; FnOnce nie oznacza, że każde wywołanie musi niszczyć całe otoczenie.
+
 
 Closure implementuje najsilniejszy możliwy kontrakt wynikający ze sposobu użycia przechwyconych wartości.
 
@@ -936,6 +1166,11 @@ assert_eq!(calls, 3);
 
 ### 47. `move` closures
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/04_closures_i_fn_traits.md).
+
+**Granica mechanizmu:** Move określa przejęcie capture, ale closure może nadal implementować Fn, jeśli tylko czyta swój stan.
+
+
 `move` wymusza przejęcie przechwytywanych wartości. Nie oznacza automatycznie, że closure implementuje tylko `FnOnce` — zależy to od użycia danych w ciele.
 
 ```rust
@@ -952,6 +1187,11 @@ handle.join().unwrap();
 **Zastosowanie:** przenoszenie danych do wątku, zadania lub callbacku o lifetime `'static`.
 
 ### 48. Konwersje `From`, `Into`, `TryFrom` i `TryInto`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/03_konwersje_dst_i_trait_objects.md).
+
+**Granica mechanizmu:** TryFrom zachowuje możliwość odrzucenia danych; as może legalnie obciąć wartość i ukryć problem domenowy.
+
 
 `From` opisuje konwersję bezbłędną i automatycznie daje `Into`. `TryFrom` służy do walidowanej konwersji zwracającej błąd.
 
@@ -976,6 +1216,11 @@ assert_eq!(port.0, 8080);
 
 ### 49. `AsRef` kontra `Borrow`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/03_konwersje_dst_i_trait_objects.md).
+
+**Granica mechanizmu:** Borrow wymaga zgodności semantyki Eq/Hash z kluczem; AsRef nie niesie tej samej obietnicy.
+
+
 `AsRef` jest tanią konwersją referencji. `Borrow` dodatkowo wymaga zgodnego `Eq`, `Ord` i `Hash`, dzięki czemu kolekcja może wyszukiwać kluczem innego typu.
 
 ```rust
@@ -995,6 +1240,11 @@ assert_eq!(byte_count("rust"), 4);
 **Zastosowanie:** elastyczne API bez alokacji i heterogeniczne wyszukiwanie w mapach.
 
 ### 50. Przeciążanie operatorów
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](02_podstawy_jezyka/05_operatory_komentarze_i_atrybuty.md).
+
+**Granica mechanizmu:** Operator ma kontrakt wejść i wyniku; preferuj semantykę zrozumiałą użytkownikowi zamiast zaskakujących efektów ubocznych.
+
 
 Operatory są mapowane na traity z `std::ops`. Typ wyniku nie musi być taki sam jak typ argumentów.
 
@@ -1019,6 +1269,11 @@ assert_eq!(Meters(2.0) + Meters(3.5), Meters(5.5));
 
 ### 51. Leniwe łańcuchy iteratorów
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/05_iteratory.md).
+
+**Granica mechanizmu:** Leniwy adapter nie wykonuje pracy bez konsumenta; przejęcie kolekcji i pożyczka mają inne skutki ownership.
+
+
 Adaptery iteratora nie wykonują pracy, dopóki konsument nie zażąda elementów.
 
 ```rust
@@ -1035,6 +1290,11 @@ assert_eq!(result, [0, 4, 16, 36]);
 **Zastosowanie:** strumieniowe transformacje bez kolekcji pośrednich.
 
 ### 52. Własna implementacja `Iterator`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/05_iteratory.md).
+
+**Granica mechanizmu:** Iterator pożycza mutowalnie siebie przez next; wynik standardowego Iterator nie jest ogólnym lending borrow self.
+
 
 Wystarczy zdefiniować associated type `Item` oraz `next`; pozostałe adaptery są dostarczane domyślnie.
 
@@ -1059,6 +1319,11 @@ assert_eq!(Countdown(3).collect::<Vec<_>>(), [3, 2, 1]);
 
 ### 53. `DoubleEndedIterator`, `ExactSizeIterator` i `FusedIterator`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/05_iteratory.md).
+
+**Granica mechanizmu:** ExactSizeIterator ma dokładny size_hint, a FusedIterator gwarantuje trwałość None; to różne własności.
+
+
 Te dodatkowe kontrakty pozwalają konsumować sekwencję z obu końców, znać pozostałą długość i zagwarantować trwałe `None` po zakończeniu.
 
 ```rust
@@ -1079,6 +1344,11 @@ consume([1, 2, 3, 4].iter().fuse());
 
 ### 54. `FromIterator` i zaawansowane `collect`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/05_iteratory.md).
+
+**Granica mechanizmu:** Typ docelowy collect steruje zachowaniem; Result kolekcjonuje do pierwszego błędu, nie do listy wszystkich błędów.
+
+
 `collect` wybiera wynik przez `FromIterator`. Kolekcjonowanie iteratora `Result<T, E>` zatrzymuje się na pierwszym błędzie.
 
 ```rust
@@ -1094,11 +1364,16 @@ assert!(parse_all(&["10", "x", "20"]).is_err());
 
 ### 55. Krótkie spięcie przez `try_fold`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/05_iteratory.md).
+
+**Granica mechanizmu:** Try_fold kończy przy pierwszym niepowodzeniu; udokumentuj efekty wykonane przed nim i typ akumulatora.
+
+
 `try_fold` łączy fold z mechanizmem `Try`, przerywając pracę po `Err` lub `None`.
 
 ```rust
 fn checked_sum(values: impl IntoIterator<Item = u64>) -> Option<u64> {
-    values.into_iter().try_fold(0, |sum, value| sum.checked_add(value))
+    values.into_iter().try_fold(0_u64, |sum, value| sum.checked_add(value))
 }
 
 assert_eq!(checked_sum([1, 2, 3]), Some(6));
@@ -1108,6 +1383,11 @@ assert_eq!(checked_sum([u64::MAX, 1]), None);
 **Zastosowanie:** walidowane agregacje bez osobnej flagi błędu.
 
 ### 56. Zaawansowane combinatory `Option`
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](07_obsluga_bledow/01_option_i_result.md).
+
+**Granica mechanizmu:** Unwrap_or oblicza argument wcześniej; unwrap_or_else wykonuje closure dopiero dla braku wartości.
+
 
 Combinatory pozwalają modelować brak wartości bez zagnieżdżonych instrukcji warunkowych.
 
@@ -1127,6 +1407,11 @@ assert_eq!(normalized_port(Some(" 8080 ")), Some(8080));
 
 ### 57. Zaawansowane combinatory `Result`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](07_obsluga_bledow/01_option_i_result.md).
+
+**Granica mechanizmu:** Map_err zmienia informację o błędzie; and_then może uruchomić następną omylną operację i zachować pierwszy błąd.
+
+
 `map`, `and_then`, `map_err`, `inspect` i `inspect_err` rozdzielają transformację sukcesu, błędu i obserwację bez zmiany wartości.
 
 ```rust
@@ -1142,6 +1427,11 @@ fn load_port(text: &str) -> Result<u16, String> {
 **Zastosowanie:** czytelne pipeline'y operacji zawodnych i mapowanie błędów między warstwami.
 
 ### 58. Operator `?` i automatyczna konwersja błędu
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](07_obsluga_bledow/02_propagacja_i_operator_question_mark.md).
+
+**Granica mechanizmu:** Znak zapytania propaguje w najbliższym odpowiednim kontekście funkcji lub closure, nie w dowolnym otaczającym bloku.
+
 
 `?` zwraca wcześniej z funkcji i konwertuje błąd przez `From`, jeżeli typ błędu warstwy wyższej to obsługuje.
 
@@ -1168,6 +1458,11 @@ fn load_number(path: &str) -> Result<u64, ConfigError> {
 
 ### 59. Własny błąd z `std::error::Error::source`
 
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](07_obsluga_bledow/04_wlasne_bledy_i_api.md).
+
+**Granica mechanizmu:** Source wiąże przyczynę z błędem warstwy; Display nie powinien przypadkowo ujawniać sekretów i pełnych payloadów.
+
+
 Implementacja `source` zachowuje łańcuch przyczyn, który narzędzia mogą raportować lub logować.
 
 ```rust
@@ -1190,6 +1485,11 @@ impl Error for LoadError {
 **Zastosowanie:** błędy domenowe z techniczną przyczyną i pełnym kontekstem diagnostycznym.
 
 ### 60. `let else`, let-chains, `@` i guardy
+
+**Kontekst nauki:** ownership, typy i rozdział kanoniczny. [Pełne omówienie i ćwiczenia](04_struktury_enumy_i_wzorce/02_wzorce_i_match.md).
+
+**Granica mechanizmu:** Let-else wymaga gałęzi rozbieżnej; guard nie czyni wzorca wyczerpującym i wpływa na możliwość przenoszenia danych.
+
 
 Edition 2024 pozwala łączyć dopasowania `let` przez `&&`. `let else` upraszcza wczesne wyjście, a `@` zachowuje dopasowaną wartość.
 
@@ -1215,6 +1515,11 @@ fn classify(input: Option<&str>) -> &'static str {
 
 ### 61. `async fn` jako maszyna stanów
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/01_future_async_i_await.md).
+
+**Granica mechanizmu:** Przechowywane przez await wartości określają rozmiar i auto-traity future; samo utworzenie future nie wykonuje jej ciała.
+
+
 Wywołanie `async fn` tworzy leniwy obiekt implementujący `Future`; ciało zaczyna pracę dopiero podczas pollingu przez executor.
 
 ```rust
@@ -1233,6 +1538,11 @@ drop(future);
 **Zastosowanie:** nieblokujące operacje I/O i miliony lekkich zadań zarządzanych przez runtime.
 
 ### 62. Ręczna implementacja `Future`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/02_executor_waker_i_poll.md).
+
+**Granica mechanizmu:** Pending wymaga zorganizowania przyszłego wake; gotowość nie daje prawa do bezwarunkowego ponownego poll po Ready.
+
 
 `Future::poll` zwraca `Ready` albo `Pending`. Po `Pending` implementacja musi doprowadzić do wywołania najnowszego `Waker`, gdy pojawi się postęp.
 
@@ -1253,6 +1563,11 @@ impl<T: Unpin> Future for Ready<T> {
 **Zastosowanie:** własne prymitywy async, adaptery callbacków i integracja z systemowym I/O.
 
 ### 63. `Pin` i auto-trait `Unpin`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/05_pin_unpin_i_self_referential.md).
+
+**Granica mechanizmu:** Pin stabilizuje pointee według kontraktu, nie sam uchwyt; dla Unpin ograniczenie nie chroni przed ruchem.
+
 
 `Pin<P>` gwarantuje, że pointee nie zostanie przeniesiony, jeśli `T: !Unpin`. Większość zwykłych typów implementuje `Unpin`, więc ograniczenie ich nie dotyczy.
 
@@ -1276,6 +1591,11 @@ assert_eq!(pinned.as_ref().get_ref().data, "fixed address");
 
 ### 64. Pinowanie na stosie przez `pin!`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/05_pin_unpin_i_self_referential.md).
+
+**Granica mechanizmu:** Lokalne pinowanie wiąże wartość z zakresem; zwrócenie Pin<&mut T> do tymczasowej wartości nie przedłuża jej życia.
+
+
 Makro `pin!` tworzy lokalny `Pin<&mut T>` bez alokacji. Dostęp do przypiętej wartości odbywa się przez reborrow `as_mut()`.
 
 ```rust
@@ -1291,6 +1611,11 @@ assert_eq!(future.as_mut().poll(&mut context), Poll::Ready(42));
 **Zastosowanie:** ręczny polling i kompozycja future bez `Box::pin`.
 
 ### 65. `Waker` i minimalny executor
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/02_executor_waker_i_poll.md).
+
+**Granica mechanizmu:** Waker musi obudzić właściwy task; minimalny block_on bez reaktora nie obsłuży wszystkich API runtime'u.
+
 
 `Waker` informuje executor, że zadanie może zostać ponownie polled. Bezpieczny trait `Wake` pozwala zbudować waker bez ręcznej tabeli `RawWakerVTable`.
 
@@ -1321,6 +1646,11 @@ fn block_on<T>(future: impl Future<Output = T>) -> T {
 
 ### 66. Tworzenie combinatora przez `poll_fn`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/02_executor_waker_i_poll.md).
+
+**Granica mechanizmu:** Własny select ma kolejność poll i politykę anulowania przegranej gałęzi; rozważ fairness i zachowane efekty.
+
+
 `poll_fn` zamienia closure przyjmujące `Context` w pełny `Future`. Można nim zbudować prosty `select`.
 
 ```rust
@@ -1343,6 +1673,11 @@ async fn first<T>(a: impl Future<Output = T>, b: impl Future<Output = T>) -> T {
 
 ### 67. `async move` blocks
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/01_future_async_i_await.md).
+
+**Granica mechanizmu:** Przeniesienie referencji do async move nie zamienia jej referenta w zasób o lifetime static.
+
+
 Blok async jest wyrażeniem zwracającym anonimowy `Future`. `move` przenosi przechwycone wartości do jego maszyny stanów.
 
 ```rust
@@ -1359,6 +1694,11 @@ async fn send_bytes(_: &[u8]) {}
 **Zastosowanie:** future o lifetime `'static` przekazywane do executora.
 
 ### 68. Async closures i rodzina `AsyncFn`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/04_closures_i_fn_traits.md).
+
+**Granica mechanizmu:** AsyncFn opisuje także zależność pożyczek wyniku; zwykła closure zwracająca future nie zawsze ma identyczne możliwości.
+
 
 Async closure może pożyczać przechwycone dane przez czas zwróconego future. Bounds `AsyncFn`, `AsyncFnMut` i `AsyncFnOnce` opisują sposób wywołania.
 
@@ -1382,6 +1722,11 @@ async fn demo() {
 
 ### 69. Warunek `Send` dla future
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/04_anulowanie_timeouty_i_blocking.md).
+
+**Granica mechanizmu:** Sprawdzaj stan zachowany przez await i captures; samo usunięcie Rc z końca funkcji nie zawsze zmienia typ future.
+
+
 Future jest `Send`, jeśli wszystkie wartości przechowywane przez punkty `.await` są `Send`. `Rc` trzymane przez `.await` może uniemożliwić przeniesienie zadania między wątkami.
 
 ```rust
@@ -1404,6 +1749,11 @@ async fn yield_once() {}
 
 ### 70. Współdzielony ownership przez `Arc`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md).
+
+**Granica mechanizmu:** Arc synchronizuje licznik współwłasności, a nie dowolne operacje na wartości wewnętrznej.
+
+
 `Arc<T>` atomowo zlicza referencje i może być współdzielony między wątkami, jeżeli `T` spełnia odpowiednie auto-traity.
 
 ```rust
@@ -1425,6 +1775,11 @@ assert_eq!(values, [1, 2, 3]);
 
 ### 71. Scoped threads
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/01_watki_i_scoped_threads.md).
+
+**Granica mechanizmu:** Scope pozwala pożyczać lokalne dane, ponieważ czeka na zakończenie wątków przed wyjściem.
+
+
 `thread::scope` gwarantuje zakończenie wątków przed wyjściem z zakresu, dlatego mogą one pożyczać dane ze stosu.
 
 ```rust
@@ -1442,6 +1797,11 @@ thread::scope(|scope| {
 **Zastosowanie:** równoległe przetwarzanie pożyczonych fragmentów bez `Arc` i bez `'static`.
 
 ### 72. `Mutex`, RAII guard i poisoning
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md).
+
+**Granica mechanizmu:** Poisoning jest sygnałem możliwego naruszenia invariant, nie dowodem naprawy ani mechanizmem soundness.
+
 
 Guard zwalnia blokadę w `Drop`. Panika podczas posiadania locka zatruwa mutex, ostrzegając, że chronione inwarianty mogły zostać naruszone.
 
@@ -1461,6 +1821,11 @@ assert_eq!(*state.lock().unwrap(), [1, 2, 3]);
 **Zastosowanie:** mutowalny stan współdzielony i świadome odzyskiwanie po panice.
 
 ### 73. Wielu czytelników przez `RwLock`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md).
+
+**Granica mechanizmu:** Wielu czytelników nie gwarantuje większej wydajności; sprawdź politykę systemu i ryzyko zagłodzenia pisarza.
+
 
 `RwLock` dopuszcza wielu równoczesnych czytelników albo jednego pisarza. Polityka pierwszeństwa zależy od systemu operacyjnego.
 
@@ -1482,23 +1847,43 @@ let config = RwLock::new(String::from("v1"));
 
 ### 74. Oczekiwanie na warunek przez `Condvar`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md).
+
+**Granica mechanizmu:** Powiadomienie nie jest stanem: predykat pod mutexem i pętla oczekiwania zapobiegają utraconym i pozornym pobudkom.
+
+
 Wątek zasypia bez aktywnego zużycia CPU. Predykat trzeba sprawdzać w pętli z powodu spurious wakeups.
 
 ```rust
 use std::sync::{Arc, Condvar, Mutex};
+use std::thread;
 
-let pair = Arc::new((Mutex::new(false), Condvar::new()));
-let (lock, cvar) = &*pair;
-
-let mut ready = lock.lock().unwrap();
-while !*ready {
-    ready = cvar.wait(ready).unwrap();
+fn main() {
+    let pair = Arc::new((Mutex::new(false), Condvar::new()));
+    let producent = Arc::clone(&pair);
+    let h = thread::spawn(move || {
+        let (lock, cvar) = &*producent;
+        *lock.lock().unwrap() = true;
+        cvar.notify_one();
+    });
+    let (lock, cvar) = &*pair;
+    let mut ready = lock.lock().unwrap();
+    while !*ready {
+        ready = cvar.wait(ready).unwrap();
+    }
+    drop(ready);
+    h.join().unwrap();
 }
 ```
 
 **Zastosowanie:** kolejki blokujące, pule wątków i koordynacja producent–konsument.
 
 ### 75. Synchronizacja faz przez `Barrier`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/01_watki_i_scoped_threads.md).
+
+**Granica mechanizmu:** Liczba uczestników bariery musi odpowiadać protokołowi; zniknięcie jednego uczestnika może zatrzymać pozostałych.
+
 
 Barrier blokuje wszystkie uczestniczące wątki, dopóki zadana liczba nie osiągnie tego samego punktu.
 
@@ -1525,6 +1910,11 @@ fn run_phase_two(_: usize) {}
 
 ### 76. Message passing przez `mpsc::channel`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/02_kanaly_i_message_passing.md).
+
+**Granica mechanizmu:** Odbiorca kończy po zamknięciu wszystkich nadajników; zapomniany klon potrafi zatrzymać shutdown.
+
+
 Kanał przenosi ownership wiadomości od wielu producentów do jednego konsumenta.
 
 ```rust
@@ -1546,6 +1936,11 @@ for message in rx {
 **Zastosowanie:** actor-like architecture i ograniczenie współdzielonej mutacji.
 
 ### 77. Backpressure przez `sync_channel`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/02_kanaly_i_message_passing.md).
+
+**Granica mechanizmu:** Ograniczony kanał wymusza politykę przeciążenia; zerowa pojemność wymaga spotkania producenta i konsumenta.
+
 
 Kanał o ograniczonym buforze blokuje producenta po zapełnieniu. Pojemność zero tworzy kanał rendezvous.
 
@@ -1570,6 +1965,11 @@ fn process(_: Vec<u8>) {}
 
 ### 78. Atomiki i memory ordering
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/05_atomics_i_memory_ordering.md).
+
+**Granica mechanizmu:** Acquire synchronizuje dostęp dopiero przy odpowiedniej relacji reads-from z Release; etykieta ordering sama nie wystarcza.
+
+
 Atomiki zapewniają operacje bez data race. `Relaxed` gwarantuje atomowość, `Acquire`/`Release` publikację danych, a `SeqCst` dodatkowo jeden globalny porządek.
 
 ```rust
@@ -1592,6 +1992,11 @@ fn read() -> Option<usize> {
 
 ### 79. Jednorazowa inicjalizacja przez `OnceLock` i `LazyLock`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/03_arc_mutex_rwlock_i_condvar.md).
+
+**Granica mechanizmu:** OnceLock i LazyLock mają różne sposoby inicjalizacji i zachowanie przy panice; dobierz typ do cyklu życia stanu.
+
+
 Oba typy są thread-safe. `OnceLock` przyjmuje inicjalizator przy użyciu, a `LazyLock` przechowuje go w samej statycznej wartości.
 
 ```rust
@@ -1610,6 +2015,11 @@ assert_eq!(POWERS[4], 16);
 **Zastosowanie:** globalna konfiguracja, kosztowne tablice i inicjalizacja bez własnego `unsafe`.
 
 ### 80. Thread-local storage i dostępna równoległość
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/01_watki_i_scoped_threads.md).
+
+**Granica mechanizmu:** Stan thread-local należy do wątku, nie taska async; available_parallelism jest wskazówką, nie rezerwacją CPU.
+
 
 `thread_local!` tworzy osobną wartość dla każdego wątku. `available_parallelism` podaje przybliżoną liczbę workerów odpowiednią dla środowiska.
 
@@ -1637,21 +2047,34 @@ println!("workers={workers}");
 
 ### 81. Wielowariantowe `macro_rules!`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/01_macro_rules.md).
+
+**Granica mechanizmu:** Makro powinno zachować przewidywalną liczbę ewaluacji argumentu i czytelny typ wyniku.
+
+
 Makro deklaratywne dopasowuje tokeny do kolejnych reguł i może generować wyrażenia, typy, wzorce lub elementy modułu.
 
 ```rust
 macro_rules! calculate {
     (double $value:expr) => { $value * 2 };
-    (square $value:expr) => { $value * $value };
+    (square $value:expr) => {{ let value = $value; value * value }};
 }
 
 assert_eq!(calculate!(double 5), 10);
 assert_eq!(calculate!(square 5), 25);
+let mut n = 0;
+assert_eq!(calculate!(square { n += 1; n }), 1);
+assert_eq!(n, 1);
 ```
 
 **Zastosowanie:** małe DSL-e i eliminowanie powtarzalnego kodu o wspólnej składni.
 
 ### 82. Fragment specifiers i repetycje makra
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/02_higiena_fragmenty_i_repetition.md).
+
+**Granica mechanizmu:** Fragment specifier ogranicza gramatykę; powtórzenia wymagają poprawnej liczności i dozwolonego separatora.
+
 
 Makro rozróżnia m.in. `expr`, `ty`, `ident`, `pat` i `tt`. Konstrukcja `$()*` powtarza fragment dowolną liczbę razy.
 
@@ -1674,6 +2097,11 @@ let ports = map! {
 
 ### 83. Rekurencyjny TT muncher
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/02_higiena_fragmenty_i_repetition.md).
+
+**Granica mechanizmu:** TT muncher może mieć kosztowną ekspansję i nieczytelne błędy; funkcja lub prostsze makro bywa lepsze.
+
+
 Makro może konsumować po jednym token tree i rekurencyjnie przetwarzać resztę wejścia.
 
 ```rust
@@ -1688,6 +2116,11 @@ assert_eq!(count_tokens!(alpha + beta * 3), 5);
 **Zastosowanie:** parsery DSL w `macro_rules!`. Głęboka rekurencja może zwiększać czas kompilacji.
 
 ### 84. Higiena makr i ścieżka `$crate`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/02_higiena_fragmenty_i_repetition.md).
+
+**Granica mechanizmu:** Dolar-crate wskazuje crate definicji; nie znosi reguł widoczności użytych elementów.
+
 
 Identyfikatory lokalne makra nie kolidują z kodem wywołującym, a `$crate` wskazuje crate, w którym makro zostało zdefiniowane.
 
@@ -1709,7 +2142,14 @@ macro_rules! app_log {
 
 ### 85. Funkcyjne makro proceduralne
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/03_makra_proceduralne.md).
+
+**Granica mechanizmu:** Makro proceduralne wymaga osobnego crate'a proc-macro; sam fragment TokenStream nie jest zwykłym programem binarnym.
+
+
 Proc macro działa w osobnym crate typu `proc-macro` i transformuje wejściowy `TokenStream` w tokeny wynikowe.
+
+Przykłady wymagają osobnego pakietu `proc-macro` oraz klienta; nie są zwykłymi doctestami.
 
 ```toml
 # Cargo.toml crate'u makra
@@ -1717,7 +2157,7 @@ Proc macro działa w osobnym crate typu `proc-macro` i transformuje wejściowy `
 proc-macro = true
 ```
 
-```rust
+```text
 use proc_macro::TokenStream;
 
 #[proc_macro]
@@ -1726,7 +2166,7 @@ pub fn answer(_input: TokenStream) -> TokenStream {
 }
 ```
 
-```rust
+```text
 let value = macros::answer!();
 assert_eq!(value, 42);
 ```
@@ -1735,9 +2175,16 @@ assert_eq!(value, 42);
 
 ### 86. Własne `derive` proceduralne
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/03_makra_proceduralne.md).
+
+**Granica mechanizmu:** Derive musi zachować generics i where; nie dodawaj przypadkowo bounds do nieużywanych parametrów.
+
+
 Derive macro otrzymuje deklarację typu i generuje dodatkową implementację. W praktyce zwykle używa się `syn` do parsowania i `quote` do generowania.
 
-```rust
+Przykład wymaga pakietu `proc-macro` i zależności `syn`/`quote` (**third-party**).
+
+```text
 // crate proc-macro; zależności: syn = "2", quote = "1"
 #[proc_macro_derive(EntityName)]
 pub fn derive_entity_name(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -1756,9 +2203,16 @@ pub fn derive_entity_name(input: proc_macro::TokenStream) -> proc_macro::TokenSt
 
 ### 87. Attribute procedural macro
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](12_makra/03_makra_proceduralne.md).
+
+**Granica mechanizmu:** Atrybut powinien zachować znaczenie elementu i dostarczać diagnostykę z właściwym spanem wejścia.
+
+
 Makro atrybutowe może otrzymać własne argumenty i cały element, a następnie zastąpić go zmodyfikowaną wersją.
 
-```rust
+Przykład wymaga pakietu `proc-macro` i odpowiedniej konfiguracji zależności.
+
+```text
 // crate proc-macro; zależności: syn = { version = "2", features = ["full"] }, quote = "1"
 #[proc_macro_attribute]
 pub fn traced(
@@ -1782,6 +2236,11 @@ pub fn traced(
 
 ### 88. Obliczenia compile-time przez `const fn`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** Const fn może działać w runtime; obliczenie przy kompilacji wymaga kontekstu const i dozwolonych operacji.
+
+
 `const fn` może zostać wykonana podczas kompilacji, jeżeli jest użyta w kontekście stałym, albo normalnie w runtime.
 
 ```rust
@@ -1802,6 +2261,11 @@ assert_eq!(FIB_20, 6765);
 
 ### 89. Inline const blocks
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** Inline const tworzy kontekst ewaluacji, lecz nie omija ograniczeń operacji const ani reprezentacji typu.
+
+
 `const { ... }` wymusza ewaluację wyrażenia w compile time i może zależeć od parametrów generycznych otaczającego elementu.
 
 ```rust
@@ -1817,6 +2281,11 @@ assert_eq!(type_size::<u64>(), 8);
 **Zastosowanie:** stałe zależne od monomorfizowanego typu i tworzenie elementów tablic bez `Copy`.
 
 ### 90. Asercje podczas kompilacji
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** Asercja const sprawdza konkretne założenie dla targetu; zgodny rozmiar nie dowodzi zgodności całego ABI.
+
 
 Panika w ewaluowanym kontekście stałym powoduje błąd kompilacji, dzięki czemu można sprawdzać założenia reprezentacji.
 
@@ -1838,6 +2307,11 @@ const _: () = {
 
 ### 91. `unsafe fn` i jawny kontrakt bezpieczeństwa
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md).
+
+**Granica mechanizmu:** Unsafe fn komunikuje obowiązek wywołującego, a blok unsafe lokalizuje odpowiedzialność autora implementacji.
+
+
 `unsafe fn` przenosi obowiązek spełnienia precondition na wywołującego. W Edition 2024 niebezpieczna operacja w jej ciele nadal powinna być w osobnym `unsafe` block.
 
 ```rust
@@ -1855,6 +2329,11 @@ assert_eq!(unsafe { read_u32(&value) }, 42);
 **Zastosowanie:** mały, audytowalny rdzeń `unsafe` otoczony bezpiecznym API.
 
 ### 92. Surowe wskaźniki i unaligned access
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Read_unaligned usuwa wymaganie wyrównania samego odczytu, ale nie legalizuje utworzenia niewyrównanej referencji.
+
 
 Raw pointer nie podlega zwykłym regułom borrow checkera, ale dereferencja wymaga poprawności, wyrównania, inicjalizacji i braku niedozwolonego aliasingu.
 
@@ -1876,6 +2355,11 @@ assert_eq!(value, 0xAABBCCDD);
 **Zastosowanie:** parsowanie packed structures, sterowniki i pamięć mapowana.
 
 ### 93. `NonNull<T>` w implementacji kontenera
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md).
+
+**Granica mechanizmu:** NonNull nie oznacza poprawnie zainicjalizowanego właściciela; jego wariancja wymaga osobnej analizy dla mutacji.
+
 
 `NonNull<T>` reprezentuje kowariantny, niepusty surowy wskaźnik. Sam nie gwarantuje ważności, wyrównania ani ownershipu.
 
@@ -1905,6 +2389,11 @@ impl<T> Drop for Owned<T> {
 
 ### 94. Strict provenance i adres wskaźnika
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/02_raw_pointers_aliasing_i_provenance.md).
+
+**Granica mechanizmu:** Adres liczbowy nie wystarcza do dostępu: zachowaj provenance, lifetime alokacji i wymagania aliasingu.
+
+
 Adres liczbowy nie opisuje pełnej zdolności dostępu do obiektu. Metody `addr` i `with_addr` zachowują provenance istniejącego wskaźnika.
 
 ```rust
@@ -1920,6 +2409,11 @@ assert_eq!(unsafe { *second }, 20);
 **Zastosowanie:** niskopoziomowe struktury danych i poprawne manipulowanie adresami bez gubienia provenance.
 
 ### 95. Stabilny layout przez `#[repr(C)]`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md).
+
+**Granica mechanizmu:** Repr(C) ustala reguły reprezentacji dla targetu, a nie automatyczny format sieciowy czy własność obcych zasobów.
+
 
 Domyślny layout Rusta nie jest publicznym ABI. `repr(C)` narzuca kolejność i zasady layoutu zgodne z reprezentacją platformy C.
 
@@ -1938,47 +2432,90 @@ assert_eq!(std::mem::size_of::<SampleI16>(), 4);
 
 ### 96. Przezroczysty wrapper przez `#[repr(transparent)]`
 
-Typ ma taki sam layout i ABI jak jego jedyne niezerowe pole, zachowując jednocześnie odrębną semantykę w typach.
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](14_idiomy_wzorce_i_architektura/01_idiomy_newtype_i_extension_traits.md).
+
+**Granica mechanizmu:** Transparentność layoutu nie zmienia dziedzinowych invariant wrappera ani nie legalizuje dowolnej konwersji API.
+
+`#[repr(transparent)]` zapewnia wrapperowi layout i ABI jego jedynego pola o niezerowym rozmiarze (z uwzględnieniem reguł dodatkowych pól ZST). Nie nadaje wartości uprawnień ani poprawności zasobu. Przykład używa zwykłego kodu statusu, więc skopiowanie liczby nie przenosi ani nie zwalnia uchwytu.
 
 ```rust
+use std::ffi::c_int;
+
 #[repr(transparent)]
-#[derive(Copy, Clone)]
-struct FileDescriptor(std::ffi::c_int);
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct Status(c_int);
 
-unsafe extern "C" {
-    fn close(fd: std::ffi::c_int) -> std::ffi::c_int;
+impl Status {
+    fn sukces(self) -> bool { self.0 == 0 }
 }
-
-fn close_fd(fd: FileDescriptor) -> i32 {
-    // SAFETY: `fd` jest przekazywany z ABI zgodnym z c_int.
-    unsafe { close(fd.0) }
+fn main() {
+    assert!(Status(0).sukces());
+    assert!(!Status(7).sukces());
+    assert_eq!(std::mem::size_of::<Status>(), std::mem::size_of::<c_int>());
+    assert_eq!(std::mem::align_of::<Status>(), std::mem::align_of::<c_int>());
 }
 ```
 
-**Zastosowanie:** typowane uchwyty FFI bez kosztu konwersji.
+Dla deskryptora pliku sam wrapper `c_int` nie zapewnia I/O safety. Bezpieczne zamykanie wymaga ownership; na obsługiwanych platformach używaj `OwnedFd`/`BorrowedFd` zgodnie z kontraktem. Safe funkcja zamykająca dowolny numer mogłaby unieważnić zasób należący do innego obiektu. Wyjaśnia to [std::io: I/O Safety](https://doc.rust-lang.org/std/io/#io-safety).
+
+**Zastosowanie:** nowe typy o reprezentacji wymaganej przez ABI, przy osobnym utrzymaniu ich znaczenia i niezmienników.
 
 ### 97. `unsafe extern` i ABI C w Edition 2024
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md).
+
+**Granica mechanizmu:** Deklaracja extern jest zobowiązaniem co do ABI i typów; niepoprawny podpis może prowadzić do UB.
+
+
 Blok deklaracji obcych funkcji musi być `unsafe`, ponieważ poprawność sygnatur jest obowiązkiem autora. Pojedynczy element można oznaczyć jako `safe`, jeśli każdy argument jest poprawny.
 
+Wykonywalny przykład natywnej integracji C: sprawdzony lokalnie na macOS. `cfg(unix)` pomija blok na pozostałych platformach; nie jest to test Windows ani Wasm. Linkowanie `c` wymaga odpowiedniego środowiska Unix.
+
 ```rust
-use std::ffi::{c_char, CStr};
+#[cfg(unix)]
+mod ffi {
+use std::ffi::{c_char, c_int, CStr};
 
 #[link(name = "c")]
 unsafe extern "C" {
-    safe fn abs(value: std::ffi::c_int) -> std::ffi::c_int;
+    /// # Safety
+    /// value != c_int::MIN: dodatni wynik musi być reprezentowalny w c_int.
+    unsafe fn abs(value: std::ffi::c_int) -> std::ffi::c_int;
     unsafe fn strlen(text: *const c_char) -> usize;
+}
+
+pub fn checked_abs(value: c_int) -> Option<c_int> {
+    if value == c_int::MIN { return None; }
+    // SAFETY: wykluczono jedyny niereprezentowalny wynik dla c_int.
+    Some(unsafe { abs(value) })
 }
 
 fn length(text: &CStr) -> usize {
     // SAFETY: CStr gwarantuje poprawny wskaźnik do NUL-terminated string.
     unsafe { strlen(text.as_ptr()) }
 }
+
+} // mod ffi
+
+fn main() {
+    #[cfg(unix)]
+    {
+        assert_eq!(ffi::checked_abs(-42), Some(42));
+        assert_eq!(ffi::checked_abs(std::ffi::c_int::MIN), None);
+    }
+}
 ```
+
+C `abs` nie może być deklarowane jako `safe`: dla `c_int::MIN` dodatni wynik nie mieści się w typie i kontrakt C dopuszcza UB. Wrapper odrzuca tę wartość przed wywołaniem. Zobacz [WG14 N3220, §7.24.6.1](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf). Własne `safe` przy elemencie extern wymaga uzasadnienia bezpieczeństwa wszystkich wywołań dozwolonych jego typem.
 
 **Zastosowanie:** wywoływanie bibliotek C z jawną granicą odpowiedzialności.
 
 ### 98. `union` i interpretacja wspólnej pamięci
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Odczyt unionu musi tworzyć poprawną wartość docelowego typu; wspólny rozmiar nie wystarcza.
+
 
 Wszystkie pola unionu współdzielą pamięć. Zapis jest bezpieczny, ale odczyt wymaga `unsafe`, ponieważ aktywny wariant nie jest śledzony.
 
@@ -2002,9 +2539,16 @@ assert_eq!(bits_of(1.0), 0x3F80_0000);
 
 ### 99. Inline assembly przez `asm!`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** Oprócz instrukcji zadeklaruj efekty na rejestry i pamięć; błędne options mogą unieważnić optymalizację.
+
+
 `asm!` daje dostęp do instrukcji procesora i jawnie opisuje rejestry, operandy oraz efekty uboczne. Jest zależne od architektury.
 
-```rust
+Kod wymaga targetu x86_64 i właściwości jego CPU; nie jest wykonywany w lokalnych testach aarch64.
+
+```text
 #[cfg(target_arch = "x86_64")]
 fn read_timestamp_counter() -> u64 {
     let low: u32;
@@ -2028,9 +2572,16 @@ fn read_timestamp_counter() -> u64 {
 
 ### 100. Portable SIMD — funkcja `nightly`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** Portable SIMD wymaga sprawdzenia aktualnego kanału i targetu; porównaj z autowektoryzacją przed wyborem nightly.
+
+
 API `std::simd` zapewnia przenośne wektory SIMD, ale w Rust 1.98.1 nadal wymaga `nightly` i feature gate `portable_simd`.
 
-```rust
+Przykład wymaga kanału **nightly** i bramki `portable_simd`; nie jest testem stable.
+
+```text
 #![feature(portable_simd)]
 
 use std::simd::f32x8;
@@ -2050,6 +2601,11 @@ fn main() {
 ## Projektowanie publicznego API i zaawansowane typy — 101–110
 
 ### 101. Precyzyjne przechwytywanie parametrów przez `use<...>`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/05_hrtb_gat_rpit_i_impl_trait.md).
+
+**Granica mechanizmu:** Use-bound określa przechwycone parametry typu opaque, ale nie dodaje runtime lifetime do przechowywanych danych.
+
 
 Zwracany `impl Trait` może przechwytywać parametry generyczne i lifetime'y funkcji. Bound `use<...>` pozwala jawnie ograniczyć ten zbiór, dzięki czemu niezwiązany lifetime nie staje się przypadkową częścią ukrytego typu.
 
@@ -2071,6 +2627,11 @@ fn main() {
 **Zastosowanie:** stabilne sygnatury bibliotek, redukcja nadmiarowych zależności lifetime'ów i precyzyjne API zwracające iteratory albo future.
 
 ### 102. Copy-on-write przez `Cow<'a, B>`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/03_konwersje_dst_i_trait_objects.md).
+
+**Granica mechanizmu:** Cow klonuje przy potrzebie własności; przy już własnym wariancie to_mut nie musi tworzyć kolejnej kopii.
+
 
 `Cow` reprezentuje dane pożyczone albo posiadane. Funkcja może zwrócić referencję bez alokacji, gdy nie trzeba nic zmieniać, i utworzyć wartość owned dopiero w ścieżce modyfikującej.
 
@@ -2094,6 +2655,11 @@ fn main() {
 **Zastosowanie:** parsery, normalizacja danych, serializacja i publiczne API, w których kopiowanie ma następować tylko wtedy, gdy jest konieczne.
 
 ### 103. Interior mutability bez borrow runtime przez `Cell<T>`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/06_smart_pointery_i_interior_mutability.md).
+
+**Granica mechanizmu:** Cell zastępuje całe wartości bez oddawania długiej referencji do wnętrza; nie zastępuje ogólnego borrow guarda.
+
 
 `Cell<T>` pozwala zmieniać wartość przez współdzieloną referencję `&self`. Nie udostępnia referencji do wnętrza; wartości są pobierane lub zastępowane, dlatego dobrze nadaje się do małych typów `Copy`.
 
@@ -2121,6 +2687,11 @@ fn main() {
 
 ### 104. Dynamiczna kontrola borrow przez `RefCell<T>`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/06_smart_pointery_i_interior_mutability.md).
+
+**Granica mechanizmu:** RefCell sprawdza konflikt w runtime; try_borrow pozwala go obsłużyć bez paniki, lecz nie naprawia projektu własności.
+
+
 `RefCell<T>` przenosi regułę „wiele odczytów albo jeden zapis” z kompilacji do runtime. Naruszenie reguły powoduje panic; warianty `try_borrow` i `try_borrow_mut` zwracają błąd.
 
 ```rust
@@ -2146,6 +2717,11 @@ fn main() {
 **Zastosowanie:** mutowalne wnętrze za `Rc<T>`, drzewa, grafy i implementacje traitów wymagających `&self`. W kodzie wielowątkowym używa się zwykle `Mutex` albo `RwLock`.
 
 ### 105. Typy niemobilne przez `PhantomPinned`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/05_pin_unpin_i_self_referential.md).
+
+**Granica mechanizmu:** PhantomPinned wyłącza automatyczny Unpin; bezpieczeństwo konstrukcji samoreferencyjnej nadal wymaga poprawnego pinowania.
+
 
 `PhantomPinned` wyłącza automatyczną implementację `Unpin`. Po przypięciu wartość nie może zostać bezpiecznie przeniesiona, co umożliwia utrzymywanie wskaźników do jej własnych pól.
 
@@ -2183,6 +2759,11 @@ impl SelfRef {
 
 ### 106. Ewolucja publicznych typów przez `#[non_exhaustive]`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](14_idiomy_wzorce_i_architektura/03_projektowanie_api_i_semver.md).
+
+**Granica mechanizmu:** Non_exhaustive ma znaczenie poza crate'em; lokalny match nie demonstruje wszystkich wymagań klienta zewnętrznego.
+
+
 Atrybut informuje użytkowników crate'a, że w przyszłości mogą pojawić się nowe warianty enumu albo pola struktury. Kod poza crate'em musi pozostawić gałąź zapasową.
 
 ```rust
@@ -2205,6 +2786,11 @@ fn message(error: &ApiError) -> &'static str {
 
 ### 107. Wymuszanie obsługi wyniku przez `#[must_use]`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](02_podstawy_jezyka/05_operatory_komentarze_i_atrybuty.md).
+
+**Granica mechanizmu:** Must_use generuje lint, nie bezwarunkowy obowiązek wykonania; let _ może świadomie odrzucić wartość.
+
+
 `#[must_use]` generuje ostrzeżenie, gdy wywołujący ignoruje istotną wartość. Można oznaczyć funkcję albo cały typ i podać komunikat wyjaśniający.
 
 ```rust
@@ -2225,6 +2811,11 @@ fn main() {
 **Zastosowanie:** buildery, obiekty żądań, guardy transakcji i funkcje zwracające rezultat, którego ciche porzucenie prawdopodobnie oznacza błąd.
 
 ### 108. Diagnostyka miejsca wywołania przez `#[track_caller]`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](02_podstawy_jezyka/05_operatory_komentarze_i_atrybuty.md).
+
+**Granica mechanizmu:** Track_caller przekazuje kontekst wywołania według kontraktu; nie zastępuje pełnego łańcucha przyczyn i trace.
+
 
 Funkcja oznaczona `#[track_caller]` może odczytać lokalizację swojego wywołującego zamiast lokalizacji wewnątrz funkcji pomocniczej.
 
@@ -2247,6 +2838,11 @@ fn main() {
 **Zastosowanie:** własne asercje, walidatory domenowe oraz biblioteki, które powinny raportować błąd w kodzie użytkownika, nie wewnątrz helpera.
 
 ### 109. Domyślne parametry typów generycznych
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/01_generics_i_const_generics.md).
+
+**Granica mechanizmu:** Domyślny parametr wpływa na inferencję i ewolucję API; nie jest dowodem braku kosztów monomorfizacji.
+
 
 Parametr generyczny może mieć typ domyślny. Podstawowe użycie pozostaje krótkie, a użytkownik zaawansowany może podmienić strategię bez tworzenia osobnego typu API.
 
@@ -2274,6 +2870,11 @@ assert_eq!(client.codec.encode("IQ"), b"IQ");
 **Zastosowanie:** konfigurowalne polityki serializacji, alokacji, logowania lub transportu przy zachowaniu wygodnego przypadku domyślnego.
 
 ### 110. Złożone trait objects: `dyn Trait + Send + Sync + 'static`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](05_generics_traits_i_system_typow/06_dyn_compatibility_vtables_i_dispatch.md).
+
+**Granica mechanizmu:** Lifetime obiektu i Send/Sync to niezależne bounds; static nie oznacza, że wartość nigdy nie zostanie zniszczona.
+
 
 Trait object może zawierać auto-traity oraz bound lifetime'u. Taki kontrakt precyzuje nie tylko zachowanie obiektu, lecz także to, czy można go współdzielić między wątkami i jak długo żyją jego przechwycone dane.
 
@@ -2304,6 +2905,11 @@ impl EventBus {
 
 ### 111. Jednoprzebiegowa aktualizacja mapy przez Entry API
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/03_mapy_zbiory_i_entry.md).
+
+**Granica mechanizmu:** Entry utrzymuje dostęp do wybranego wpisu i ogranicza ponowne wyszukiwanie; pożyczka nadal blokuje konfliktującą mutację mapy.
+
+
 `HashMap::entry` wykonuje wyszukanie klucza tylko raz i zwraca stan `Occupied` albo `Vacant`. Combinatory `or_insert`, `or_insert_with` i `and_modify` upraszczają atomową logicznie aktualizację wartości.
 
 ```rust
@@ -2329,9 +2935,16 @@ assert_eq!(count(["fft", "fft", "iq"])["fft"], 2);
 
 ### 112. Algebraiczne operacje zmiennoprzecinkowe — Rust 1.98
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** Algebraiczne przekształcenia zmieniają kontrakt numeryczny; zweryfikuj dopuszczalny błąd, NaN i reprodukowalność.
+
+
 Metody `algebraic_add`, `algebraic_sub`, `algebraic_mul`, `algebraic_div` i `algebraic_rem` pozwalają kompilatorowi stosować przekształcenia wynikające z praw algebry liczb rzeczywistych. Dla IEEE 754 oznacza to możliwość zmiany kolejności działań i niedeterministyczne różnice zaokrągleń, ale nigdy undefined behavior.
 
-```rust
+Opisowe API **stable od Rust 1.98**; lokalny Rust 1.90 go nie wykonuje.
+
+```text
 fn energy_algebraic(samples: &[f32]) -> f32 {
     samples.iter().copied().fold(0.0_f32, |sum, sample| {
         sum.algebraic_add(sample.algebraic_mul(sample))
@@ -2347,6 +2960,11 @@ fn main() {
 **Zastosowanie:** DSP, macierze i redukcje numeryczne, gdy możliwość wektoryzacji jest ważniejsza niż identyczny bitowo wynik na każdym buildzie i procesorze. Nie używaj tych metod w obliczeniach wymagających ścisłej reprodukowalności.
 
 ### 113. Pierścieniowy bufor przez `VecDeque::make_contiguous`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/01_tablice_wektory_i_sekwencje.md).
+
+**Granica mechanizmu:** Make_contiguous może przemieścić elementy; długo żyjący wskaźnik do starego układu nie jest bezpiecznym kontraktem.
+
 
 `VecDeque` może być fizycznie rozdzielony na dwa fragmenty. `make_contiguous` reorganizuje dane i zwraca pojedynczy `&mut [T]`, który można przekazać algorytmowi pracującemu na slice.
 
@@ -2365,6 +2983,11 @@ assert_eq!(queue, VecDeque::from([1, 2, 3, 5]));
 **Zastosowanie:** ring buffery, okna próbek, kolejki audio i protokoły strumieniowe wymagające okresowego dostępu do ciągłej pamięci.
 
 ### 114. Inicjalizacja zapasu `Vec<T>` przez `spare_capacity_mut`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Długość zwiększ dopiero po inicjalizacji; panika między zapisami wymaga sprzątania już utworzonych zasobów.
+
 
 `Vec::spare_capacity_mut` udostępnia wolną pojemność jako `&mut [MaybeUninit<T>]`. Po zainicjalizowaniu elementów kod może zwiększyć długość wektora, ale musi dokładnie udowodnić liczbę zapisanych wartości.
 
@@ -2393,6 +3016,11 @@ assert_eq!(values, [10, 0, 1, 2]);
 
 ### 115. Dowodzenie rozłączności przez `split_at_mut`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](03_ownership_i_pamiec/03_referencje_i_borrowing.md).
+
+**Granica mechanizmu:** Split_at_mut koduje dowód rozłączności; sprawdź granicę podziału i nie odtwarzaj dwóch &mut z jednego raw pointera bez dowodu.
+
+
 Borrow checker nie wnioskuje ogólnie, że dwa indeksy tablicy są różne. `split_at_mut` konstruuje dwa rozłączne slice'y, dzięki czemu można jednocześnie mutować obie części bez `unsafe`.
 
 ```rust
@@ -2412,6 +3040,11 @@ assert_eq!(values, [3, 4, 1, 2]);
 **Zastosowanie:** algorytmy in-place, sortowanie, przetwarzanie kanałów i równoległe dzielenie buforów na niezależne regiony.
 
 ### 116. Ramki o stałym rozmiarze przez `chunks_exact`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/05_iteratory.md).
+
+**Granica mechanizmu:** Chunks_exact pozostawia resztę; protokół musi jawnie określić, czy ją odrzuca, czy przechowuje do następnej porcji.
+
 
 `chunks_exact` iteruje wyłącznie po pełnych blokach i zachowuje końcową resztę. Pozwala jawnie odróżnić poprawne ramki od niekompletnego fragmentu wejścia.
 
@@ -2436,6 +3069,11 @@ assert_eq!(decode_u32(&[1, 0, 0, 0, 2, 0, 0, 0]), Ok(vec![1, 2]));
 
 ### 117. Inicjalizacja tablic zależna od indeksu przez `array::from_fn`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](06_kolekcje_iteratory_i_closures/01_tablice_wektory_i_sekwencje.md).
+
+**Granica mechanizmu:** From_fn wywołuje konstruktor dla indeksów; stan closure i częściowa inicjalizacja mają znaczenie przy panice.
+
+
 `std::array::from_fn` buduje `[T; N]` bez wymagania, aby `T` implementował `Copy` albo `Default`. Każdy element może zależeć od swojego indeksu.
 
 ```rust
@@ -2455,6 +3093,11 @@ assert_eq!(matrix[2][1], 7);
 **Zastosowanie:** bufory o rozmiarze compile-time, macierze, tablice kanałów i inicjalizacja typów nieimplementujących `Copy`.
 
 ### 118. Odczyt bez dodatkowego bufora przez `BufRead::fill_buf`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md).
+
+**Granica mechanizmu:** Fill_buf pożycza bufor czytnika; consume dopiero po ustaleniu liczby faktycznie zużytych bajtów.
+
 
 `fill_buf` zwraca referencję do wewnętrznego bufora czytnika, a `consume` oznacza wykorzystane bajty. Kod może analizować dane bez kopiowania ich do nowego `Vec<u8>`.
 
@@ -2485,6 +3128,11 @@ fn count_newlines(mut reader: impl BufRead) -> io::Result<usize> {
 
 ### 119. Scatter/gather I/O przez `read_vectored` i `write_vectored`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](13_io_siec_i_protokoly/01_pliki_io_i_procesy.md).
+
+**Granica mechanizmu:** Vectored I/O nadal może wykonać operację częściową; śledź postęp również na granicy kolejnych segmentów.
+
+
 Operacje vectored I/O przekazują systemowi kilka buforów w jednym wywołaniu. Pozwala to np. odczytać nagłówek i payload bez wcześniejszego łączenia pamięci.
 
 ```rust
@@ -2510,9 +3158,16 @@ fn read_packet(mut input: impl Read) -> io::Result<(usize, [u8; 4], [u8; 12])> {
 
 ### 120. Formatowanie liczb bez alokacji przez `NumBuffer` — Rust 1.98
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/04_const_eval_simd_i_asm.md).
+
+**Granica mechanizmu:** NumBuffer usuwa część alokacji formatowania; bufor wyniku String nadal może rosnąć i wymaga osobnego pomiaru.
+
+
 Każdy typ całkowity udostępnia `format_into`, który zapisuje reprezentację dziesiętną do bufora `NumBuffer` i zwraca pożyczony `&str`. Ten sam bufor można wielokrotnie wykorzystywać bez budowania osobnego `String` dla każdej liczby.
 
-```rust
+Opisowe API **stable od Rust 1.98**; lokalny Rust 1.90 go nie wykonuje.
+
+```text
 use std::fmt::NumBuffer;
 
 fn append_ids(output: &mut String, ids: &[u64]) {
@@ -2539,9 +3194,16 @@ fn main() {
 
 ### 121. Cancellation safety w `tokio::select!`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/04_anulowanie_timeouty_i_blocking.md).
+
+**Granica mechanizmu:** Select porzuca przegraną future, ale nie cofa zewnętrznych efektów; sprawdzaj kontrakt każdej użytej operacji.
+
+
 `select!` kończy zwycięską gałąź i porzuca future z pozostałych gałęzi. Operacja jest cancellation-safe, jeżeli jej porzucenie nie gubi częściowo przetworzonego stanu ani nie narusza kolejności danych.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::sync::{mpsc, watch};
 
 struct Job;
@@ -2572,9 +3234,16 @@ async fn worker(
 
 ### 122. Zarządzanie dynamicznym zbiorem zadań przez `JoinSet`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** JoinSet utrzymuje zbiór zadań, nie dowodzi ograniczenia ich liczby; połącz go z limitem przyjęć.
+
+
 `JoinSet` przechowuje zadania i pozwala odbierać wyniki w kolejności ich zakończenia. Upuszczenie zbioru abortuje nadal działające zadania, dzięki czemu lifecycle jest jawnie powiązany z właścicielem.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::task::JoinSet;
 
 async fn compute(id: u32) -> u32 {
@@ -2600,9 +3269,16 @@ async fn run_all() -> Result<Vec<u32>, tokio::task::JoinError> {
 
 ### 123. Future `!Send` na `LocalSet`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** LocalSet dopuszcza lokalny stan !Send, lecz nie usuwa problemów blokowania, anulowania i cyklu życia.
+
+
 Nie każda future może przechodzić między wątkami. `LocalSet` uruchamia zadania `!Send` na jednym wątku, pozwalając używać np. `Rc<RefCell<T>>` w kodzie asynchronicznym.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use std::{cell::RefCell, rc::Rc};
 use tokio::task::LocalSet;
 
@@ -2624,9 +3300,16 @@ async fn main() {
 
 ### 124. Izolowanie pracy blokującej przez `spawn_blocking`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/04_anulowanie_timeouty_i_blocking.md).
+
+**Granica mechanizmu:** Rozpoczętego zadania blokującego nie da się zwykle przerwać samym abort; kontroluj czas i liczbę równoległych prac.
+
+
 Kod blokujący nie powinien zajmować wątku executora async. `spawn_blocking` przenosi taką pracę do dedykowanej puli; jej anulowanie po rozpoczęciu nie zatrzymuje automatycznie funkcji blokującej.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::task;
 
 fn correlate(samples: Vec<f32>) -> f32 {
@@ -2642,9 +3325,16 @@ async fn correlation(samples: Vec<f32>) -> Result<f32, task::JoinError> {
 
 ### 125. Ograniczanie współbieżności przez `Semaphore`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** Semaphore ogranicza aktywne pozwolenia; nieograniczona kolejka oczekujących może nadal wyczerpać pamięć.
+
+
 Semafor przydziela określoną liczbę permitów. Owned permit można przenieść do zadania, a jego `Drop` automatycznie zwalnia limit nawet przy wcześniejszym wyjściu.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use std::sync::Arc;
 use tokio::{sync::Semaphore, task::JoinHandle};
 
@@ -2667,9 +3357,16 @@ async fn main() {
 
 ### 126. Asynchroniczny backpressure przez bounded `mpsc`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** Bounded mpsc wymaga ustalonej pojemności i zachowania przy zamknięciu; opóźnienie kolejki wchodzi do deadline.
+
+
 Kanał `tokio::sync::mpsc::channel(n)` ma ograniczoną pojemność. Gdy bufor jest pełny, `send().await` czeka, przez co szybki producent nie może bez ograniczeń zwiększać zużycia pamięci.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::sync::mpsc;
 
 #[derive(Debug)]
@@ -2694,9 +3391,16 @@ async fn consume(mut receiver: mpsc::Receiver<Block>) {
 
 ### 127. Dystrybucja najnowszego stanu przez kanał `watch`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** Watch przechowuje najnowszą wartość i może pominąć stany pośrednie; nie zastępuje kolejki wszystkich zdarzeń.
+
+
 Kanał `watch` przechowuje wyłącznie ostatnią wartość. Wolny odbiorca nie musi przetwarzać całej historii zmian; po przebudzeniu odczytuje aktualną konfigurację.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::sync::watch;
 
 #[derive(Clone, Debug)]
@@ -2720,9 +3424,16 @@ drop((sender, receiver));
 
 ### 128. Fan-out zdarzeń przez kanał `broadcast`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** Broadcast może zgłaszać opóźnionego odbiorcę; protokół musi obsłużyć utratę i ewentualne odtworzenie stanu.
+
+
 Każdy aktywny odbiorca kanału `broadcast` widzi własną kopię wiadomości. Jeżeli odbiorca pozostaje zbyt daleko w tyle, otrzymuje `Lagged(n)` i musi jawnie zdecydować, jak obsłużyć utracone zdarzenia.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::sync::broadcast;
 
 async fn receive(mut receiver: broadcast::Receiver<String>) {
@@ -2747,9 +3458,16 @@ drop((receiver_a, receiver_b));
 
 ### 129. Aktor jako właściciel stanu i command bus
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](11_async_rust/03_taski_join_select_i_stream.md).
+
+**Granica mechanizmu:** Aktor ma jednego właściciela stanu, ale nadal potrzebuje limitów skrzynki, idempotencji i polityki zakończenia.
+
+
 Aktor przechowuje stan w jednym zadaniu i przyjmuje typowane komendy przez kanał. Zapytania mogą posiadać `oneshot::Sender`, który tworzy kanał odpowiedzi bez współdzielonego mutexu.
 
-```rust
+Szkic wymaga Tokio (**third-party**), odpowiednich features manifestu i runtime’u; nie jest doctestem std.
+
+```text
 use tokio::sync::{mpsc, oneshot};
 
 enum Command {
@@ -2780,6 +3498,11 @@ fn spawn_counter() -> mpsc::Sender<Command> {
 
 ### 130. Pętla CAS przez `compare_exchange_weak`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](10_wspolbieznosc/05_atomics_i_memory_ordering.md).
+
+**Granica mechanizmu:** Compare_exchange_weak może zawieść pozornie; ordering porażki nie wykonuje zapisu i podlega osobnym ograniczeniom.
+
+
 Operacja compare-and-swap zapisuje nową wartość wyłącznie wtedy, gdy atomik nadal zawiera oczekiwaną starą wartość. Wariant `weak` może pozornie zawieść, dlatego używa się go w pętli aktualizującej oczekiwanie.
 
 ```rust
@@ -2809,6 +3532,11 @@ fn saturating_increment(counter: &AtomicU64) {
 
 ### 131. Workspace Cargo i resolver funkcji
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](08_moduly_cargo_i_workspaces/02_crates_pakiety_i_workspaces.md).
+
+**Granica mechanizmu:** Workspace współdzieli część konfiguracji, lecz nie jest pojedynczym crate'em; resolver wpływa na unifikację features.
+
+
 Workspace zarządza wieloma crate'ami przy wspólnym `Cargo.lock` oraz katalogu `target`. Resolver wersji 3 odpowiada Edition 2024 i ogranicza niepożądane łączenie feature'ów między różnymi rodzajami zależności i targetami.
 
 ```toml
@@ -2833,6 +3561,11 @@ serde = { version = "1", features = ["derive"] }
 
 ### 132. Addytywne feature flags
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](08_moduly_cargo_i_workspaces/03_zaleznosci_features_i_cfg.md).
+
+**Granica mechanizmu:** Features zwykle dodają możliwości; wyłączenie domyślnych w jednym miejscu nie wyłącza aktywacji przez inną zależność.
+
+
 Feature Cargo powinien dodawać możliwości, a nie wybierać wzajemnie wykluczające się tryby. Zależność może być opcjonalna i aktywowana przez zapis `dep:nazwa`.
 
 ```toml
@@ -2851,6 +3584,11 @@ tracing = { version = "0.1", optional = true }
 **Zastosowanie:** lekkie biblioteki, opcjonalne adaptery i ograniczanie drzewa zależności. Kod powinien działać również wtedy, gdy Cargo zjednoczy feature'y kilku użytkowników crate'a.
 
 ### 133. Kompilacja warunkowa przez `cfg` i `cfg_attr`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](08_moduly_cargo_i_workspaces/03_zaleznosci_features_i_cfg.md).
+
+**Granica mechanizmu:** Cfg usuwa elementy z konfiguracji, cfg! zwraca bool i nie ukrywa błędów typów drugiej gałęzi.
+
 
 `#[cfg(...)]` usuwa element z danej konfiguracji kompilacji, a `#[cfg_attr(...)]` warunkowo dodaje inny atrybut. Warunki mogą dotyczyć targetu, feature'u, testów lub własnych symboli.
 
@@ -2878,6 +3616,11 @@ fn record_metric(name: &str) {
 
 ### 134. Kontrolowany build script przez `build.rs`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](08_moduly_cargo_i_workspaces/04_profile_build_scripts_i_publikowanie.md).
+
+**Granica mechanizmu:** Build script wykonuje kod na hoście; śledź wejścia, zmienne i uprawnienia, aby uniknąć niejawnego środowiska.
+
+
 Build script działa przed kompilacją crate'a i komunikuje się z Cargo liniami `cargo::...`. Dyrektywy `rerun-if-changed` i `rerun-if-env-changed` zapobiegają niepotrzebnemu uruchamianiu skryptu przy każdym buildzie.
 
 ```rust
@@ -2897,9 +3640,16 @@ fn main() {
 
 ### 135. Jawne linkowanie natywnej biblioteki przez `#[link]`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md).
+
+**Granica mechanizmu:** Link wskazuje bibliotekę, lecz nie weryfikuje zgodności nagłówków, ownership uchwytu ani jego bieżącej ważności.
+
+
 Atrybut `#[link]` przypisuje blok `extern` do biblioteki statycznej, dynamicznej albo frameworka. Sygnatury FFI nadal muszą dokładnie odpowiadać ABI i typom strony natywnej.
 
-```rust
+Szkic wymaga zewnętrznej biblioteki natywnej `sdr`, zgodnego ABI i ważnego uchwytu.
+
+```text
 use std::ffi::{c_int, c_void};
 
 #[link(name = "sdr")]
@@ -2907,7 +3657,9 @@ unsafe extern "C" {
     fn sdr_start(handle: *mut c_void) -> c_int;
 }
 
-fn start(handle: *mut c_void) -> Result<(), c_int> {
+/// # Safety
+/// Uchwyt musi być żywy i wyłącznie dostępny według kontraktu biblioteki.
+unsafe fn start(handle: *mut c_void) -> Result<(), c_int> {
     // SAFETY: `handle` musi wskazywać na aktywne urządzenie biblioteki SDR.
     let status = unsafe { sdr_start(handle) };
     match status {
@@ -2920,6 +3672,11 @@ fn start(handle: *mut c_void) -> Result<(), c_int> {
 **Zastosowanie:** integracja z UHD, libiio, bibliotekami C i systemowymi SDK. Bezpieczny wrapper powinien ukryć surowy uchwyt i opisać ownership.
 
 ### 136. Profile wydania, LTO i jednostki codegen
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/03_monomorfizacja_mir_llvm_i_optymalizacja.md).
+
+**Granica mechanizmu:** LTO i codegen-units zmieniają kompromisy; wynik mierz na rzeczywistym workloadzie, nie na samej wielkości binarium.
+
 
 Profile Cargo sterują strategią optymalizacji całego grafu crate'ów. LTO pozwala optymalizować między jednostkami kodu, a mniejsza liczba `codegen-units` zwykle poprawia wynik kosztem czasu kompilacji.
 
@@ -2940,6 +3697,11 @@ strip = "none"
 **Zastosowanie:** binaria produkcyjne, embedded i obciążenia obliczeniowe. Osobny profil z symbolami jest potrzebny do sensownego profilowania zoptymalizowanego kodu.
 
 ### 137. Testy dokumentacyjne jako wykonywalny kontrakt API
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](09_dokumentacja_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md).
+
+**Granica mechanizmu:** Doctest jest wykonywalnym kontraktem tylko wtedy, gdy blok rzeczywiście jest uruchamiany w odpowiednim środowisku.
+
 
 Bloki Rust w komentarzach dokumentacyjnych są kompilowane i uruchamiane przez `cargo test --doc`. Ukryte linie zaczynające się od `#` pozwalają dodać setup bez zaśmiecania renderowanej dokumentacji.
 
@@ -2962,9 +3724,16 @@ pub fn energy(samples: &[f32]) -> f32 {
 
 ### 138. Property-based testing przez `proptest`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](26_testowanie_zaawansowane_fuzzing_i_miri/01_testy_wlasciwosci_i_fuzzing.md).
+
+**Granica mechanizmu:** Dobry generator zna dziedzinę, a niezależna własność wykrywa błąd; dwa symetrycznie błędne algorytmy mogą przejść round-trip.
+
+
 Zamiast ręcznie wybierać kilka przypadków, test właściwości generuje wiele wejść i minimalizuje przypadek powodujący błąd. Sprawdza inwariant, nie jedną zapamiętaną odpowiedź.
 
-```rust
+Szkic wymaga zależności `proptest` (**third-party**) i harnessu testowego.
+
+```text
 use proptest::prelude::*;
 
 proptest! {
@@ -2989,25 +3758,40 @@ proptest! {
 
 ### 139. Wykrywanie undefined behavior przez Miri
 
-Miri interpretuje MIR i wykrywa wiele naruszeń zasad pamięci, m.in. use-after-free, błędne wyrównanie, część naruszeń aliasingu i wycieki w testach. Nie jest dowodem pełnej poprawności ani analizatorem wyścigów między wątkami.
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](26_testowanie_zaawansowane_fuzzing_i_miri/02_miri_sanitizery_i_loom.md).
+
+**Granica mechanizmu:** Czysty wynik Miri dotyczy przebytej ścieżki i modelu; nie jest dowodem braku całego UB.
+
+
+Miri interpretuje MIR i wykrywa wiele naruszeń zasad pamięci, m.in. use-after-free, błędne wyrównanie, część naruszeń aliasingu i wycieki w testach. Ma także detektor wyścigów danych (data races) w obsługiwanych wykonaniach wielowątkowych. Nie jest dowodem pełnej poprawności ani wyczerpującą eksploracją wszystkich harmonogramów; odrębną technikę modelowania przeplotów pokazuje Loom. Zakres potwierdza [README Miri](https://github.com/rust-lang/miri).
 
 ```bash
 rustup component add miri --toolchain nightly
 cargo +nightly miri setup
 cargo +nightly miri test
 
-# Dodatkowe kontrole i wiele wariantów losowego wykonania:
+# Dodatkowe kontrole pojedynczego wykonania:
 MIRIFLAGS="-Zmiri-strict-provenance -Zmiri-symbolic-alignment-check" \
   cargo +nightly miri test
+
+# Osobno wiele wariantów wykonania (16 seedów, większy koszt):
+MIRIFLAGS="-Zmiri-many-seeds=0..16" cargo +nightly miri test
 ```
 
 **Zastosowanie:** audyt własnych kontenerów, surowych wskaźników, FFI i abstrakcji zawierających `unsafe`. Testy powinny celować w granice oraz nietypowe ścieżki `Drop`.
 
 ### 140. Modelowanie przeplotów współbieżnych przez Loom
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](26_testowanie_zaawansowane_fuzzing_i_miri/02_miri_sanitizery_i_loom.md).
+
+**Granica mechanizmu:** Loom widzi modelowane prymitywy; ukryty std::sync i zbyt silne uproszczenie mogą wykluczyć rzeczywisty błąd.
+
+
 Loom zastępuje typowe prymitywy synchronizacji własnymi odpowiednikami i systematycznie eksploruje możliwe kolejności operacji. Mały model potrafi ujawnić błąd, który w zwykłym teście występuje raz na milion uruchomień.
 
-```rust
+Szkic wymaga zależności `loom` (**third-party**) i modelowanego środowiska.
+
+```text
 use loom::{
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
@@ -3041,9 +3825,16 @@ loom::model(|| {
 
 ### 141. Biblioteki bez `std` przez `#![no_std]` i crate `alloc`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md).
+
+**Granica mechanizmu:** No_std usuwa standardowy runtime API, a alloc nadal potrzebuje allocatora; to różne stopnie zależności środowiskowej.
+
+
 `#![no_std]` usuwa zależność od biblioteki standardowej, ale pozostawia `core`. Jeżeli środowisko dostarcza allocator, crate `alloc` udostępnia m.in. `Box`, `String`, `Vec` i `Arc` bez systemowych API `std`.
 
-```rust
+To źródło biblioteki `no_std`, wymagające własnego manifestu i środowiska allocatora; nie jest samowystarczalnym doctestem.
+
+```text
 #![no_std]
 
 extern crate alloc;
@@ -3062,6 +3853,11 @@ pub fn positive(values: &[i16]) -> Vec<i16> {
 **Zastosowanie:** embedded, kernela, WebAssembly i biblioteki przenośne. Brak `std` nie oznacza automatycznie braku alokacji — do tego trzeba zrezygnować także z `alloc`.
 
 ### 142. Własny globalny allocator przez `GlobalAlloc`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](23_no_std_allocatory_i_embedded/02_no_std_allocatory_i_embedded.md).
+
+**Granica mechanizmu:** Allocator musi zachować Layout i nie wywołać rekurencyjnej alokacji; licznik nie mierzy automatycznie szczytowej pamięci.
+
 
 Implementacja `GlobalAlloc` przechwytuje globalne alokacje. Każda metoda jest `unsafe`, ponieważ musi zachować wymagania layoutu, poprawnie delegować zwalnianie i nie wykonywać operacji prowadzących rekurencyjnie do kolejnej alokacji.
 
@@ -3099,6 +3895,11 @@ static GLOBAL: CountingAllocator = CountingAllocator;
 
 ### 143. Wymuszone wyrównanie przez `#[repr(align(N))]`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Wyrównanie może powiększyć rozmiar i padding; stosuj je w odpowiedzi na wymaganie ABI lub potwierdzony false sharing.
+
+
 `repr(align)` podnosi wymagane wyrównanie struktury. Zmienia również jej rozmiar i layout tablicy takich elementów, ponieważ każdy następny element musi zaczynać się pod odpowiednim adresem.
 
 ```rust
@@ -3119,6 +3920,11 @@ assert_eq!(std::mem::size_of::<CacheLine<u8>>(), 64);
 **Zastosowanie:** typy wymagane przez SIMD lub DMA oraz ograniczanie false sharing. Wyrównanie jest wskazówką layoutu, nie gwarancją osobnej linii cache na każdej architekturze.
 
 ### 144. Struktury packed i bezpieczny odczyt niewyrównany
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/03_layout_alignment_i_uninitialized_memory.md).
+
+**Granica mechanizmu:** Packed zabrania tworzenia zwykłej referencji do niewyrównanego pola; najpierw użyj raw pointera i właściwej operacji.
+
 
 `#[repr(packed)]` usuwa padding, więc pole może znajdować się pod niewyrównanym adresem. Utworzenie zwykłej referencji do takiego pola jest undefined behavior; należy użyć surowego wskaźnika i `read_unaligned`.
 
@@ -3143,6 +3949,11 @@ assert_eq!(payload_len(&header), 4096);
 
 ### 145. Bezpieczna granica wokół `slice::from_raw_parts`
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](21_unsafe_soundness_i_model_pamieci/01_unsafe_i_soundness.md).
+
+**Granica mechanizmu:** Nawet pusty slice z raw parts wymaga non-null i alignment; całość musi leżeć w jednej odpowiedniej alokacji.
+
+
 Surowa para wskaźnik–długość może zostać przedstawiona jako slice, ale caller musi zapewnić poprawność całego regionu, wyrównanie, jedną alokację oraz odpowiedni lifetime. Bezpieczne API powinno wiązać lifetime z właścicielem, gdy tylko jest to możliwe.
 
 ```rust
@@ -3150,7 +3961,10 @@ use std::slice;
 
 /// # Safety
 /// Dla `len > 0` wskaźnik musi wskazywać na `len` czytelnych bajtów,
-/// które pozostają żywe przez całe `'a` i należą do jednej alokacji.
+/// które są zainicjalizowane, należą do jednej alokacji i pozostają
+/// żywe oraz niezmieniane przez całe `'a`. Rozmiar regionu nie może
+/// przekroczyć isize::MAX, a obliczenie jego końca nie może zawinąć adresu.
+/// Dla len == 0 funkcja ignoruje pointer i zwraca niezależny pusty slice.
 unsafe fn bytes_from_foreign<'a>(pointer: *const u8, len: usize) -> &'a [u8] {
     if len == 0 {
         return &[];
@@ -3165,6 +3979,11 @@ unsafe fn bytes_from_foreign<'a>(pointer: *const u8, len: usize) -> &'a [u8] {
 **Zastosowanie:** FFI, pamięć mapowana, bufory sterowników i deserializacja zero-copy. Dowolny lifetime zwracany z surowego wskaźnika wymaga szczególnie ostrożnego wrappera.
 
 ### 146. Łańcuchy C przez `CString` i `CStr`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/01_ffi_abi_i_repr.md).
+
+**Granica mechanizmu:** CString posiada zakończenie NUL, CStr je pożycza; nie zwalniaj obcego bufora niewłaściwym allocatorem.
+
 
 `CString` zapewnia końcowy bajt NUL i odrzuca wewnętrzne zera. `CStr` jest pożyczonym widokiem na poprawny łańcuch C; konwersja na `str` może się nie udać, ponieważ C nie gwarantuje UTF-8.
 
@@ -3186,6 +4005,11 @@ fn print_with_c(text: &str) -> Result<c_int, NulError> {
 
 ### 147. Opaque handle i transfer ownership przez granicę C
 
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md).
+
+**Granica mechanizmu:** Uchwyt musi mieć jednego właściciela odpowiedzialnego za zwolnienie; transfer i pożyczka są różnymi operacjami ABI.
+
+
 Rust może zwrócić C surowy wskaźnik utworzony przez `Box::into_raw`. Dokładnie jedna odpowiadająca funkcja musi później odzyskać ownership przez `Box::from_raw`.
 
 ```rust
@@ -3199,7 +4023,8 @@ pub extern "C" fn counter_new() -> *mut Counter {
 }
 
 /// # Safety
-/// `pointer` musi pochodzić z `counter_new` i nie może być zwolniony drugi raz.
+/// `pointer` jest null albo pochodzi z `counter_new`, pozostaje żywy
+/// i unikalny; nie może być zwolniony drugi raz ani używany po wywołaniu.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn counter_free(pointer: *mut Counter) {
     if !pointer.is_null() {
@@ -3212,6 +4037,11 @@ pub unsafe extern "C" fn counter_free(pointer: *mut Counter) {
 **Zastosowanie:** stabilne C API dla biblioteki Rust, integracja z C++, Pythonem i kodem pluginów. Wszystkie operacje na uchwycie powinny sprawdzać null oraz dokumentować wątkowość.
 
 ### 148. Zatrzymywanie panic na granicy FFI przez `catch_unwind`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md).
+
+**Granica mechanizmu:** Catch_unwind działa dla unwind, nie dla abort i UB; nie obejmuje automatycznie wszystkich granic obcego wyjątku.
+
 
 Panic nie powinien przekraczać zwykłej granicy `extern "C"`. Wrapper może przechwycić unwinding i przetłumaczyć zarówno błąd domenowy, jak i panic na kod statusu rozumiany przez C.
 
@@ -3235,6 +4065,11 @@ pub extern "C" fn run_work() -> i32 {
 **Zastosowanie:** pluginy, biblioteki dynamiczne i callbacki C. `panic = "abort"` nie pozwala przechwycić panic, a `C-unwind` należy stosować wyłącznie przy świadomie zaprojektowanym wspólnym modelu unwindingu.
 
 ### 149. Callback C z kontekstem `userdata`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](22_ffi_i_interoperacyjnosc/02_ffi_safe_wrappers_i_ub.md).
+
+**Granica mechanizmu:** Userdata musi żyć przez wszystkie callbacki, także wywołane później; ustal wątki, reentrancy i odwołanie rejestracji.
+
 
 Typowy interfejs C przechowuje wskaźnik do funkcji oraz nieprzezroczysty `void*`. Rust może przekazać wskaźnik do własnego stanu, o ile zagwarantuje jego lifetime, stabilny adres i właściwą synchronizację.
 
@@ -3263,6 +4098,11 @@ assert_eq!(counter, 5);
 **Zastosowanie:** SDK urządzeń, callbacki logowania i eventy z C/C++. Jeżeli biblioteka zachowuje callback, stan powinien zwykle trafić do `Box`, a zwalnianie musi być częścią protokołu.
 
 ### 150. Bariera optymalizatora przez `std::hint::black_box`
+
+**Kontekst nauki:** fundamenty języka oraz kontrakty omawianego API. [Pełne omówienie i ćwiczenia](20_wydajnosc_i_optymalizacja/02_benchmarki_profilowanie_i_miri.md).
+
+**Granica mechanizmu:** Black_box jest wskazówką best-effort dla optymalizatora; nie jest barierą bezpieczeństwa ani gwarancją stałego czasu.
+
 
 `black_box` utrudnia kompilatorowi usunięcie badanego obliczenia lub zastąpienie go stałym wynikiem. Nie jest mechanizmem bezpieczeństwa ani absolutną gwarancją zachowania każdej instrukcji.
 

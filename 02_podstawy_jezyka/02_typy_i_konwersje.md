@@ -3,7 +3,7 @@
 
 # Typy i konwersje
 
-> Rust 1.98.1, Edition 2024, zweryfikowany 10 września 2026 r.; przykłady wykonano lokalnie przez Rust 1.90.0.
+> Przykłady: **stable**, Rust 1.90.0, Edition 2024. Źródła uzupełniono 11 listopada 2026 r.; nie deklarujemy testu na Rust 1.98.1.
 
 ## Cele
 
@@ -50,6 +50,31 @@ fn main() {
 }
 ~~~
 
+## Rozmiar, jednostka i przypadki brzegowe
+
+Typ liczbowy określa zakres, ale nie jednostkę. Dwie wartości `u64` mogą oznaczać bajty i milisekundy; ich zamiana nadal przejdzie kontrolę typów. Newtype oddziela te domeny, a konstruktor może sprawdzić dodatkowy limit. Dla formatu sieciowego wybierz jawny rozmiar oraz kolejność bajtów, na przykład `u32::to_be_bytes`. `usize` nadaje się do indeksowania pamięci procesu, lecz jego szerokość może różnić się na platformie odbiorcy.
+
+Nie utożsamiaj błędu kompilacji z błędem danych. `let n: u8 = 300;` jest odrzucane, natomiast `300_u16 as u8` jest poprawną operacją z wynikiem `44`. To właśnie powód, by na granicy wejścia wybierać konwersję sprawdzaną. Z kolei `u32::from(u8)` wyraża bezstratne poszerzenie i nie wymaga obsługi błędu.
+
+~~~rust
+fn dekoduj_port(bajty: [u8; 2]) -> Option<u16> {
+    let port = u16::from_be_bytes(bajty);
+    (port != 0).then_some(port)
+}
+
+fn main() {
+    assert_eq!(dekoduj_port([0x1f, 0x90]), Some(8080));
+    assert_eq!(dekoduj_port([0, 0]), None);
+    assert_eq!(300_u16 as u8, 44);
+}
+~~~
+
+Przykład świadomie zabrania portu zero w swojej domenie; nie jest to uniwersalna reguła systemowego API portów. `from_be_bytes` tylko odtwarza liczbę, a walidacja domenowa jest osobnym krokiem. Takie rozdzielenie ułatwia testowanie.
+
+`f32` i `f64` reprezentują przybliżenia. Dopuszczają `NaN`, nieskończoności i dwa zera o różnych znakach. `NaN != NaN`, dlatego liczby zmiennoprzecinkowe nie implementują zwykłego `Eq` ani `Ord`. Do sortowania można świadomie wybrać `total_cmp`, ale to nie naprawia znaczenia brakującego pomiaru. Dla pieniędzy zwykle lepiej przechowywać jednostki najmniejsze w typie całkowitym z jawną regułą zaokrąglania.
+
+Dzielenie całkowite ucina część ułamkową w stronę zera: `-7 / 3` daje `-2`. Jeżeli algorytm potrzebuje dzielenia euklidesowego z nieujemną resztą, użyj `div_euclid` i `rem_euclid`. Przypadki zero, minimum i maksimum typu należą do kontraktu algorytmu, a nie tylko do dodatkowych testów.
+
 ## Diagnostyka kompilatora
 
 Brak kontekstu dla metody liczbowej wymaga adnotacji lub przyrostka; E0308 oznacza niedopasowane typy. Rzut `300_u16 as u8` jest legalny, lecz stratny. Indeks tablicy musi mieć `usize`.
@@ -57,6 +82,8 @@ Brak kontekstu dla metody liczbowej wymaga adnotacji lub przyrostka; E0308 oznac
 ~~~compile_fail
 fn main() { let xs = [1, 2]; let i: i32 = 1; println!("{}", xs[i]); }
 ~~~
+
+Diagnostyka odróżnia przepełniony literał od legalnej operacji stratnej. Sprawdzaj pierwszą przyczynę błędu i typ oczekiwany po lewej stronie; kolejne komunikaty mogą być tylko skutkiem tej samej niezgodności. Przy parsowaniu użytkowego wejścia dodaj testy pustego tekstu, znaku minus, granicy zakresu i liczby o jeden większej.
 
 ## Praktyka produkcyjna
 
@@ -73,6 +100,10 @@ Waliduj dane na granicy przez `TryFrom`/`parse`, nie przez `as`. Dla domeny twó
 - `P02-1` — podstawowe: porównaj `checked_add` i `wrapping_add`. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-1).
 - `P02-2` — praktyczne: przekonwertuj `u16` do `u8` bez utraty danych. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-2).
 - `P02-3` — pogłębione: porównaj turbofish, adnotację wyniku i kontekst odbiorcy dla `"42".parse()`. [Rozwiązanie](../rozwiazania/02_podstawy_jezyka/02_typy_i_konwersje.md#p02-3).
+
+## Źródła i zakres stabilności
+
+Reprezentacje liczb: [Book: data types](https://doc.rust-lang.org/book/ch03-02-data-types.html). Jawne operacje arytmetyczne: [u8](https://doc.rust-lang.org/std/primitive.u8.html). Całkowity porządek zmiennoprzecinkowy: [f64::total_cmp](https://doc.rust-lang.org/std/primitive.f64.html#method.total_cmp).
 
 ## Powiązane tematy
 

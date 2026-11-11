@@ -20,6 +20,16 @@ Cargo, moduły, obsługa błędów i umiejętność budowania małej biblioteki.
 
 Potrafisz rozłożyć testy na warstwy, utrzymywać wykonywalne przykłady w dokumentacji i egzekwować wspólne standardy jakości.
 
+## Praca z rozdziałami
+
+Każdy rozdział zawiera model działania, przykłady, diagnostykę, decyzje produkcyjne i trzy zadania o rosnącym poziomie trudności. Najpierw przewiduj wynik kodu, następnie go uruchom, a dopiero potem porównaj rozwiązanie.
+
+- [Testy jednostkowe i integracyjne: rozwiązania](../rozwiazania/09_dokumentacja_testowanie_i_jakosc/01_testy_jednostkowe_i_integracyjne.md)
+- [Testy dokumentacyjne i rustdoc: rozwiązania](../rozwiazania/09_dokumentacja_testowanie_i_jakosc/02_testy_dokumentacyjne_i_rustdoc.md)
+- [Clippy, rustfmt i linty: rozwiązania](../rozwiazania/09_dokumentacja_testowanie_i_jakosc/03_clippy_rustfmt_i_linty.md)
+
+Przykłady samowystarczalne odnoszą się do Rust 1.90, Edition 2024. Bloki `text` z zależnościami zewnętrznymi lub wymaganiami środowiskowymi opisują oddzielny kontrakt; nie są testami wykonanymi przez rustdoc.
+
 ## Co dalej
 
 Przejdź do współbieżności albo zacznij budować pierwszy większy projekt, uruchamiając pełny zestaw kontroli przed każdym wydaniem.

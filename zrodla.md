@@ -2,7 +2,10 @@
 
 [← Spis treści](README.md)
 
-Stan linków i wersji sprawdzono 12 sierpnia 2026. Kompendium parafrazuje
+Główne kontrakty i źródła rozbudowy sprawdzono 11 listopada 2026.
+Aktualna dokumentacja stable wskazywała Rust 1.99.1; lokalnie dostępne
+`rustc`, `cargo` i `rustdoc` miały wersję 1.90.0. Przykłady nowszego API
+pozostają opisowe, jeśli nie mogły zostać uruchomione tym toolchainem. Kompendium parafrazuje
 źródła i nie zastępuje dokumentacji konkretnego API/toolchainu. W razie
 sprzeczności dla semantyki języka preferuj aktualny Rust Reference i
 dokumentację konkretnej funkcji.
@@ -21,7 +24,7 @@ dokumentację konkretnej funkcji.
   safety requirements i stabilność typów oraz funkcji.
 - [Rust release announcements](https://blog.rust-lang.org/releases/) —
   oficjalna lista wydań. Na dzień weryfikacji najnowsza wersja stable to
-  Rust 1.97.1.
+  Rust 1.99.1, potwierdzona w [release notes](https://doc.rust-lang.org/stable/releases.html).
 
 ## Narzędzia
 
@@ -88,6 +91,26 @@ dokumentację konkretnej funkcji.
   integracja Rust/Wasm; część narzędzi należy do ekosystemu.
 - [Platform Support](https://doc.rust-lang.org/stable/rustc/platform-support.html) —
   poziomy wsparcia targetów i wymagania platform.
+
+## Ekosystem i materiały produkcyjne
+
+Poniższe źródła są dokumentacją ich autorów, a nie częścią standardowej biblioteki Rusta. Zmienność wersji zależności i wymagań platformowych wymaga osobnego sprawdzania. Szkic oznaczony `text` w kompendium nie jest deklaracją wykonania tej integracji.
+
+- [Tokio](https://docs.rs/tokio/latest/tokio/) i [graceful shutdown](https://tokio.rs/tokio/topics/shutdown) — taski, synchronizacja, anulowanie i kończenie pracy.
+- [axum](https://docs.rs/axum/latest/axum/) — warstwa HTTP i stan aplikacji.
+- [SQLx](https://docs.rs/sqlx/latest/sqlx/) — sterowniki, pule, transakcje i migracje.
+- [Serde](https://serde.rs/) — serializacja oraz mapowanie formatu na model.
+- [Proptest Book](https://proptest-rs.github.io/proptest/intro.html) i [Rust Fuzz Book](https://rust-fuzz.github.io/book/cargo-fuzz.html) — strategie, shrinking, harness i odtwarzanie awarii.
+- [Miri](https://github.com/rust-lang/miri), [Loom](https://docs.rs/loom/latest/loom/) i [sanitizery rustc](https://doc.rust-lang.org/unstable-book/compiler-flags/sanitizer.html) — zakres narzędzi, wymagania i ograniczenia interpretacji wyników.
+- [RustSec](https://rustsec.org/) i [cargo-deny](https://embarkstudios.github.io/cargo-deny/) — advisory i polityki zależności.
+- [tracing](https://docs.rs/tracing/latest/tracing/) i [OpenTelemetry](https://opentelemetry.io/docs/concepts/signals/) — eventy, spany oraz sygnały telemetryczne.
+- [Google SRE: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/) — definicje SLI/SLO oraz interpretacja celu usługi.
+- [cargo-bisect-rustc](https://rust-lang.github.io/cargo-bisect-rustc/) — odtwarzalne wyszukiwanie regresji kompilatora.
+- [wasm-bindgen](https://docs.rs/wasm-bindgen/latest/wasm_bindgen/) — wiązania JavaScript; osobno sprawdzaj [kontrakt targetu Wasm](https://doc.rust-lang.org/rustc/platform-support/wasm32-unknown-unknown.html) i [WASIp1](https://doc.rust-lang.org/rustc/platform-support/wasm32-wasip1.html).
+
+## Co potwierdza weryfikacja
+
+`rustdoc` uruchamia samowystarczalne bloki `rust` i potwierdza odrzucenie `compile_fail`; nie sprawdza sam z siebie konkretnego kodu błędu, jeśli nie został dodatkowo zweryfikowany. Kod zależny od third-party, urządzenia, obcej biblioteki, nowszego stable lub nightly wymaga opisanego środowiska. Przejście lokalnych doctestów nie stanowi testu bazy, serwera HTTP, przeglądarki ani embedded.
 
 ## Jak weryfikować twierdzenie
 
